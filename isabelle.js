@@ -1,17 +1,18 @@
 /*
   TODO:
-  Move Isabelle to a linux box, set up putty and github for remote upkeep
+  Refactor config, use config table in db instead of file
   ;character (gives a character role)
   Refactor ;set to check if a belt change happened, and assign roles if they did
   add a weekly decay feature (add a 'active' field to players table, when a match is put in set active to 1,
     when rivals is called anyone that's 0 gets decayed, then set everyone to 0)
-  Refactor database, add a dID field to players table, tweak commands to use that to find people without suffix
+  Refactor database, add a 'dID' field to players table, tweak commands to use that to find people without suffix
   ;name change your tag in the database (checks dID)
   Refactor ;rival in/out to use dID and no name suffix
 
   far future:
   add small games
-  make new table with discord ids and a currency from the games
+  [make new table with discord ids and a currency from the games] bad, too much redundant data
+  make new field 'currency' to players table
 */
 
 // requires/resources
@@ -776,7 +777,7 @@ Check #weekly-rivals for a weekly challenge, its worth 2x points if you win!`
           })
         })
       })// chan send greeting    
-      config.updateRanks = Date.now()  
+      config.rankUpdate = Date.now()  
     }// else
   })// con query
 }// updateRanks
@@ -785,8 +786,10 @@ function updateRivals() {
   con.query(`SELECT * FROM players WHERE rival=1`, (err, result) => {
     let rivals = []
     let players = []
-    let oldRivals = JSON.parse(fs.readFileSync("data/rivals.json"))
-    oldRivals.shift()
+    // let oldRivals = JSON.parse(fs.readFileSync("data/rivals.json"))
+    // oldRivals.shift()
+    let oldRivals = []
+    
     for (let row of result) {
       players.push(row.tag)
     }
@@ -798,40 +801,42 @@ function updateRivals() {
       j = Math.floor(Math.random()*players.length)
       if (j < 0) j = 0
       rivals[i] = players.splice(j,1)[0] // assign first rival in a pair
-      i++
-      let tries = 0
+      i++      
       j = Math.floor(Math.random()*players.length)
 
       // double check for duplicate pairings from last week
-      let r = 0
-      for (let w=0; w<oldRivals[0].length; w++) {
-        if (oldRivals[0][w] == rivals[i-1]) {
-          r = w
-          w = oldRivals[0].length
+      if (oldRivals[0]) {      
+        let r = 0
+        for (let w=0; w<oldRivals[0].length; w++) {
+          if (oldRivals[0][w] == rivals[i-1]) {
+            r = w
+            w = oldRivals[0].length
+          }
         }
-      }
-      while (tries < 10) {
-            if (r % 2 == 1) {
-              if (oldRivals[0][r-1] == players[j]) {
-                j = Math.floor(Math.random()*players.length)
+        let tries = 0
+        while (tries < 10) {
+              if (r % 2 == 1) {
+                if (oldRivals[0][r-1] == players[j]) {
+                  j = Math.floor(Math.random()*players.length)
+                }
+                else {
+                  tries = 10
+                }
               }
               else {
-                tries = 10
+                if (oldRivals[0][r+1] == players[j]) {
+                  j = Math.floor(Math.random()*players.length)
+                }
+                else {
+                  tries = 10
+                }
               }
-            }
-            else {
-              if (oldRivals[0][r+1] == players[j]) {
-                j = Math.floor(Math.random()*players.length)
-              }
-              else {
-                tries = 10
-              }
-            }
-        tries++
-      }// while tries < 10
-      rivals[i] = players.splice(j,1)[0] // assign second rival in a pair
-      i++
-    }// while players.length > 1
+          tries++
+        }// while tries < 10
+        rivals[i] = players.splice(j,1)[0] // assign second rival in a pair
+        i++
+      }// while players.length > 1
+    }
     if (players.length == 1) { // if odd number of rivals, reuse someone
       rivals[i] = players[0] // the leftover player
       i++
@@ -845,7 +850,7 @@ function updateRivals() {
       z++
       rivalstr += `${rivals[z]}\n`
     }
-    rivalstr += '```'    
+    rivalstr += '```'
     oldRivals.push(rivals)
     let oldstr = ''
     if (oldRivals && oldRivals[0] && oldRivals[0][0]) {
