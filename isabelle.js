@@ -69,7 +69,7 @@ bot.on('ready', () => {
     }
     console.log('interval loop exit')
     //fs.writeFileSync('data/config.json',JSON.stringify(config))
-  }, 60000)
+  }, 59000)
 })
 bot.on('disconnected', () => {
   console.log('Diconnected!')
