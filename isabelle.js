@@ -385,7 +385,7 @@ const commands = {
 
 // functions
 function parseMessage(msg) {
-  if (msg.author.id != bot.user.id && msg.content.startsWith(prefix)) {
+  if (msg.author.id != bot.user.id && msg.content.startsWith(prefix) && msg.author.id != '85614143951892480') { //command from user (not UB3R-B0T)
     let cmdTxt = msg.content.split(" ")[0].substring(prefix.length)
     let suffix = msg.content.substring(cmdTxt.length+prefix.length+1)
     let cmd = commands[cmdTxt.toLowerCase()]
@@ -430,6 +430,13 @@ function parseMessage(msg) {
       } catch(e) {
         msg.channel.send(`Command "${cmdTxt}" failed!`)
       }
+    }
+  }
+  else if (msg.author.id === bot.user.id) { //messages from bot to clean up
+    switch(msg.content) {
+      case "Thanks! I'll write this down right away!" :
+        msg.delete(4000)
+        break;
     }
   }
 }// parseMessage
