@@ -23,11 +23,11 @@ var token = process.env.token
 try {
   token = fs.readFileSync('token.txt')
   config = JSON.parse(fs.readFileSync('configlocal.json'))
-  console.log('Running on local machine.')
+  console.error('Running on local machine.')
 }
 catch(e){
-  console.log(e)
-  console.log('Running on Heroku cloud.')
+  console.error(e)
+  console.error('Running on Heroku cloud.')
 }
 //var reportStream = fs.createWriteStream("data/reports.txt", {flags:'a'})
 //var logStream = fs.createWriteStream("data/log.txt", {flags:'a'})
