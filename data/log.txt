@@ -1,6 +1,0 @@
-[Sun Aug 18 2019 00:19:48 GMT-0600 (Mountain Daylight Time)]
-Player 9 recorded a set:
-'Player 9' vs 'Halfling' 1-0
-1537 => 1539 
-1200 => 1200
-
