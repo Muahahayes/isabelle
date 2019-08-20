@@ -6,6 +6,6 @@ notes.txt
 rivals.json
 reports.txt
 log.txt
-package-lock.json
-package.json
 *.json
+!package-lock.json
+!package.json
