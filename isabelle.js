@@ -18,9 +18,9 @@
 const Discord = require('discord.js')
 const fs = require('fs')
 const mysql = require('mysql')
-var config = JSON.parse(fs.readFileSync('config.json'))
-var reportStream = fs.createWriteStream("reports.txt", {flags:'a'})
-var logStream = fs.createWriteStream("log.txt", {flags:'a'})
+var config = JSON.parse(fs.readFileSync('data/config.json'))
+var reportStream = fs.createWriteStream("data/reports.txt", {flags:'a'})
+var logStream = fs.createWriteStream("data/log.txt", {flags:'a'})
 var con = mysql.createConnection(config.db)
 
 // bot config
@@ -53,7 +53,7 @@ bot.on('ready', () => {
       config.rankUpdate = Date.now()
       updateRanks()  
     }
-    fs.writeFileSync('config.json',JSON.stringify(config))
+    fs.writeFileSync('data/config.json',JSON.stringify(config))
   }, 3600000)
 })
 bot.on('disconnected', () => {
@@ -82,7 +82,7 @@ const commands = {
                     Math.floor(((config.lastEnd - config.lastStart)/1000)%60) + '.' +
                     Math.floor((config.lastEnd - config.lastStart)%1000)
         console.log(`Uptime: ${uptime}`)
-        fs.writeFileSync('config.json',JSON.stringify(config))
+        fs.writeFileSync('data/config.json',JSON.stringify(config))
         setTimeout(() => {
          process.exit(0)
         }, 200)
@@ -230,7 +230,7 @@ const commands = {
         }
         // find rivals
         let name = (!suffix)?((msg.member.nickname)?msg.member.nickname:msg.author.username):suffix
-        let rivals = JSON.parse(fs.readFileSync('rivals.json'))
+        let rivals = JSON.parse(fs.readFileSync('data/rivals.json'))
         let enemies = []
         if (rivals[0]) {
           for (let i=0; i<rivals[0].length; i++) {
@@ -330,8 +330,8 @@ const commands = {
   "prefix": {
     admin:true,
     process: function(msg, suffix) {
-      fs.writeFileSync('prefix.txt', suffix)
-      let newP = fs.readFileSync('prefix.txt')
+      fs.writeFileSync('data/prefix.txt', suffix)
+      let newP = fs.readFileSync('data/prefix.txt')
       msg.channel.send(newP)
     }
   }
@@ -727,7 +727,7 @@ function updateRivals() {
   con.query(`SELECT * FROM players WHERE rival=1`, (err, result) => {
     let rivals = []
     let players = []
-    let oldRivals = JSON.parse(fs.readFileSync("rivals.json"))
+    let oldRivals = JSON.parse(fs.readFileSync("data/rivals.json"))
     oldRivals.shift()
     for (let row of result) {
       players.push(row.tag)
@@ -799,7 +799,7 @@ function updateRivals() {
       }
       oldstr += '```'
     }
-    fs.writeFileSync('rivals.json', JSON.stringify(oldRivals))
+    fs.writeFileSync('data/rivals.json', JSON.stringify(oldRivals))
     let greeting = `CHALLENGE YOUR RIVAL! (Best of 3)
 Every week you will be given a random rival from the ranking database. You can challenge them once that week for double the points! You have 2 weeks to do that rival challenge before it goes away, meaning you have 2 rivals at one time and each week the older of the two gets replaced.
 (loser only loses the normal amount so don't be afraid!)`

@@ -1,5 +1,4 @@
 node_modules/**
-config.json
 cmd.lnk
 notes.txt
 *.txt
@@ -8,4 +7,4 @@ reports.txt
 log.txt
 package-lock.json
 package.json
-*.json
+!data/**
