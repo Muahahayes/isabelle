@@ -2,3 +2,7 @@ node_modules/**
 config.json
 cmd.lnk
 notes.txt
+*.txt
+rivals.json
+reports.txt
+log.txt
