@@ -19,14 +19,20 @@ const Discord = require('discord.js')
 const fs = require('fs')
 const mysql = require('mysql')
 var config = JSON.parse(fs.readFileSync('data/config.json'))
-var localToken = fs.readFileSync('token.txt')
+var token = process.env.token
+try {
+  token = fs.readFileSync('token.txt')
+}
+catch(e){
+
+}
 var reportStream = fs.createWriteStream("data/reports.txt", {flags:'a'})
 var logStream = fs.createWriteStream("data/log.txt", {flags:'a'})
 var con = mysql.createConnection(config.db)
 
 // bot config
 const bot = new Discord.Client()
-const TOKEN = (localToken)?localToken:process.env.token
+const TOKEN = token
 var prefix = config.prefix
 var K = config.K
 bot.login(TOKEN)
