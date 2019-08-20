@@ -58,6 +58,8 @@ else {
 const bot = new Discord.Client()
 var prefix = config.prefix
 var K = config.K
+var logChan;
+var reportChan;
 bot.login(token)
 
 // bot event handlers
@@ -66,6 +68,8 @@ bot.on('ready', () => {
   config.lastStart = Date.now()
   console.log(`Time Start: ${config.lastStart}`)
   bot.user.setActivity('Super Smash Bros. Ultimate')
+  logChan = bot.channels.find(x => x.name === 'logs')
+  reportChan = bot.channels.find(x => x.name === 'reports')
   bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!')
   setInterval(() => { // update loop 
     let currentTime = Date.now()
@@ -193,10 +197,14 @@ const commands = {
       let time = new Date()
       let rep = `[${time.toString()}]\n${(msg.member.nickname)?msg.member.nickname:msg.author.username}: ${suffix}\n\n`
       //reportStream.write(rep)
+      reportChan.send(rep)
       if (msg.member.roles.has('369948375530995712')) console.log('Consul')
       if (msg.member.roles.has('494878132143128616')) console.log('Senator')
       msg.delete(3000)
-      msg.channel.send('Thanks! I\'ll write this down right away!')
+      reportChan.send(rep).then(result => {
+        msg.channel.send('Thanks! I\'ll write this down right away!')
+      })
+      
     }// process
   },//report
   "update": {
@@ -359,7 +367,9 @@ const commands = {
           console.log(logstr)
           let time = new Date()
           //logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
-          msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!`)
+          msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!`).then(result => {
+            logChan.send(time)
+          })
         }
       })// con query
     }// process
@@ -600,11 +610,14 @@ function inputSet(msg, suffix) {
                             .setTitle('Match has been recorded!')
                             .addField(`${details[0]}'s new ELO and placements`, `${winnerNew} : ${winnerP}`,false)
                             .addField(`${details[1]}'s new ELO and placements`, `${loserNew} : ${loserP}`, false)
-                          msg.channel.send(embed)
+                          
                           let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} recorded a set:\n${winner} vs ${loser} ${wins}-${losses}\n${winnerELO} => ${winnerNew} \n${loserELO} => ${loserNew}\n`
                           console.log(logstr)
                           let time = new Date()
                           //logStream.write(`[${time.toString()}]\n${logstr}\n`)
+                          msg.channel.send(embed).then(then => {
+                            logChan.send(`[${time.toString()}]\n${logstr}\n`)
+                          })
                         }
                       })
                     }
