@@ -8,3 +8,4 @@ reports.txt
 log.txt
 package-lock.json
 package.json
+*.json

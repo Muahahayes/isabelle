@@ -326,7 +326,15 @@ const commands = {
         }
       })// con query
     }// process
-  }//join
+  },//join
+  "prefix": {
+    admin:true,
+    process: function(msg, suffix) {
+      fs.writeFileSync('prefix.txt', suffix)
+      let newP = fs.readFileSync('prefix.txt')
+      msg.channel.send(newP)
+    }
+  }
 }
 
 // functions
