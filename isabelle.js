@@ -63,7 +63,7 @@ bot.on('ready', () => {
     else {
       bot.channels.find(x => x.name === 'woof').send("Woof!")
     }
-    fs.writeFileSync('data/config.json',JSON.stringify(config))
+    //fs.writeFileSync('data/config.json',JSON.stringify(config))
   }, 60000)
 })
 bot.on('disconnected', () => {
@@ -92,7 +92,7 @@ const commands = {
                     Math.floor(((config.lastEnd - config.lastStart)/1000)%60) + '.' +
                     Math.floor((config.lastEnd - config.lastStart)%1000)
         console.log(`Uptime: ${uptime}`)
-        fs.writeFileSync('data/config.json',JSON.stringify(config))
+        //fs.writeFileSync('data/config.json',JSON.stringify(config))
         setTimeout(() => {
          process.exit(0)
         }, 200)
@@ -168,7 +168,7 @@ const commands = {
       console.log(`Message: ${suffix}`)
       let time = new Date()
       let rep = `[${time.toString()}]\n${(msg.member.nickname)?msg.member.nickname:msg.author.username}: ${suffix}\n\n`
-      reportStream.write(rep)
+      //reportStream.write(rep)
       if (msg.member.roles.has('369948375530995712')) console.log('Consul')
       if (msg.member.roles.has('494878132143128616')) console.log('Senator')
       msg.delete(3000)
@@ -331,7 +331,7 @@ const commands = {
           let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} added ${tag} to the database.`
           console.log(logstr)
           let time = new Date()
-          logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
+          //logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
           msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!`)
         }
       })// con query
@@ -340,7 +340,7 @@ const commands = {
   "prefix": {
     admin:true,
     process: function(msg, suffix) {
-      fs.writeFileSync('data/prefix.txt', suffix)
+      //fs.writeFileSync('data/prefix.txt', suffix)
       let newP = fs.readFileSync('data/prefix.txt')
       msg.channel.send(newP)
     }
@@ -571,7 +571,7 @@ function inputSet(msg, suffix) {
                           let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} recorded a set:\n${winner} vs ${loser} ${wins}-${losses}\n${winnerELO} => ${winnerNew} \n${loserELO} => ${loserNew}\n`
                           console.log(logstr)
                           let time = new Date()
-                          logStream.write(`[${time.toString()}]\n${logstr}\n`)
+                          //logStream.write(`[${time.toString()}]\n${logstr}\n`)
                         }
                       })
                     }
@@ -809,7 +809,7 @@ function updateRivals() {
       }
       oldstr += '```'
     }
-    fs.writeFileSync('data/rivals.json', JSON.stringify(oldRivals))
+    //fs.writeFileSync('data/rivals.json', JSON.stringify(oldRivals))
     let greeting = `CHALLENGE YOUR RIVAL! (Best of 3)
 Every week you will be given a random rival from the ranking database. You can challenge them once that week for double the points! You have 2 weeks to do that rival challenge before it goes away, meaning you have 2 rivals at one time and each week the older of the two gets replaced.
 (loser only loses the normal amount so don't be afraid!)`
