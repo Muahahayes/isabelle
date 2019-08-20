@@ -28,7 +28,15 @@ catch(e){
 }
 var reportStream = fs.createWriteStream("data/reports.txt", {flags:'a'})
 var logStream = fs.createWriteStream("data/log.txt", {flags:'a'})
-var con = mysql.createConnection(config.db)
+//var con = mysql.createConnection(config.db)
+var con = mysql.createPool({
+  connectionLimit : 9,
+  host : config.db.host,
+  user : config.db.user,
+  password : config.db.password,
+  database : config.db.database,
+  debug : false
+})
 
 // bot config
 const bot = new Discord.Client()
@@ -64,7 +72,6 @@ bot.on('ready', () => {
       updateRanks()  
     }
     else {
-      con.pause()
       // con.query('SELECT * FROM players', function(err, result) {
       //   if(err) console.error('Routine check: Something broke in the mysql!')
       //   else if (!result[0]) console.error('Routine check: Couldn\'t find any players!')
@@ -128,7 +135,6 @@ const commands = {
                   'if no name is given, prints your own rating (if your name matches your tag in the database)',
     admin:false,
     process: function(msg, suffix) {
-      con.resume()
       let name = msg.member.nickname
       if (suffix) name = suffix
       con.query(`SELECT * FROM players WHERE tag = ${mysql.escape(name)}`, function(err, result) {
@@ -224,7 +230,6 @@ const commands = {
       if (!suffix) {
         suffix = (msg.member.nickname)?msg.member.nickname:msg.author.username
       }
-      con.resume()
       con.query(`SELECT tag FROM players ORDER BY elo desc`, function(err, result) {
         let i = 0
         while (result[i] && result[i].tag != suffix) {
@@ -294,7 +299,6 @@ const commands = {
         }
       }// if not in/out
       else {// if in/out
-        con.resume()
         let name = (!suffix.split(" ")[1])?((msg.member.nickname)?msg.member.nickname:msg.author.username):suffix.split(" ")[0]
         name = mysql.escape(name)
         if (suffix == 'in' || suffix.split(" ")[1] == 'in') {
@@ -327,7 +331,6 @@ const commands = {
     description: 'Adds a player into the database with the given name and tag, names with spaces are ok here.',
     admin: true,
     process: function(msg, suffix) {
-      con.resume()
       let name = suffix.split(" ")[0]      
       suffix = suffix.split(" ")
       suffix.shift()
@@ -471,7 +474,6 @@ function inputSet(msg, suffix) {
       msg.channel.send('Oops! You forgot some details there...')
     }
     else {
-      con.resume()
       let [winner, loser, wins, losses, ...rt] = details
       winner = mysql.escape(winner)
       loser = mysql.escape(loser)
@@ -604,7 +606,6 @@ function inputSet(msg, suffix) {
 // takes the current message and the name of a player
 // sends to channel their match history in an embed
 function matchHistory(msg, name) {
-  con.resume()
   let player = {}
   player.tag = name
   player.matches = {}
@@ -676,7 +677,6 @@ function matchHistory(msg, name) {
 }// matchHistory
 
 function updateRanks() {
-  con.resume()
   con.query(`SELECT * FROM players ORDER BY elo desc`, (err, result) => {
     if (err) console.error(err)
     else if (!result[0]) {
@@ -750,7 +750,6 @@ Check #weekly-rivals for a weekly challenge, its worth 2x points if you win!`
 }// updateRanks
 
 function updateRivals() {
-  con.resume()
   con.query(`SELECT * FROM players WHERE rival=1`, (err, result) => {
     let rivals = []
     let players = []
