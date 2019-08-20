@@ -22,12 +22,14 @@ var config = JSON.parse(fs.readFileSync('data/config.json'))
 var token = process.env.token
 try {
   token = fs.readFileSync('token.txt')
+  console.log('Running on local machine.')
 }
 catch(e){
-
+  console.log(e)
+  console.log('Running on Heroku cloud.')
 }
-var reportStream = fs.createWriteStream("data/reports.txt", {flags:'a'})
-var logStream = fs.createWriteStream("data/log.txt", {flags:'a'})
+//var reportStream = fs.createWriteStream("data/reports.txt", {flags:'a'})
+//var logStream = fs.createWriteStream("data/log.txt", {flags:'a'})
 //var con = mysql.createConnection(config.db)
 var con = mysql.createPool({
   connectionLimit : 9,
