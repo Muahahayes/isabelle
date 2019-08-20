@@ -368,7 +368,7 @@ const commands = {
           let time = new Date()
           //logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
           msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!`).then(result => {
-            logChan.send(time)
+            logChan.send(`[${time.toString()}]\n${logstr}\n\n`)
           })
         }
       })// con query
