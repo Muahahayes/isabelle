@@ -1,6 +1,5 @@
 node_modules/**
 data/**
-data/config.json
 cmd.lnk
 notes.txt
 *.txt
