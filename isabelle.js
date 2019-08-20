@@ -64,12 +64,15 @@ bot.on('ready', () => {
       updateRanks()  
     }
     else {
-      console.log('if woof')
-      bot.channels.find(x => x.name === 'woof').send("Woof!")
+      con.query('SELECT * FROM players', function(err, result) {
+        if(err) console.error('Routine check: Something broke in the mysql!')
+        else if (!result[0]) console.error('Routine check: Couldn\'t find any players!')
+        //else do nothing
+      })
     }
     console.log('interval loop exit')
     //fs.writeFileSync('data/config.json',JSON.stringify(config))
-  }, 59000)
+  }, 55000)
 })
 bot.on('disconnected', () => {
   console.log('Diconnected!')
