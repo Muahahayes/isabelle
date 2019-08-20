@@ -19,8 +19,8 @@
 const Discord = require('discord.js')
 const fs = require('fs')
 const mysql = require('mysql')
-var config = JSON.parse(fs.readFileSync('data/config.json'))
-var token = process.env.token
+var config = {}
+var token = (process.env.token)?process.env.token:JSON.parse(fs.readFileSync('data/configlocal.json')).token
 try {
   token = fs.readFileSync('token.txt')
   console.error('Running on local machine.')
@@ -56,11 +56,39 @@ else {
 
 // bot config
 const bot = new Discord.Client()
-var prefix = config.prefix
-var K = config.K
+//var prefix = config.prefix
+//var K = config.K
 var logChan;
 var reportChan;
-bot.login(token)
+con.query(`SELECT * FROM config`, function (err, result) {
+  if (err) {
+    console.error(err)
+    bot.channels.find(x => x.name === 'logs').send(`Error Loading config values from database!\n${err}`).then(then => {
+      process.exit(1)
+    })
+  }
+  else {
+    if (result[0]) {
+      console.log('Loading config from database...')
+      config.rivalUpdate = (result[0].rivalUpdate)?result[0].rivalUpdate:Date.now()
+      config.rankUpdate = (result[0].rankUpdate)?result[0].rankUpdate:Date.now()
+      config.prefix = (result[0].prefix)?result[0].prefix:';'
+      config.K = (result[0].K)?result[0].K:16
+      config.failedLoad = (result[0])?false:true
+      if (config.failedLoad) console.error('Failed to load from database, using default values.')
+    }
+    else {//TODO refactor to load from local db
+      console.log('No config values found from database! Loading from local...')
+      config.rivalUpdate = (configlocal)?configlocal.rivalUpdate:Date.now()
+      config.rankUpdate = (configlocal)?configlocal.rankUpdate:Date.now()
+      config.prefix = (configlocal)?configlocal.prefix:';'
+      config.K = (configlocal)?configlocal.K:16
+      config.failedLoad = (configlocal)?false:true
+      if (config.failedLoad) console.error('Failed to load from local, using default values.')
+    }
+    bot.login(token)
+  }
+})
 
 // bot event handlers
 bot.on('ready', () => {
@@ -74,21 +102,18 @@ bot.on('ready', () => {
   setInterval(() => { // update loop 
     let currentTime = Date.now()
     if ((currentTime - config.rivalUpdate) > 604800000) {
-      config.rivalUpdate = Date.now()
       updateRivals()
       if ((currentTime - config.rankUpdate) > 86400000) {
-        setTimeout(() => { // so we don't post too soon after updateRivals          
-          config.rankUpdate = Date.now()
+        setTimeout(() => { // so we don't post too soon after updateRivals
           updateRanks()  
         }, 2000)
       }
     }
     else if ((currentTime - config.rankUpdate) > 86400000) {
-      config.rankUpdate = Date.now()
       updateRanks()  
     }
     //fs.writeFileSync('data/config.json',JSON.stringify(config))
-  }, 55000)
+  }, 360000)
 })
 bot.on('disconnected', () => {
   console.log('Diconnected!')
@@ -796,7 +821,12 @@ Check #weekly-rivals for a weekly challenge, its worth 2x points if you win!`
           })
         })
       })// chan send greeting    
-      config.rankUpdate = Date.now()  
+      config.rankUpdate = Date.now()
+      con.query(`UPDATE config SET rankUpdate=${Date.now()} WHERE id=0`, function(err,result) {
+        if (err) {
+          console.error('Failed to update rankUpdate in config!')
+        }
+      })
     }// else
   })// con query
 }// updateRanks
@@ -899,7 +929,12 @@ Every week you will be given a random rival from the ranking database. You can c
         chan.send(rivalstr)        
       }
     })
-    config.updateRivals = Date.now()
+    config.rivalUpdate = Date.now()
+    con.query(`UPDATE config SET rivalUpdate=${Date.now()} WHERE id=0`, function(err,result) {
+      if (err) {
+        console.error('Failed to update rivalUpdate in config!')
+      }
+    })
   })// con query
 }// updateRivals
 /*
