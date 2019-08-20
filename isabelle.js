@@ -22,7 +22,6 @@ var config = JSON.parse(fs.readFileSync('data/config.json'))
 var token = process.env.token
 try {
   token = fs.readFileSync('token.txt')
-  config = JSON.parse(fs.readFileSync('configlocal.json'))
   console.error('Running on local machine.')
 }
 catch(e){
@@ -32,21 +31,33 @@ catch(e){
 //var reportStream = fs.createWriteStream("data/reports.txt", {flags:'a'})
 //var logStream = fs.createWriteStream("data/log.txt", {flags:'a'})
 //var con = mysql.createConnection(config.db)
-var con = mysql.createPool({
+if (process.env.db_host) {
+  var con = mysql.createPool({
   connectionLimit : 9,
-  host : config.db.host,
-  user : config.db.user,
-  password : config.db.password,
-  database : config.db.database,
+  host : process.env.db_host,
+  user : process.env.db_user,
+  password : process.env.db_password,
+  database : process.env.db_database,
   debug : false
 })
+}
+else {
+  var configlocal = JSON.parse(fs.readFileSync('data/configlocal.json'))
+  var con = mysql.createPool({
+    connectionLimit : 9,
+    host : configlocal.db.host,
+    user : configlocal.db.user,
+    password : configlocal.db.password,
+    database : configlocal.db.database,
+    debug : false
+  })
+}
 
 // bot config
 const bot = new Discord.Client()
-const TOKEN = token
 var prefix = config.prefix
 var K = config.K
-bot.login(TOKEN)
+bot.login(token)
 
 // bot event handlers
 bot.on('ready', () => {

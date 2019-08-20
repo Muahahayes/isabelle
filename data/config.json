@@ -3,11 +3,5 @@
   "rankUpdate":1566174896700,
   "prefix":";",
   "K":16,
-  "db":{
-    "host":"us-cdbr-iron-east-02.cleardb.net",
-    "user":"b211598cf1398d",
-    "password":"5b27137d",
-    "database":"heroku_61da6e68e3990ef"
-  },
   "updateRanks":1566174896718
 }
