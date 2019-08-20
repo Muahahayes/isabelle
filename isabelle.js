@@ -53,8 +53,11 @@ bot.on('ready', () => {
       config.rankUpdate = Date.now()
       updateRanks()  
     }
+    else {
+      bot.channels.find(x => x.name === 'woof').send("Woof!")
+    }
     fs.writeFileSync('data/config.json',JSON.stringify(config))
-  }, 3600000)
+  }, 60000)
 })
 bot.on('disconnected', () => {
   console.log('Diconnected!')
