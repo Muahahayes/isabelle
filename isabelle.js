@@ -52,11 +52,9 @@ bot.on('ready', () => {
   console.log(`Time Start: ${config.lastStart}`)
   bot.user.setActivity('Super Smash Bros. Ultimate')
   bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!')
-  setInterval(() => { // update loop  
-    console.log('interval loop start')  
+  setInterval(() => { // update loop 
     let currentTime = Date.now()
-    if ((currentTime - config.rivalUpdate) > 604800000) {  
-      console.log('if rival')    
+    if ((currentTime - config.rivalUpdate) > 604800000) {
       config.rivalUpdate = Date.now()
       updateRivals()
       if ((currentTime - config.rankUpdate) > 86400000) {
@@ -66,19 +64,10 @@ bot.on('ready', () => {
         }, 2000)
       }
     }
-    else if ((currentTime - config.rankUpdate) > 86400000) {     
-      console.log('if ranks') 
+    else if ((currentTime - config.rankUpdate) > 86400000) {
       config.rankUpdate = Date.now()
       updateRanks()  
     }
-    else {
-      // con.query('SELECT * FROM players', function(err, result) {
-      //   if(err) console.error('Routine check: Something broke in the mysql!')
-      //   else if (!result[0]) console.error('Routine check: Couldn\'t find any players!')
-      //   //else do nothing
-      // })
-    }
-    console.log('interval loop exit')
     //fs.writeFileSync('data/config.json',JSON.stringify(config))
   }, 55000)
 })
@@ -138,7 +127,11 @@ const commands = {
       let name = msg.member.nickname
       if (suffix) name = suffix
       con.query(`SELECT * FROM players WHERE tag = ${mysql.escape(name)}`, function(err, result) {
-        if (err) console.error(err)
+        if (err) {
+          console.error(err)
+          msg.channel.send('Oops! Something broke when reading the database. Restarting bot...')
+          process.exit(1)
+        }
         else if (!result[0]) {
           console.error(`Query failed! ${(msg.member.nickname)?msg.member.nickname:msg.author.username} queried for the rank of ${name}, no results found.`)
           msg.channel.send('Oops! I couldn\'t find anyone with that name on the rankings!')
@@ -305,7 +298,8 @@ const commands = {
           con.query(`UPDATE players SET rival=1 WHERE tag=${name}`, function(err, result) {
             if (err) {
               console.error(err)
-              msg.channel.send('Oops! Something broke when trying to opt you into the rivals system.')
+              msg.channel.send('Oops! Something broke when trying to opt you into the rivals system. Restarting bot...')
+              process.exit(1)
             }
             else {
               msg.channel.send('Ok '+ name + ', I\'ve added you to the rivals system!')
@@ -316,7 +310,8 @@ const commands = {
           con.query(`UPDATE players SET rival=0 WHERE tag=${name}`, function(err, result) {
             if (err) {
               console.error(err)
-              msg.channel.send('Oops! Something broke when trying to opt you out of the rivals system.')
+              msg.channel.send('Oops! Something broke when trying to opt you out of the rivals system. Restarting bot...')
+              process.exit(1)
             }
             else {
               msg.channel.send('Ok '+ name + ', I\'ve taken you out of the rivals system!')
@@ -341,7 +336,8 @@ const commands = {
       con.query(`INSERT INTO players (id, name, tag) VALUES (0, ${name}, ${tag})`, function(err, result) {
         if (err) {
           console.error(err)
-          msg.channel.send(`Oops! Something broke when adding ${tag} to the database!`)
+          msg.channel.send(`Oops! Something broke when adding ${tag} to the database! Restarting bot...`)
+          process.exit(1)
         }
         else {
           let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} added ${tag} to the database.`
@@ -485,7 +481,8 @@ function inputSet(msg, suffix) {
       con.query(`SELECT id, elo, placement FROM players WHERE tag=${winner}`, (err, result) => {
         if (err) {
           console.log(err)
-          msg.channel.send('Something broke when reading winner!')
+          msg.channel.send('Something broke when reading winner! Restarting bot...')
+          process.exit(1)
         }
         else if (!result[0]) {
           msg.channel.send(`Sorry! I couldn't find anyone named ${winner} in the database.`)
@@ -497,7 +494,8 @@ function inputSet(msg, suffix) {
           con.query(`SELECT id, elo, placement FROM players WHERE tag=${loser}`, (err, result) => {
             if (err) {
               console.log(err)
-              msg.channel.send('Something broke when reading loser!')
+              msg.channel.send('Something broke when reading loser! Restarting bot...')
+              process.exit(1)
             }
             else if (!result[0]) {
               msg.channel.send(`Sorry! I couldn't find anyone named ${loser} in the database.`)
@@ -509,7 +507,8 @@ function inputSet(msg, suffix) {
               con.query(`INSERT INTO matches VALUES (0, '${winnerK}', '${loserK}', ${winsE}, ${lossesE})`, (err, result) => {
                 if (err) {
                   console.log(err)
-                  msg.channel.send('Something broke when inserting into matches!')
+                  msg.channel.send('Something broke when inserting into matches! Restarting bot...')
+                  process.exit(1)
                 }
                 else {
                   let newK = K
@@ -567,15 +566,18 @@ function inputSet(msg, suffix) {
                   con.query(query, (err, result) => {
                     if (err) {
                       console.log(err)
-                      msg.channel.send('Oh no! Something broke when updating the winner\'s score!')
+                      msg.channel.send('Oh no! Something broke when updating the winner\'s score! Restarting bot...')
+                      process.exit(1)
                     }
                     else {
                       let query = `UPDATE players SET elo=${loserNew}, placement=${loserP} WHERE id=${loserK}`
                       con.query(query, (err, result) => {
                         if (err) {
                           console.log(err)
-                          msg.channel.send('Oh no! Something broke when updating the loser\'s score!')
-                          con.query(`UPDATE players SET elo=${winnerELO} WHERE id=${winnerK}`)
+                          msg.channel.send('Oh no! Something broke when updating the loser\'s score! Restarting bot...')
+                          con.query(`UPDATE players SET elo=${winnerELO} WHERE id=${winnerK}`, function(err, result) {
+                            process.exit(1)
+                          })
                         }
                         else {
                           let embed = new Discord.RichEmbed()
@@ -612,7 +614,11 @@ function matchHistory(msg, name) {
   name = mysql.escape(name)
 
   con.query(`SELECT * FROM players WHERE tag=${name}`, function(err, result) {
-    if(err) console.error(err)
+    if (err) {
+      console.error(err)
+      msg.channel.send('Oops! Something broke when reading the database. Restarting bot...')
+      process.exit(1)
+    }
     else if (!result[0]) {
       console.error(`Query failed! ${(msg.member.nickname)?msg.member.nickname:msg.author.username} queried for the match history of ${name}, no results found.`)
       msg.channel.send('Oops! I could\'t find anyone with that name in the rankings!')
@@ -626,7 +632,11 @@ function matchHistory(msg, name) {
           {id:0,winnerFK:1,loserFK:2,wins:3,losses:1}
         ]
         */
-        if (err) console.error(err)
+        if (err) {
+          console.error(err)
+          msg.channel.send('Oops! Something broke when reading the database. Restarting bot...')
+          process.exit(1)
+        }
         else if (!result[0]) {
           let embed = new Discord.RichEmbed()
             .setColor("#bd3535")
@@ -654,7 +664,11 @@ function matchHistory(msg, name) {
             }
           }//for
           con.query(`SELECT id,tag FROM players`, function (err, result) {
-            if (err) console.error(err)
+            if (err) {
+              console.error(err)
+              msg.channel.send('Oops! Something broke when reading the database. Restarting bot...')
+              process.exit(1)
+            }
             for (let row of result) {
               if (player.matches.hasOwnProperty(row.id)) {
                 player.matches[row.id].name = row.tag
@@ -678,7 +692,11 @@ function matchHistory(msg, name) {
 
 function updateRanks() {
   con.query(`SELECT * FROM players ORDER BY elo desc`, (err, result) => {
-    if (err) console.error(err)
+    if (err) {
+      console.error(err)
+      bot.channels.find(x => x.name === 'bot-maintanence').send('Oops! Something broke when updating the rankings. Restarting bot...')
+      process.exit(1)
+    }
     else if (!result[0]) {
       console.error('Failed to update ranks, no results found.')
       bot.channels.find(x => x.name === 'bot-maintanence').send('Oh no! Something went wrong when updating ranks, no results were found!')
