@@ -9,3 +9,4 @@ log.txt
 *.json
 !package-lock.json
 !package.json
+!config.json

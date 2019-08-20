@@ -5,10 +5,10 @@
   "prefix":";",
   "K":16,
   "db":{
-    "host":"localhost",
-    "user":"root",
-    "password":"",
-    "database":"smash"
+    "host":"us-cdbr-iron-east-02.cleardb.net",
+    "user":"b211598cf1398d",
+    "password":"5b27137d",
+    "database":"heroku_61da6e68e3990ef"
   },
   "lastStart":1566247655301,
   "lastEnd":1566124491852,
