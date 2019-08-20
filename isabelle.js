@@ -23,11 +23,10 @@ var config = {}
 var token = (process.env.token)?process.env.token:JSON.parse(fs.readFileSync('data/configlocal.json')).token
 try {
   token = fs.readFileSync('token.txt')
-  console.error('Running on local machine.')
+  console.log('Running on local machine.')
 }
 catch(e){
-  console.error(e)
-  console.error('Running on Heroku cloud.')
+  console.log('Running on Heroku cloud.')
 }
 //var reportStream = fs.createWriteStream("data/reports.txt", {flags:'a'})
 //var logStream = fs.createWriteStream("data/log.txt", {flags:'a'})
@@ -115,7 +114,7 @@ bot.on('ready', () => {
       updateRanks()  
     }
     //fs.writeFileSync('data/config.json',JSON.stringify(config))
-  }, 360000)
+  }, 60000)
 })
 bot.on('disconnected', () => {
   console.log('Diconnected!')
@@ -856,7 +855,7 @@ function updateRivals() {
       j = Math.floor(Math.random()*players.length)
 
       // double check for duplicate pairings from last week
-      if (oldRivals[0]) {      
+      if (oldRivals[0]) {
         let r = 0
         for (let w=0; w<oldRivals[0].length; w++) {
           if (oldRivals[0][w] == rivals[i-1]) {
