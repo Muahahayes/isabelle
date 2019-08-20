@@ -44,9 +44,11 @@ bot.on('ready', () => {
   console.log(`Time Start: ${config.lastStart}`)
   bot.user.setActivity('Super Smash Bros. Ultimate')
   bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!')
-  setInterval(() => { // update loop    
+  setInterval(() => { // update loop  
+    console.log('interval loop start')  
     let currentTime = Date.now()
-    if ((currentTime - config.rivalUpdate) > 604800000) {      
+    if ((currentTime - config.rivalUpdate) > 604800000) {  
+      console.log('if rival')    
       config.rivalUpdate = Date.now()
       updateRivals()
       if ((currentTime - config.rankUpdate) > 86400000) {
@@ -56,13 +58,16 @@ bot.on('ready', () => {
         }, 2000)
       }
     }
-    else if ((currentTime - config.rankUpdate) > 86400000) {      
+    else if ((currentTime - config.rankUpdate) > 86400000) {     
+      console.log('if ranks') 
       config.rankUpdate = Date.now()
       updateRanks()  
     }
     else {
+      console.log('if woof')
       bot.channels.find(x => x.name === 'woof').send("Woof!")
     }
+    console.log('interval loop exit')
     //fs.writeFileSync('data/config.json',JSON.stringify(config))
   }, 60000)
 })
