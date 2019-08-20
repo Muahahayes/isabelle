@@ -22,6 +22,7 @@ var config = JSON.parse(fs.readFileSync('data/config.json'))
 var token = process.env.token
 try {
   token = fs.readFileSync('token.txt')
+  config = JSON.parse(fs.readFileSync('configlocal.json'))
   console.log('Running on local machine.')
 }
 catch(e){
