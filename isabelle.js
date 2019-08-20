@@ -197,7 +197,6 @@ const commands = {
       let time = new Date()
       let rep = `[${time.toString()}]\n${(msg.member.nickname)?msg.member.nickname:msg.author.username}: ${suffix}\n\n`
       //reportStream.write(rep)
-      reportChan.send(rep)
       if (msg.member.roles.has('369948375530995712')) console.log('Consul')
       if (msg.member.roles.has('494878132143128616')) console.log('Senator')
       msg.delete(3000)
