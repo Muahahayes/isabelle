@@ -823,7 +823,7 @@ Check #weekly-rivals for a weekly challenge, its worth 2x points if you win!`
         })
       })// chan send greeting    
       config.rankUpdate = Date.now()
-      con.query(`UPDATE config SET rankUpdate=${Date.now()} WHERE id=0`, function(err,result) {
+      con.query(`UPDATE config SET rankUpdate=${Date.now()} WHERE id=2`, function(err,result) {
         if (err) {
           console.error('Failed to update rankUpdate in config!')
         }
@@ -931,7 +931,7 @@ Every week you will be given a random rival from the ranking database. You can c
       }
     })
     config.rivalUpdate = Date.now()
-    con.query(`UPDATE config SET rivalUpdate=${Date.now()} WHERE id=0`, function(err,result) {
+    con.query(`UPDATE config SET rivalUpdate=${Date.now()} WHERE id=2`, function(err,result) {
       if (err) {
         console.error('Failed to update rivalUpdate in config!')
       }
