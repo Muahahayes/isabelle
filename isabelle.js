@@ -56,7 +56,7 @@ else {
 // bot config
 const bot = new Discord.Client()
 var prefix
-//var K = config.K
+var K;
 var logChan;
 var reportChan;
 con.query(`SELECT * FROM config`, function (err, result) {
@@ -74,6 +74,7 @@ con.query(`SELECT * FROM config`, function (err, result) {
       config.prefix = (result[0].prefix)?result[0].prefix:';'
       prefix = config.prefix
       config.K = (result[0].K)?result[0].K:16
+      K = config.K;
       config.failedLoad = (result[0])?false:true
       if (config.failedLoad) console.error('Failed to load from database, using default values.')
     }
@@ -84,6 +85,7 @@ con.query(`SELECT * FROM config`, function (err, result) {
       config.prefix = (configlocal)?configlocal.prefix:';'
       prefix = config.prefix
       config.K = (configlocal)?configlocal.K:16
+      K = config.K;
       config.failedLoad = (configlocal)?false:true
       if (config.failedLoad) console.error('Failed to load from local, using default values.')
     }
