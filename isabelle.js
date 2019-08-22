@@ -1,6 +1,7 @@
 /*
   TODO:
-  Refactor config, use config table in db instead of file
+  add a currency to players table, give currency when a set is entered
+    (something like 2x score change to winner, and 0.5x score change to loser (1.5x mod to lower elo player))
   ;character (gives a character role)
   Refactor ;set to check if a belt change happened, and assign roles if they did
   add a weekly decay feature (add a 'active' field to players table, when a match is put in set active to 1,
@@ -379,10 +380,11 @@ const commands = {
       let name = suffix.split(" ")[0]      
       suffix = suffix.split(" ")
       suffix.shift()
-      suffix = suffix.join("")
+      suffix = suffix.join(" ")
       let tag = suffix
       name = mysql.escape(name)
       tag = mysql.escape(tag)
+      
       con.query(`INSERT INTO players (id, name, tag) VALUES (0, ${name}, ${tag})`, function(err, result) {
         if (err) {
           console.error(err)
