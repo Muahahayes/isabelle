@@ -869,7 +869,7 @@ function matchHistory(msg, suffix) {
             }
             let embed = new Discord.RichEmbed()
                         .setColor(player.color)
-                        .setTitle(`Match History for ${name}`)
+                        .setTitle(`Match History for ${player.tag}`)
                         .setDescription(str)
             msg.channel.send(embed)
           })
