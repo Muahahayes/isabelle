@@ -622,6 +622,7 @@ function inputSet(msg, suffix) {
           winnerP = result[0].placement
           let winP = winnerP // in case we need to reset it
           winnerID = result[0].dID
+          console.log(winnerID)
           winnerCurrency = result[0].currency
           con.query(`SELECT id, elo, placement, dID, currency FROM players WHERE tag=${loser}`, (err, result) => {
             if (err) {
@@ -638,6 +639,7 @@ function inputSet(msg, suffix) {
               loserP = result[0].placement
               loserCurrency = result[0].currency
               loserID = result[0].dID
+              console.log(loserID)
               con.query(`INSERT INTO matches VALUES (0, '${winnerK}', '${loserK}', ${winsE}, ${lossesE})`, (err, result) => {
                 if (err) {
                   console.log(err)
@@ -737,17 +739,20 @@ function inputSet(msg, suffix) {
                             .addField(`${details[1]}'s new ELO, placements and wallet`, `${loserNew} : ${loserP} : ${loserCurrency}`, false)
                           
                           // TODO: check if belt changes happened and update roles accordingly
-                          //message.guild.members.get("id", ID)
+                          //message.guild.members.get(ID)
+                          let smasher, belt;
                           if ((Math.floor(winnerNew/100) - Math.floor(winnerELO/100)) > 0) { // belt went up
-                            let smasher = msg.guild.members.get(winnerID)
-                            let belt = smasher.roles.find(r => r.name.includes('Belt'))
+                            console.log(`Belt change for ${winner}, ${(winnerNew/100) - (winnerELO/100)}`)
+                            smasher = msg.guild.members.find(r => r.id == winnerID)
+                            belt = smasher.roles.find(r => r.name.includes('Belt'))
                             if (belt) smasher.removeRole(belt)                            
                             belt = msg.guild.roles.find(r => r.name === beltColor(winnerNew).name)
                             smasher.addRole(belt)
                           }
                           if ((Math.floor(loserELO/100) - Math.floor(loserNew/100)) > 0) { // belt went down
-                            let smasher = msg.guild.members.get(loserID)
-                            let belt = smasher.roles.find(r => r.name.includes('Belt'))
+                            console.log(`Belt change for ${loser}, ${(loserELO/100) - (loserNew/100)}`)
+                            smasher = msg.guild.members.find(r => r.id == loserID)
+                            belt = smasher.roles.find(r => r.name.includes('Belt'))
                             if(belt) smasher.removeRole(belt)
                             belt = msg.guild.roles.find(r => r.name === beltColor(loserNew).name)
                             smasher.addRole(belt)
