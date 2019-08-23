@@ -695,7 +695,7 @@ function inputSet(msg, suffix) {
                     loserNew = Math.ceil(loserELO + ((lK * (0 - e2)) * s1))
                   }
 
-                  let loserCoins = K * (wins + losses)
+                  let loserCoins = K * (Number(wins) + Number(losses))
                   console.log(loserCoins)
                   console.log(`e1=${e1} e2=${e2}`)
                   if (winnerELO > loserELO) {// coins based on better player's odds of winning, fighting big guys helps
