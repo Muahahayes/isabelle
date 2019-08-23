@@ -622,7 +622,6 @@ function inputSet(msg, suffix) {
           winnerP = result[0].placement
           let winP = winnerP // in case we need to reset it
           winnerID = result[0].dID
-          console.log(winnerID)
           winnerCurrency = result[0].currency
           con.query(`SELECT id, elo, placement, dID, currency FROM players WHERE tag=${loser}`, (err, result) => {
             if (err) {
@@ -639,7 +638,6 @@ function inputSet(msg, suffix) {
               loserP = result[0].placement
               loserCurrency = result[0].currency
               loserID = result[0].dID
-              console.log(loserID)
               con.query(`INSERT INTO matches VALUES (0, '${winnerK}', '${loserK}', ${winsE}, ${lossesE})`, (err, result) => {
                 if (err) {
                   console.log(err)
@@ -697,13 +695,16 @@ function inputSet(msg, suffix) {
                     loserNew = Math.ceil(loserELO + ((lK * (0 - e2)) * s1))
                   }
 
-                  let loserCoins = K * (wins + losses) 
+                  let loserCoins = K * (wins + losses)
+                  console.log(loserCoins)
+                  console.log(`e1=${e1} e2=${e2}`)
                   if (winnerELO > loserELO) {// coins based on better player's odds of winning, fighting big guys helps
                     loserCoins *= e1
                   }
                   else {
                     loserCoins *= e2
                   }
+                  console.log(loserCoins)
                   let winC = winnerCurrency // in case we need to reset it
                   winnerCurrency += loserCoins * 1.25 // bonus for winning
 
@@ -738,11 +739,8 @@ function inputSet(msg, suffix) {
                             .addField(`${details[0]}'s new ELO, placements and wallet`, `${winnerNew} : ${winnerP} : ${winnerCurrency}`,false)
                             .addField(`${details[1]}'s new ELO, placements and wallet`, `${loserNew} : ${loserP} : ${loserCurrency}`, false)
                           
-                          // TODO: check if belt changes happened and update roles accordingly
-                          //message.guild.members.get(ID)
                           let smasher, belt;
                           if ((Math.floor(winnerNew/100) - Math.floor(winnerELO/100)) > 0) { // belt went up
-                            console.log(`Belt change for ${winner}, ${(winnerNew/100) - (winnerELO/100)}`)
                             smasher = msg.guild.members.find(r => r.id == winnerID)
                             belt = smasher.roles.find(r => r.name.includes('Belt'))
                             if (belt) smasher.removeRole(belt)                            
@@ -750,7 +748,6 @@ function inputSet(msg, suffix) {
                             smasher.addRole(belt)
                           }
                           if ((Math.floor(loserELO/100) - Math.floor(loserNew/100)) > 0) { // belt went down
-                            console.log(`Belt change for ${loser}, ${(loserELO/100) - (loserNew/100)}`)
                             smasher = msg.guild.members.find(r => r.id == loserID)
                             belt = smasher.roles.find(r => r.name.includes('Belt'))
                             if(belt) smasher.removeRole(belt)
