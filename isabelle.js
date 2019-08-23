@@ -744,7 +744,7 @@ function inputSet(msg, suffix) {
                             if (belt) smasher.removeRole(belt)                            
                             belt = msg.guild.roles.find(r => r.name === beltColor(winnerNew).name)
                             smasher.addRole(belt)
-                            beltStr += `<@${winnerID}> has moved up to ${belt.name}!`
+                            beltStr += `${details[0]} has moved up to ${belt.name}!\n`
                           }
                           if ((Math.floor(loserELO/100) - Math.floor(loserNew/100)) > 0) { // belt went down
                             smasher = msg.guild.members.find(r => r.id == loserID)
@@ -752,7 +752,7 @@ function inputSet(msg, suffix) {
                             if(belt) smasher.removeRole(belt)
                             belt = msg.guild.roles.find(r => r.name === beltColor(loserNew).name)
                             smasher.addRole(belt)
-                            beltStr += `\n<@${loserID}> has fallen down to ${belt.name}!`
+                            beltStr += `${details[1]} has fallen down to ${belt.name}!`
                           }
                           if (beltStr != '') {
                             embed.addField(`Belt changes`, beltStr, false)
