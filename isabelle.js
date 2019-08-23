@@ -280,10 +280,10 @@ const commands = {
     description: `Adds a role for that character to your Discord profile.`,
     admin: false,
     process: function(msg, suffix) {
-      let role = msg.guild.roles.find(r => r.name === suffix)
-      let notAllowed = miscRoles.find(r => r === suffix)
+      let role = msg.guild.roles.find(r => r.name.toLowerCase() === suffix.toLowerCase())
+      let notAllowed = miscRoles.find(r => r.toLowerCase() === suffix.toLowerCase())
       if (notAllowed) {
-        msg.channel.send(`Sorry! ${suffix} is not allowed to be self-assigned!`)
+        msg.channel.send(`Sorry! ${role.name} is not allowed to be self-assigned!`)
       }
       else if (!role) {
         msg.channel.send(`Sorry! I couldn't find a role called ${suffix}!`)
@@ -291,12 +291,12 @@ const commands = {
       else {
         if (!msg.member.roles.has(role.id)) {
           msg.member.addRole(role).then(result => {
-            msg.channel.send(`Ok, I added the ${suffix} role to you!`)
+            msg.channel.send(`Ok, I added the ${role.name} role to you!`)
           })
         }
         else {
           msg.member.removeRole(role.id).then(result => {
-            msg.channel.send(`Ok, I removed the ${suffix} role from you!`)
+            msg.channel.send(`Ok, I removed the ${role.name} role from you!`)
           })
         }
       }
