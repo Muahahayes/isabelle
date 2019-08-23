@@ -696,23 +696,20 @@ function inputSet(msg, suffix) {
                   }
 
                   let loserCoins = K * (Number(wins) + Number(losses))
-                  console.log(loserCoins)
-                  console.log(`e1=${e1} e2=${e2}`)
                   if (winnerELO > loserELO) {// coins based on better player's odds of winning, fighting big guys helps
                     loserCoins *= e1
                   }
                   else {
                     loserCoins *= e2
                   }
-                  console.log(loserCoins)
                   let winC = winnerCurrency // in case we need to reset it
-                  winnerCurrency += loserCoins * 1.25 // bonus for winning
+                  winnerCurrency += Math.ceil(loserCoins * 1.25) // bonus for winning
 
                   if (loserELO > winnerELO) {
                     loserCoins = loserCoins*((winnerELO-1000)/(loserELO-1000)) // scale based on how much of an upset it was, 
                                                                                       //great players should be punished for losing to weak players
                   }
-                  loserCurrency += loserCoins
+                  loserCurrency += Math.ceil(loserCoins)
 
                   // update scores
                   let query = `UPDATE players SET elo=${winnerNew}, placement=${winnerP}, currency=${winnerCurrency} WHERE id=${winnerK}`
@@ -739,13 +736,15 @@ function inputSet(msg, suffix) {
                             .addField(`${details[0]}'s new ELO, placements and wallet`, `${winnerNew} : ${winnerP} : ${winnerCurrency}`,false)
                             .addField(`${details[1]}'s new ELO, placements and wallet`, `${loserNew} : ${loserP} : ${loserCurrency}`, false)
                           
-                          let smasher, belt;
+                          let smasher, belt
+                          let beltStr = ''
                           if ((Math.floor(winnerNew/100) - Math.floor(winnerELO/100)) > 0) { // belt went up
                             smasher = msg.guild.members.find(r => r.id == winnerID)
                             belt = smasher.roles.find(r => r.name.includes('Belt'))
                             if (belt) smasher.removeRole(belt)                            
                             belt = msg.guild.roles.find(r => r.name === beltColor(winnerNew).name)
                             smasher.addRole(belt)
+                            beltStr += `<@${winnerID}> has moved up to ${belt.name}!`
                           }
                           if ((Math.floor(loserELO/100) - Math.floor(loserNew/100)) > 0) { // belt went down
                             smasher = msg.guild.members.find(r => r.id == loserID)
@@ -753,6 +752,10 @@ function inputSet(msg, suffix) {
                             if(belt) smasher.removeRole(belt)
                             belt = msg.guild.roles.find(r => r.name === beltColor(loserNew).name)
                             smasher.addRole(belt)
+                            beltStr += `\n<@${loserID}> has fallen down to ${belt.name}!`
+                          }
+                          if (beltStr != '') {
+                            embed.addField(`Belt changes`, beltStr, false)
                           }
                           let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} recorded a set:\n${winner} vs ${loser} ${wins}-${losses}\n${winnerELO} => ${winnerNew} \n${loserELO} => ${loserNew}\n`
                           console.log(logstr)
