@@ -213,16 +213,23 @@ const commands = {
                   'if no name is given, prints your own rating (if your name matches your tag in the database)',
     admin:false,
     process: function(msg, suffix) {
-      let name = msg.member.nickname
-      if (suffix) name = suffix
-      con.query(`SELECT * FROM players WHERE tag = ${mysql.escape(name)}`, function(err, result) {
+      let query = 'SELECT * FROM players WHERE id=0' // intentionally returns 0 results
+      let name = (msg.member.nickname)?msg.member.nickname:msg.author.username
+      if (suffix){
+        query = `SELECT * FROM players WHERE tag = ${mysql.escape(suffix)}`
+      }
+      else {
+        
+        query = `SELECT * FROM players WHERE dID = ${msg.author.id}`
+      }
+      con.query(query, function(err, result) {
         if (err) {
           console.error(err)
           msg.channel.send('Oops! Something broke when reading the database. Restarting bot...')
           process.exit(1)
         }
         else if (!result[0]) {
-          console.error(`Query failed! ${(msg.member.nickname)?msg.member.nickname:msg.author.username} queried for the rank of ${name}, no results found.`)
+          console.error(`Query failed! ${name} queried for the rank of ${(suffix)?suffix:name}, no results found.`)
           msg.channel.send('Oops! I couldn\'t find anyone with that name on the rankings!')
         }
         else {
@@ -230,7 +237,7 @@ const commands = {
           let embed = new Discord.RichEmbed()
             .setColor(beltColor(player.elo).color)
             .setTitle(`Rating Report`)
-            .setDescription(`Tag: ${name}\nRating: ${player.elo}${(player.placement > 0)?'\nPlacements: ' + player.placement:''}\nWallet: ${player.currency}`)
+            .setDescription(`Tag: ${player.tag}\nRating: ${player.elo}${(player.placement > 0)?'\nPlacements: ' + player.placement:''}\nWallet: ${player.currency}`)
           msg.channel.send(embed)
         }
       })
@@ -252,8 +259,8 @@ const commands = {
                   'if no name is given, prints the history for yourself (if your name matches your tag in the database)',
     admin:false,
     process: function(msg, suffix) {
-      let name = (suffix)?suffix:(msg.member.nickname)?msg.member.nickname:msg.author.username
-      matchHistory(msg,name)
+      // let name = (suffix)?suffix:(msg.member.nickname)?msg.member.nickname:msg.author.username
+      matchHistory(msg,suffix)
     }// process
   },//history
   "report": {
@@ -757,12 +764,12 @@ function inputSet(msg, suffix) {
                           if (beltStr != '') {
                             embed.addField(`Belt changes`, beltStr, false)
                           }
-                          let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} recorded a set:\n${winner} vs ${loser} ${wins}-${losses}\n${winnerELO} => ${winnerNew} \n${loserELO} => ${loserNew}\n`
+                          let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} recorded a set:\n${winner} vs ${loser} ${wins}-${losses}\n${winnerELO} => ${winnerNew} \n${loserELO} => ${loserNew}`
                           console.log(logstr)
                           let time = new Date()
-                          //logStream.write(`[${time.toString()}]\n${logstr}\n`)
+                          //logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
                           msg.channel.send(embed).then(then => {
-                            logChan.send(`[${time.toString()}]\n${logstr}\n`)
+                            logChan.send(`[${time.toString()}]\n${logstr}\n\n`)
                           })
                         }
                       })
@@ -781,13 +788,19 @@ function inputSet(msg, suffix) {
 // matchHistory
 // takes the current message and the name of a player
 // sends to channel their match history in an embed
-function matchHistory(msg, name) {
+function matchHistory(msg, suffix) {
   let player = {}
-  player.tag = name
+  let name = (suffix)?mysql.escape(suffix):''
   player.matches = {}
-  name = mysql.escape(name)
+  let query = 'SELECT * FROM players WHERE id=0' // intentionally returns 0 results
+  if (suffix) {
+    query = `SELECT * FROM players WHERE tag=${name}`
+  }
+  else {
+    query = `SELECT * FROM players WHERE dID=${msg.author.id}`
+  }
 
-  con.query(`SELECT * FROM players WHERE tag=${name}`, function(err, result) {
+  con.query(query, function(err, result) {
     if (err) {
       console.error(err)
       msg.channel.send('Oops! Something broke when reading the database. Restarting bot...')
@@ -798,6 +811,8 @@ function matchHistory(msg, name) {
       msg.channel.send('Oops! I could\'t find anyone with that name in the rankings!')
     }
     else {
+      if (name = '') name = result[0].tag
+      player.tag = result[0].tag
       player.id = result[0].id
       player.color = beltColor(result[0].elo).color
       con.query(`SELECT * FROM matches WHERE winnerFK=${player.id} OR loserFK=${player.id}`, function(err, result) {
