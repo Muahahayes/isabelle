@@ -1,7 +1,5 @@
 /*
   TODO:
-  add a currency to players table, give currency when a set is entered
-    (something like 2x score change to winner, and 0.5x score change to loser (1.5x mod to lower elo player))
   ;character (gives a character role)
   Refactor ;set to check if a belt change happened, and assign roles if they did
   add a weekly decay feature (add a 'active' field to players table, when a match is put in set active to 1,
@@ -127,6 +125,48 @@ bot.on('message', (msg) => {
   parseMessage(msg)
 })
 
+const miscRoles = [
+  'Consul',
+  'Senator',
+  'Liason',
+  'PRETTY COLOR!',
+  'BEEP BOOP',
+  'Black Belt',
+  'Red Belt',
+  'Purple Belt',
+  'Blue Belt',
+  'Green Belt',
+  'Yellow Belt',
+  'White Belt',
+  'Wolverine',
+  'Friend',
+  'Smash Master',
+  'Titan',
+  'King',
+  'Royalty',
+  'Lord',
+  'Champion',
+  'Knight',
+  'Squire',
+  'Scrub',
+  'Isabelle-Bot',
+  'UB3R-B0T',
+  'Crystal',
+  'Bots',
+  'D&D',
+  'Player Juan',
+  'Racial Slur',
+  'DJ',
+  'Dead',
+  'DM',
+  'gmichael',
+  'coal',
+  'Tatsumaki',
+  'namelock',
+  'rp',
+  'shhh'
+]
+
 // commands
 const commands = {
   "die": {
@@ -235,6 +275,34 @@ const commands = {
       
     }// process
   },//report
+  "character": {
+    usage: `${prefix}character charactername`,
+    description: `Adds a role for that character to your Discord profile.`,
+    admin: false,
+    process: function(msg, suffix) {
+      let role = msg.guild.roles.find(r => r.name === suffix)
+      let notAllowed = miscRoles.find(r => r === suffix)
+      if (notAllowed) {
+        msg.channel.send(`Sorry! ${suffix} is not allowed to be self-assigned!`)
+      }
+      else if (!role) {
+        msg.channel.send(`Sorry! I couldn't find a role called ${suffix}!`)
+      }
+      else {
+        if (!msg.member.roles.has(role.id)) {
+          msg.member.addRole(role).then(result => {
+            msg.channel.send(`Ok, I added the ${suffix} role to you!`)
+          })
+        }
+        else {
+          msg.member.removeRole(role.id).then(result => {
+            msg.channel.send(`Ok, I removed the ${suffix} role from you!`)
+          })
+        }
+      }
+    }
+
+  },//character
   "update": {
     usage: `${prefix}update [optional]ranks/rivals`,
     description: `Pulls the current data from the database to update the given list\nif no list is given, updates all lists`,
