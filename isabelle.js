@@ -1,6 +1,5 @@
 /*
   TODO:
-  ;character (gives a character role)
   Refactor ;set to check if a belt change happened, and assign roles if they did
   add a weekly decay feature (add a 'active' field to players table, when a match is put in set active to 1,
     when rivals is called anyone that's 0 gets decayed, then set everyone to 0)
@@ -9,9 +8,8 @@
   Refactor ;rival in/out to use dID and no name suffix
 
   far future:
+  add waifu stocks
   add small games
-  [make new table with discord ids and a currency from the games] bad, too much redundant data
-  make new field 'currency' to players table
 */
 
 // requires/resources
@@ -77,7 +75,7 @@ con.query(`SELECT * FROM config`, function (err, result) {
       config.failedLoad = (result[0])?false:true
       if (config.failedLoad) console.error('Failed to load from database, using default values.')
     }
-    else {//TODO refactor to load from local db
+    else {
       console.log('No config values found from database! Loading from local...')
       config.rivalUpdate = (configlocal)?configlocal.rivalUpdate:Date.now()
       config.rankUpdate = (configlocal)?configlocal.rankUpdate:Date.now()
@@ -231,7 +229,7 @@ const commands = {
         else {
           let player = result[0]
           let embed = new Discord.RichEmbed()
-            .setColor(beltColor(player.elo))
+            .setColor(beltColor(player.elo).color)
             .setTitle(`Rating Report`)
             .setDescription(`Tag: ${name}\nRating: ${player.elo}${(player.placement > 0)?'\nPlacements: ' + player.placement:''}\nWallet: ${player.currency}`)
           msg.channel.send(embed)
@@ -445,34 +443,41 @@ const commands = {
     }// process
   },//rival
   "join": {
-    usage: `;join name tag`,
-    description: 'Adds a player into the database with the given name and tag, names with spaces are ok here.',
+    usage: `;join name @player tag`,
+    description: 'Adds a player into the database with the given name and tag, and gets their discord ID from the @ mention.\nNames with spaces are ok here.',
     admin: true,
     process: function(msg, suffix) {
-      let name = suffix.split(" ")[0]      
-      suffix = suffix.split(" ")
-      suffix.shift()
-      suffix = suffix.join(" ")
-      let tag = suffix
-      name = mysql.escape(name)
-      tag = mysql.escape(tag)
-      
-      con.query(`INSERT INTO players (id, name, tag) VALUES (0, ${name}, ${tag})`, function(err, result) {
-        if (err) {
-          console.error(err)
-          msg.channel.send(`Oops! Something broke when adding ${tag} to the database! Restarting bot...`)
-          process.exit(1)
-        }
-        else {
-          let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} added ${tag} to the database.`
-          console.log(logstr)
-          let time = new Date()
-          //logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
-          msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!`).then(result => {
-            logChan.send(`[${time.toString()}]\n${logstr}\n\n`)
-          })
-        }
-      })// con query
+      if (msg.mentions.users.size) {
+        let player = msg.mentions.users.first()
+        let name = suffix.split(" ")[0]      
+        suffix = suffix.split(" ")
+        suffix.shift()
+        suffix.shift()
+        suffix = suffix.join(" ")
+        let tag = suffix
+        name = mysql.escape(name)
+        tag = mysql.escape(tag)
+        
+        con.query(`INSERT INTO players (id, name, tag, dID) VALUES (0, ${name}, ${tag}, ${player.id})`, function(err, result) {
+          if (err) {
+            console.error(err)
+            msg.channel.send(`Oops! Something broke when adding ${tag} to the database! Restarting bot...`)
+            process.exit(1)
+          }
+          else {
+            let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} added ${tag} to the database.`
+            console.log(logstr)
+            let time = new Date()
+            //logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
+            msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!`).then(result => {
+              logChan.send(`[${time.toString()}]\n${logstr}\n\n`)
+            })
+          }
+        })// con query
+      }//if mentions
+      else {
+        msg.channel.send('Sorry! I need you to @mention the person you\'re trying to add!')
+      }
     }// process
   }//join
 }
@@ -538,31 +543,31 @@ function parseMessage(msg) {
 function beltColor(elo) {
   if (elo < 1300) {
     //white
-    return '#cecece'
+    return {name:'White Belt', color:'#cecece'}
   }
   else if (elo < 1400) {
     //yellow
-    return '#d4d41b'
+    return {name:'Yellow Belt', color:'#d4d41b'}
   }
   else if (elo < 1500) {
     // green
-    return '#1f833b'
+    return {name:'Green Belt', color:'#1f833b'}
   }
   else if (elo < 1600) {
     //blue
-    return '#0f4a8d'
+    return {name:'Blue Belt', color:'#0f4a8d'}
   }
   else if (elo < 1700) {
     //purple
-    return '#a212be'
+    return {name:'Purple Belt', color:'#a212be'}
   }
   else if (elo < 1800) {
     //red
-    return '#bd3535'
+    return {name:'Red Belt', color:'#bd3535'}
   }
   else {
     //black
-    return '#140a0a'
+    return {name:'Black Belt', color:'#140a0a'}
   }
 }// beltColor
 
@@ -601,9 +606,9 @@ function inputSet(msg, suffix) {
       winsE = mysql.escape(wins)
       lossesE = mysql.escape(losses)
 
-      let winnerK, winnerELO, winnerP, winnerCurrency, loserK, loserELO, loserP, loserCurrency
+      let winnerK, winnerELO, winnerP, winnerCurrency, winnerID, loserK, loserELO, loserP, loserCurrency, loserID
       console.log(`winner: ${winner}\nloser: ${loser}\nwins: ${wins}\nlosses: ${losses}\nrt: ${rt}`)
-      con.query(`SELECT id, elo, placement, currency FROM players WHERE tag=${winner}`, (err, result) => {
+      con.query(`SELECT id, elo, placement, currency, dID FROM players WHERE tag=${winner}`, (err, result) => {
         if (err) {
           console.log(err)
           msg.channel.send('Something broke when reading winner! Restarting bot...')
@@ -616,9 +621,10 @@ function inputSet(msg, suffix) {
           winnerK = result[0].id
           winnerELO = result[0].elo
           winnerP = result[0].placement
-          winP = winnerP // in case we need to reset it
+          let winP = winnerP // in case we need to reset it
+          winnerID = result[0].dID
           winnerCurrency = result[0].currency
-          con.query(`SELECT id, elo, placement FROM players WHERE tag=${loser}`, (err, result) => {
+          con.query(`SELECT id, elo, placement, dID FROM players WHERE tag=${loser}`, (err, result) => {
             if (err) {
               console.log(err)
               msg.channel.send('Something broke when reading loser! Restarting bot...')
@@ -632,6 +638,7 @@ function inputSet(msg, suffix) {
               loserELO = result[0].elo
               loserP = result[0].placement
               loserCurrency = result[0].currency
+              loserID = result[0].dID
               con.query(`INSERT INTO matches VALUES (0, '${winnerK}', '${loserK}', ${winsE}, ${lossesE})`, (err, result) => {
                 if (err) {
                   console.log(err)
@@ -648,7 +655,7 @@ function inputSet(msg, suffix) {
                   if (rt && rt.includes('t')) newK *= 1.5
                   let wK = newK
                   let lK = newK
-                  if (winnerP > 0) { // TODO: update placements in final con.query
+                  if (winnerP > 0) {
                     wK = K + newK
                     winnerP--
                   }
@@ -724,6 +731,22 @@ function inputSet(msg, suffix) {
                             .addField(`${details[0]}'s new ELO, placements and wallet`, `${winnerNew} : ${winnerP} : ${winnerCurrency}`,false)
                             .addField(`${details[1]}'s new ELO, placements and wallet`, `${loserNew} : ${loserP} : ${loserCurrency}`, false)
                           
+                          // TODO: check if belt changes happened and update roles accordingly
+                          //message.guild.members.get("id", ID)
+                          if ((Math.floor(winnerNew/100) - Math.floor(winnerELO/100)) > 0) { // belt went up
+                            let smasher = msg.guild.members.get('id', winnerID)
+                            let belt = smasher.roles.find(r => r.name.includes('Belt'))
+                            if (belt) smasher.removeRole(belt)                            
+                            belt = msg.guild.roles.find(r => r.name === beltColor(winnerNew).name)
+                            smasher.addRole(belt)
+                          }
+                          if ((Math.floor(loserELO/100) - Math.floor(loserNew/100)) > 0) { // belt went down
+                            let smasher = msg.guild.members.get('id', loserID)
+                            let belt = smasher.roles.find(r => r.name.includes('Belt'))
+                            if(belt) smasher.removeRole(belt)
+                            belt = msg.guild.roles.find(r => r.name === beltColor(loserNew).name)
+                            smasher.addRole(belt)
+                          }
                           let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} recorded a set:\n${winner} vs ${loser} ${wins}-${losses}\n${winnerELO} => ${winnerNew} \n${loserELO} => ${loserNew}\n`
                           console.log(logstr)
                           let time = new Date()
@@ -766,7 +789,7 @@ function matchHistory(msg, name) {
     }
     else {
       player.id = result[0].id
-      player.color = beltColor(result[0].elo)
+      player.color = beltColor(result[0].elo).color
       con.query(`SELECT * FROM matches WHERE winnerFK=${player.id} OR loserFK=${player.id}`, function(err, result) {
         /*
         [
@@ -854,7 +877,7 @@ function updateRanks() {
           i++
         }
         if (!embeds[i]) {
-          embeds[i] = new Discord.RichEmbed().setColor(beltColor(tiers[i]+1)).setTitle(`${tierNames[i]} Belts`)
+          embeds[i] = new Discord.RichEmbed().setColor(beltColor(tiers[i]+1).color).setTitle(`${tierNames[i]} Belts`)
         }
         player.tag += ' -'
         for (let j=player.tag.split('').length; j < 15; j++) {
