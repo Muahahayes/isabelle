@@ -623,7 +623,7 @@ function inputSet(msg, suffix) {
           let winP = winnerP // in case we need to reset it
           winnerID = result[0].dID
           winnerCurrency = result[0].currency
-          con.query(`SELECT id, elo, placement, dID FROM players WHERE tag=${loser}`, (err, result) => {
+          con.query(`SELECT id, elo, placement, dID, currency FROM players WHERE tag=${loser}`, (err, result) => {
             if (err) {
               console.log(err)
               msg.channel.send('Something broke when reading loser! Restarting bot...')
@@ -695,20 +695,16 @@ function inputSet(msg, suffix) {
                     loserNew = Math.ceil(loserELO + ((lK * (0 - e2)) * s1))
                   }
 
-                  let loserCoins = (K * (wins + losses)) * ((e1 > e2)?e1:e2) // loser gets coins based on better player's odds of winning, fighting big guys helps
+                  let loserCoins = (K * (wins + losses)) * ((e1 > e2)?1-e2:1-e1) // loser gets coins based on better player's odds of winning, fighting big guys helps
                   let winC = winnerCurrency // in case we need to reset it
                   winnerCurrency += loserCoins * 1.25 // bonus for winning
-
-                  console.log(loserCurrency)
+                  console.log(loserCoins)
 
                   if (loserELO > winnerELO) {
                     loserCoins = loserCoins * ((winnerELO - 1000) / (loserELO - 1000)) // scale based on how much of an upset it was, 
                                                                                       //great players should be punished for losing to weak players
-                    console.log(loserCoins)
                   }
                   loserCurrency += loserCoins
-                  console.log(winnerCurrency)
-                  console.log(loserCurrency)
 
                   // update scores
                   let query = `UPDATE players SET elo=${winnerNew}, placement=${winnerP}, currency=${winnerCurrency} WHERE id=${winnerK}`
