@@ -189,7 +189,7 @@ const commands = {
           let embed = new Discord.RichEmbed()
             .setColor(beltColor(player.elo))
             .setTitle(`Rating Report`)
-            .setDescription(`Tag: ${name}\nRating: ${player.elo}${(player.placement > 0)?'\nPlacements: ' + player.placement:''}`)
+            .setDescription(`Tag: ${name}\nRating: ${player.elo}${(player.placement > 0)?'\nPlacements: ' + player.placement:''}\nWallet: ${player.currency}`)
           msg.channel.send(embed)
         }
       })
@@ -529,9 +529,9 @@ function inputSet(msg, suffix) {
       winsE = mysql.escape(wins)
       lossesE = mysql.escape(losses)
 
-      let winnerK, winnerELO, winnerP, loserK, loserELO, loserP
+      let winnerK, winnerELO, winnerP, winnerCurrency, loserK, loserELO, loserP, loserCurrency
       console.log(`winner: ${winner}\nloser: ${loser}\nwins: ${wins}\nlosses: ${losses}\nrt: ${rt}`)
-      con.query(`SELECT id, elo, placement FROM players WHERE tag=${winner}`, (err, result) => {
+      con.query(`SELECT id, elo, placement, currency FROM players WHERE tag=${winner}`, (err, result) => {
         if (err) {
           console.log(err)
           msg.channel.send('Something broke when reading winner! Restarting bot...')
@@ -544,6 +544,8 @@ function inputSet(msg, suffix) {
           winnerK = result[0].id
           winnerELO = result[0].elo
           winnerP = result[0].placement
+          winP = winnerP // in case we need to reset it
+          winnerCurrency = result[0].currency
           con.query(`SELECT id, elo, placement FROM players WHERE tag=${loser}`, (err, result) => {
             if (err) {
               console.log(err)
@@ -557,6 +559,7 @@ function inputSet(msg, suffix) {
               loserK = result[0].id
               loserELO = result[0].elo
               loserP = result[0].placement
+              loserCurrency = result[0].currency
               con.query(`INSERT INTO matches VALUES (0, '${winnerK}', '${loserK}', ${winsE}, ${lossesE})`, (err, result) => {
                 if (err) {
                   console.log(err)
@@ -614,8 +617,18 @@ function inputSet(msg, suffix) {
                     loserNew = Math.ceil(loserELO + ((lK * (0 - e2)) * s1))
                   }
 
+                  let loserCoins = (K * (wins + losses)) * (e1 > e2)?e1:e2 // loser gets coins based on better player's odds of winning, fighting big guys helps
+                  let winC = winnerCurrency // in case we need to reset it
+                  winnerCurrency += loserCoins * 1.25 // bonus for winning
+
+                  if (loserELO > winnerELO) {
+                    loserCoins = loserCoins * ((winnerELO - 1000) / (loserELO - 1000)) // scale based on how much of an upset it was, 
+                                                                                      //great players should be punished for losing to weak players
+                  }
+                  loserCurrency += loserCoins
+
                   // update scores
-                  let query = `UPDATE players SET elo=${winnerNew}, placement=${winnerP} WHERE id=${winnerK}`
+                  let query = `UPDATE players SET elo=${winnerNew}, placement=${winnerP}, currency=${winnerCurrency} WHERE id=${winnerK}`
                   con.query(query, (err, result) => {
                     if (err) {
                       console.log(err)
@@ -623,12 +636,12 @@ function inputSet(msg, suffix) {
                       process.exit(1)
                     }
                     else {
-                      let query = `UPDATE players SET elo=${loserNew}, placement=${loserP} WHERE id=${loserK}`
+                      let query = `UPDATE players SET elo=${loserNew}, placement=${loserP}, currency=${loserCurrency} WHERE id=${loserK}`
                       con.query(query, (err, result) => {
                         if (err) {
                           console.log(err)
                           msg.channel.send('Oh no! Something broke when updating the loser\'s score! Restarting bot...')
-                          con.query(`UPDATE players SET elo=${winnerELO} WHERE id=${winnerK}`, function(err, result) {
+                          con.query(`UPDATE players SET elo=${winnerELO}, placement=${winP}, currency=${winC} WHERE id=${winnerK}`, function(err, result) {
                             process.exit(1)
                           })
                         }
@@ -636,8 +649,8 @@ function inputSet(msg, suffix) {
                           let embed = new Discord.RichEmbed()
                             .setColor('#08f8e')
                             .setTitle('Match has been recorded!')
-                            .addField(`${details[0]}'s new ELO and placements`, `${winnerNew} : ${winnerP}`,false)
-                            .addField(`${details[1]}'s new ELO and placements`, `${loserNew} : ${loserP}`, false)
+                            .addField(`${details[0]}'s new ELO, placements and wallet`, `${winnerNew} : ${winnerP} : ${winnerCurrency}`,false)
+                            .addField(`${details[1]}'s new ELO, placements and wallet`, `${loserNew} : ${loserP} : ${loserCurrency}`, false)
                           
                           let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} recorded a set:\n${winner} vs ${loser} ${wins}-${losses}\n${winnerELO} => ${winnerNew} \n${loserELO} => ${loserNew}\n`
                           console.log(logstr)
