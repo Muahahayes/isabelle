@@ -210,7 +210,7 @@ const commands = {
   "rating": {
     usage: `;rating name`,
     description: 'prints the current ELO rating of the named player\n'+
-                  'if no name is given, prints your own rating (if your name matches your tag in the database)',
+                  'if no name is given, prints your own rating',
     admin:false,
     process: function(msg, suffix) {
       let query = 'SELECT * FROM players WHERE id=0' // intentionally returns 0 results
@@ -256,7 +256,7 @@ const commands = {
   "history": {
     usage: `;history name`,
     description: 'prints out the match history of the named player (wins-losses against each person they\'ve fought)\n'+
-                  'if no name is given, prints the history for yourself (if your name matches your tag in the database)',
+                  'if no name is given, prints the history for yourself',
     admin:false,
     process: function(msg, suffix) {
       // let name = (suffix)?suffix:(msg.member.nickname)?msg.member.nickname:msg.author.username
@@ -274,8 +274,6 @@ const commands = {
       let time = new Date()
       let rep = `[${time.toString()}]\n${(msg.member.nickname)?msg.member.nickname:msg.author.username}: ${suffix}\n\n`
       //reportStream.write(rep)
-      if (msg.member.roles.has('369948375530995712')) console.log('Consul')
-      if (msg.member.roles.has('494878132143128616')) console.log('Senator')
       msg.delete(3000)
       reportChan.send(rep).then(result => {
         msg.channel.send('Thanks! I\'ll write this down right away!')
@@ -344,28 +342,36 @@ const commands = {
   "rank": {
     usage: `;rank name`,
     description: 'Prints out the given player\'s current place in the ranked list (eg. 1st place, 10th place, ect)\n' + 
-                  'if no name is given, prints the rank for yourself (if your name matches your tag in the database)',
+                  'if no name is given, prints the rank for yourself',
     admin: false,
     process: function(msg, suffix) {
       if (!suffix) {
-        suffix = (msg.member.nickname)?msg.member.nickname:msg.author.username
-      }
-      con.query(`SELECT tag FROM players ORDER BY elo desc`, function(err, result) {
-        let i = 0
-        while (result[i] && result[i].tag != suffix) {
+        con.query(`SELECT dID FROM players ORDER BY elo desc`, function(err, result) {
+          let i = 0
+          while (result[i] && result[i].dID != msg.author.id) {
+            i++
+          }
           i++
-        }
-        i++
-        msg.channel.send(`You're #${i} in the rankings!`)
-      })
+          msg.channel.send(`You're #${i} in the rankings!`)
+        })
+      }
+      else {
+        con.query(`SELECT tag FROM players ORDER BY elo desc`, function(err, result) {
+          let i = 0
+          while (result[i] && result[i].tag != suffix) {
+            i++
+          }
+          i++
+          msg.channel.send(`You're #${i} in the rankings!`)
+        })
+      }
     }// process
   },//rank
-  "rival": {
-    usage: `;rival name [optional]in or out`,
-    description: 'If options are blank, tells you who your rival(s) are for the week. If no name is given it uses your name (Your name must match your tag in the database)\n'+
-                  'If the word in is included, opts you into the rivals system for future weeks\n'+
-                  'If the word out is included, opts you out of the rivals system for future weeks\n' +
-                  'Note: if your name has spaces in it and you use the in/out option, writing your name in the command will break it! Set your server nickname to your tag name instead!',
+  "rival": { // TODO: fix rivals to work without json
+    usage: `;rival name or in or out`,
+    description: 'If options are blank, tells you who your rival(s) are for the week. If a name is given, tells the rivals of that player\n'+
+                  'If the word in used, opts you into the rivals system for future weeks\n'+
+                  'If the word out used, opts you out of the rivals system for future weeks\n',
     admin: false,
     process: function(msg, suffix) {
       if (!suffix || ((suffix != 'in' && suffix != 'out') && (suffix.split(" ")[1] != 'in' && suffix.split(" ")[1] != 'out'))) {
@@ -419,10 +425,9 @@ const commands = {
         }
       }// if not in/out
       else {// if in/out
-        let name = (!suffix.split(" ")[1])?((msg.member.nickname)?msg.member.nickname:msg.author.username):suffix.split(" ")[0]
-        name = mysql.escape(name)
-        if (suffix == 'in' || suffix.split(" ")[1] == 'in') {
-          con.query(`UPDATE players SET rival=1 WHERE tag=${name}`, function(err, result) {
+        let name = (msg.member.nickname)?msg.member.nickname:msg.author.username
+        if (suffix == 'in') {
+          con.query(`UPDATE players SET rival=1 WHERE dID=${msg.author.id}`, function(err, result) {
             if (err) {
               console.error(err)
               msg.channel.send('Oops! Something broke when trying to opt you into the rivals system. Restarting bot...')
@@ -434,7 +439,7 @@ const commands = {
           })
         }// in
         else {//out
-          con.query(`UPDATE players SET rival=0 WHERE tag=${name}`, function(err, result) {
+          con.query(`UPDATE players SET rival=0 WHERE dID=${msg.author.id}`, function(err, result) {
             if (err) {
               console.error(err)
               msg.channel.send('Oops! Something broke when trying to opt you out of the rivals system. Restarting bot...')
