@@ -1,6 +1,5 @@
 /*
   TODO:
-  Refactor ;set to check if a belt change happened, and assign roles if they did
   add a weekly decay feature (add a 'active' field to players table, when a match is put in set active to 1,
     when rivals is called anyone that's 0 gets decayed, then set everyone to 0)
   Refactor database, add a 'dID' field to players table, tweak commands to use that to find people without suffix
@@ -696,15 +695,20 @@ function inputSet(msg, suffix) {
                     loserNew = Math.ceil(loserELO + ((lK * (0 - e2)) * s1))
                   }
 
-                  let loserCoins = (K * (wins + losses)) * (e1 > e2)?e1:e2 // loser gets coins based on better player's odds of winning, fighting big guys helps
+                  let loserCoins = (K * (wins + losses)) * ((e1 > e2)?e1:e2) // loser gets coins based on better player's odds of winning, fighting big guys helps
                   let winC = winnerCurrency // in case we need to reset it
                   winnerCurrency += loserCoins * 1.25 // bonus for winning
+
+                  console.log(loserCurrency)
 
                   if (loserELO > winnerELO) {
                     loserCoins = loserCoins * ((winnerELO - 1000) / (loserELO - 1000)) // scale based on how much of an upset it was, 
                                                                                       //great players should be punished for losing to weak players
+                    console.log(loserCoins)
                   }
                   loserCurrency += loserCoins
+                  console.log(winnerCurrency)
+                  console.log(loserCurrency)
 
                   // update scores
                   let query = `UPDATE players SET elo=${winnerNew}, placement=${winnerP}, currency=${winnerCurrency} WHERE id=${winnerK}`
