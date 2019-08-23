@@ -54,7 +54,7 @@ else {
 
 // bot config
 const bot = new Discord.Client()
-var prefix
+var prefix;
 var K;
 var logChan;
 var reportChan;
@@ -73,7 +73,7 @@ con.query(`SELECT * FROM config`, function (err, result) {
       config.prefix = (result[0].prefix)?result[0].prefix:';'
       prefix = config.prefix
       config.K = (result[0].K)?result[0].K:16
-      K = config.K;
+      K = config.K
       config.failedLoad = (result[0])?false:true
       if (config.failedLoad) console.error('Failed to load from database, using default values.')
     }
@@ -84,7 +84,7 @@ con.query(`SELECT * FROM config`, function (err, result) {
       config.prefix = (configlocal)?configlocal.prefix:';'
       prefix = config.prefix
       config.K = (configlocal)?configlocal.K:16
-      K = config.K;
+      K = config.K
       config.failedLoad = (configlocal)?false:true
       if (config.failedLoad) console.error('Failed to load from local, using default values.')
     }
@@ -170,7 +170,7 @@ const miscRoles = [
 // commands
 const commands = {
   "die": {
-    usage: `${prefix}die`,
+    usage: `${config.prefix}die`,
     description: 'kills the bot and ends the process (bot owner only!)',
     admin:true,
     process: function(msg, suffix) {
@@ -207,7 +207,7 @@ const commands = {
     }// process
   },//die
   "rating": {
-    usage: `${prefix}rating name`,
+    usage: `${config.prefix}rating name`,
     description: 'prints the current ELO rating of the named player\n'+
                   'if no name is given, prints your own rating (if your name matches your tag in the database)',
     admin:false,
@@ -236,17 +236,17 @@ const commands = {
     }// process
   },//rating
   "set": {
-    usage: `${prefix}set winner loser wins losses [optional] rt`,
+    usage: `${config.prefix}set winner loser wins losses [optional] rt`,
     description: 'inputs the results of a set into the database, with an optional r or t to flag it as a rival/tournament match.\n' +
                   'For names with 1 space, add a * in front of the name. (*Player 9). More than 1 space won\'t work, talk to the player about changing things' +
-                  `eg. ${prefix}set Bob John 3 2 r (Bob won 3-2 vs John, and it was a rivals match).\n 'r' 't' or 'rt' are valid tags (no spaces in rt)`,
+                  `eg. ${config.prefix}set Bob John 3 2 r (Bob won 3-2 vs John, and it was a rivals match).\n 'r' 't' or 'rt' are valid tags (no spaces in rt)`,
     admin:true,
     process: function(msg, suffix) {
       inputSet(msg,suffix)
     }// process
   },//set
   "history": {
-    usage: `${prefix}history name`,
+    usage: `${config.prefix}history name`,
     description: 'prints out the match history of the named player (wins-losses against each person they\'ve fought)\n'+
                   'if no name is given, prints the history for yourself (if your name matches your tag in the database)',
     admin:false,
@@ -256,7 +256,7 @@ const commands = {
     }// process
   },//history
   "report": {
-    usage: `${prefix}report text`,
+    usage: `${config.prefix}report text`,
     description: 'Isabelle will take down a note from you to give to the Mayor later. \n'+
                   '(logs it to the bot\'s files, deletes your message shortly afterwards to keep your reports confidential)',
     admin:false,
@@ -276,7 +276,7 @@ const commands = {
     }// process
   },//report
   "character": {
-    usage: `${prefix}character charactername`,
+    usage: `${config.prefix}character charactername`,
     description: `Adds a role for that character to your Discord profile.`,
     admin: false,
     process: function(msg, suffix) {
@@ -304,7 +304,7 @@ const commands = {
 
   },//character
   "update": {
-    usage: `${prefix}update [optional]ranks/rivals`,
+    usage: `${config.prefix}update [optional]ranks/rivals`,
     description: `Pulls the current data from the database to update the given list\nif no list is given, updates all lists`,
     admin:true,
     process: function(msg, suffix) {
@@ -334,7 +334,7 @@ const commands = {
     }
   },//update
   "rank": {
-    usage: `${prefix}rank name`,
+    usage: `${config.prefix}rank name`,
     description: 'Prints out the given player\'s current place in the ranked list (eg. 1st place, 10th place, ect)\n' + 
                   'if no name is given, prints the rank for yourself (if your name matches your tag in the database)',
     admin: false,
@@ -353,7 +353,7 @@ const commands = {
     }// process
   },//rank
   "rival": {
-    usage: `${prefix}rival name [optional]in or out`,
+    usage: `${config.prefix}rival name [optional]in or out`,
     description: 'If options are blank, tells you who your rival(s) are for the week. If no name is given it uses your name (Your name must match your tag in the database)\n'+
                   'If the word in is included, opts you into the rivals system for future weeks\n'+
                   'If the word out is included, opts you out of the rivals system for future weeks\n' +
@@ -441,7 +441,7 @@ const commands = {
     }// process
   },//rival
   "join": {
-    usage: `${prefix}join name tag`,
+    usage: `${config.prefix}join name tag`,
     description: 'Adds a player into the database with the given name and tag, names with spaces are ok here.',
     admin: true,
     process: function(msg, suffix) {
