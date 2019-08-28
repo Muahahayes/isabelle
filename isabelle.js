@@ -246,7 +246,7 @@ const commands = {
   "set": {
     usage: `;set winner loser wins losses [optional] rt`,
     description: 'inputs the results of a set into the database, with an optional r or t to flag it as a rival/tournament match.\n' +
-                  'For names with 1 space, add a * in front of the name. (*Player 9). More than 1 space won\'t work, talk to the player about changing things' +
+                  'For names with 1 space, add a * in front of the name. (*Player 9). More than 1 space won\'t work, talk to the player about changing things\n' +
                   `eg. ;set Bob John 3 2 r (Bob won 3-2 vs John, and it was a rivals match).\n 'r' 't' or 'rt' are valid tags (no spaces in rt)`,
     admin:true,
     process: function(msg, suffix) {
@@ -608,7 +608,13 @@ function inputSet(msg, suffix) {
       details[1] = name
     }
     if (details.length < 4) {
-      msg.channel.send('Oops! You forgot some details there...')
+      msg.channel.send('Oops! You forgot some details there...\n' + commands['set'].usage)
+    }
+    else if (details[3] > details[2]) {
+      msg.channel.send('Oops! You put things in the wrong order!\n' + commands['set'].usage)
+    }
+    else if (Number(details[2]) == NaN || Number(details[3]) == NaN) {
+      msg.channel.send('Oops! You did\'t put a number in the wins or losses argument!\n' + commands['set'].usage)
     }
     else {
       let [winner, loser, wins, losses, ...rt] = details
