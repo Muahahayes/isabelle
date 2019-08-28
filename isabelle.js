@@ -978,7 +978,7 @@ function updateRivals() {
     let players = []
     // let oldRivals = JSON.parse(fs.readFileSync("data/rivals.json"))
     // oldRivals.shift()
-    let oldRivals = []
+    let oldRivals = [[]]
     
     for (let row of result) {
       players.push(row.tag)
@@ -1027,7 +1027,7 @@ function updateRivals() {
         i++
       }// while players.length > 1
     }
-    if (players.length == 1) { // if odd number of rivals, reuse someone
+    if (result.length % 2 == 1) { // if odd number of rivals, reuse someone
       rivals[i] = players[0] // the leftover player
       i++
       rivals[i] = rivals[Math.floor(Math.random()*(rivals.length-1))]
