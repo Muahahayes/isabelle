@@ -4,7 +4,6 @@
     when rivals is called anyone that's 0 gets decayed, then set everyone to 0)
   Refactor database, add a 'dID' field to players table, tweak commands to use that to find people without suffix
   ;name change your tag in the database (checks dID)
-  Refactor ;rival in/out to use dID and no name suffix
 
   far future:
   add waifu stocks
@@ -309,6 +308,22 @@ const commands = {
     }
 
   },//character
+  "name" : {
+    usage: `;name tag`,
+    description: `Changes your current tag to the new one you provide.`,
+    admin: false,
+    process: function(msg, suffix) {
+      con.query(`UPDATE players SET tag=${suffix} WHERE dID=${msg.author.id}`, function(err, result) {
+        if (err) {
+          console.error(err)
+          msg.channel.send('Oops! Something broke when trying to change your tag.')
+        }
+        else {
+          msg.channel.send('Ok ' + suffix + ', I\'ve changed your tag in the system!')
+        }
+      })
+    }
+  },//name
   "update": {
     usage: `;update [optional]ranks/rivals`,
     description: `Pulls the current data from the database to update the given list\nif no list is given, updates all lists`,
@@ -430,8 +445,7 @@ const commands = {
           con.query(`UPDATE players SET rival=1 WHERE dID=${msg.author.id}`, function(err, result) {
             if (err) {
               console.error(err)
-              msg.channel.send('Oops! Something broke when trying to opt you into the rivals system. Restarting bot...')
-              process.exit(1)
+              msg.channel.send('Oops! Something broke when trying to opt you into the rivals system.')
             }
             else {
               msg.channel.send('Ok '+ name + ', I\'ve added you to the rivals system!')
@@ -442,8 +456,7 @@ const commands = {
           con.query(`UPDATE players SET rival=0 WHERE dID=${msg.author.id}`, function(err, result) {
             if (err) {
               console.error(err)
-              msg.channel.send('Oops! Something broke when trying to opt you out of the rivals system. Restarting bot...')
-              process.exit(1)
+              msg.channel.send('Oops! Something broke when trying to opt you out of the rivals system.')
             }
             else {
               msg.channel.send('Ok '+ name + ', I\'ve taken you out of the rivals system!')
@@ -480,8 +493,11 @@ const commands = {
             console.log(logstr)
             let time = new Date()
             //logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
-            msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!`).then(result => {
-              logChan.send(`[${time.toString()}]\n${logstr}\n\n`)
+            msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!\nIf you want to join the rivals system (weekly challenges) use the \`;rival in\` command.`)
+              .then(result => {
+              logChan.send(`[${time.toString()}]\n${logstr}\n\n`).then(result => {
+                msg.delete(500) // keep first name private
+              })
             })
           }
         })// con query
@@ -609,6 +625,9 @@ function inputSet(msg, suffix) {
     }
     if (details.length < 4) {
       msg.channel.send('Oops! You forgot some details there...\n' + commands['set'].usage)
+    }
+    else if (details[3].toLowerCase() == details[2].toLowerCase()){
+      msg.channel.send('Sorry! The same player can\'t defeat themselves!')
     }
     else if (details[3] > details[2]) {
       msg.channel.send('Oops! You put things in the wrong order!\n' + commands['set'].usage)
@@ -814,12 +833,11 @@ function matchHistory(msg, suffix) {
   con.query(query, function(err, result) {
     if (err) {
       console.error(err)
-      msg.channel.send('Oops! Something broke when reading the database. Restarting bot...')
-      process.exit(1)
+      msg.channel.send('Oops! Something broke when reading the database.')
     }
     else if (!result[0]) {
-      console.error(`Query failed! ${(msg.member.nickname)?msg.member.nickname:msg.author.username} queried for the match history of ${name}, no results found.`)
-      msg.channel.send('Oops! I could\'t find anyone with that name in the rankings!')
+      console.error(`Query failed! ${(msg.member.nickname)?msg.member.nickname:msg.author.username} queried for the match history of ${(name)?name:'themselves'}, no results found.`)
+      msg.channel.send('Oops! I couldn\'t find anyone with that name in the rankings!')
     }
     else {
       if (name = '') name = result[0].tag
