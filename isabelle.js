@@ -313,15 +313,27 @@ const commands = {
     description: `Changes your current tag to the new one you provide.`,
     admin: false,
     process: function(msg, suffix) {
-      con.query(`UPDATE players SET tag=${suffix} WHERE dID=${msg.author.id}`, function(err, result) {
+      con.query(`SELECT tag FROM players WHERE dID=${msg.author.id}`, function(err, result) {
         if (err) {
           console.error(err)
           msg.channel.send('Oops! Something broke when trying to change your tag.')
         }
+        else if (!result[0]) {
+          msg.channel.send(`Sorry! I couldn't find you in the database!`)
+        }
         else {
-          msg.channel.send('Ok ' + suffix + ', I\'ve changed your tag in the system!')
+          con.query(`UPDATE players SET tag=${suffix} WHERE dID=${msg.author.id}`, function(err, result) {
+            if (err) {
+              console.error(err)
+              msg.channel.send('Oops! Something broke when trying to change your tag.')
+            }
+            else {
+              msg.channel.send('Ok ' + suffix + ', I\'ve changed your tag in the system!')
+            }
+          })
         }
       })
+
     }
   },//name
   "update": {
