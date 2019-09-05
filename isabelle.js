@@ -515,7 +515,7 @@ const commands = {
         })// con query
       }//if mentions
       else {
-        msg.channel.send('Sorry! I need you to @mention the person you\'re trying to add!')
+        msg.channel.send('Sorry! I need you to @mention the person you\'re trying to add!\n```' + commands['join'].usage + '```')
       }
     }// process
   }//join
