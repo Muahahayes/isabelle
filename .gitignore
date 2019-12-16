@@ -10,3 +10,4 @@ log.txt
 !package-lock.json
 !package.json
 *.code-workspace
+!todo.txt

@@ -493,26 +493,30 @@ const commands = {
         let tag = suffix
         name = mysql.escape(name)
         tag = mysql.escape(tag)
-        
-        con.query(`INSERT INTO players (id, name, tag, dID) VALUES (0, ${name}, ${tag}, ${player.id})`, function(err, result) {
-          if (err) {
-            console.error(err)
-            msg.channel.send(`Oops! Something broke when adding ${tag} to the database! Restarting bot...`)
-            process.exit(1)
-          }
-          else {
-            let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} added ${tag} to the database.`
-            console.log(logstr)
-            let time = new Date()
-            //logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
-            msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!\nIf you want to join the rivals system (weekly challenges) use the \`;rival in\` command.`)
-              .then(result => {
-              logChan.send(`[${time.toString()}]\n${logstr}\n\n`).then(result => {
-                msg.delete(500) // keep first name private
+        if (name == '' || tag == '') {
+          msg.channel.send('Oops! You forgot something, please give me a name, a @mention, and a tag!')
+        }
+        else {
+          con.query(`INSERT INTO players (id, name, tag, dID) VALUES (0, ${name}, ${tag}, ${player.id})`, function(err, result) {
+            if (err) {
+              console.error(err)
+              msg.channel.send(`Oops! Something broke when adding ${tag} to the database! Restarting bot...`)
+              process.exit(1)
+            }
+            else {
+              let logstr = `${(msg.member.nickname)?msg.member.nickname:msg.author.username} added ${tag} to the database.`
+              console.log(logstr)
+              let time = new Date()
+              //logStream.write(`[${time.toString()}]\n${logstr}\n\n`)
+              msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!\nIf you want to join the rivals system (weekly challenges) use the \`;rival in\` command.`)
+                .then(result => {
+                logChan.send(`[${time.toString()}]\n${logstr}\n\n`).then(result => {
+                  msg.delete(500) // keep first name private
+                })
               })
-            })
-          }
-        })// con query
+            }
+          })// con query
+        }
       }//if mentions
       else {
         msg.channel.send('Sorry! I need you to @mention the person you\'re trying to add!\n```' + commands['join'].usage + '```')
