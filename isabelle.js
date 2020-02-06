@@ -748,7 +748,7 @@ function inputSet(msg, suffix) {
                     loserNew = Math.ceil(loserELO + ((lK * (0 - e2)) * s1))
                   }
 
-                  let loserCoins = K * (Number(wins) + Number(losses))
+                  let loserCoins = newK * (Number(wins) + Number(losses))
                   if (winnerELO > loserELO) {// coins based on better player's odds of winning, fighting big guys helps
                     loserCoins *= e1
                   }
@@ -760,7 +760,7 @@ function inputSet(msg, suffix) {
 
                   if (loserELO > winnerELO) {
                     loserCoins = loserCoins*((winnerELO-1000)/(loserELO-1000)) // scale based on how much of an upset it was, 
-                                                                                      //great players should be punished for losing to weak players
+                                                                               //great players should be punished for losing to weak players
                   }
                   loserCurrency += Math.ceil(loserCoins)
 
