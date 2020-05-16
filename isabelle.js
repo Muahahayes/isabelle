@@ -297,10 +297,15 @@ const commands = {
     description: `Isabelle is well trained and can speak on command!`,
     admin:true,
     process: function(msg, suffix) {
-      console.log(`${msg.member.nickname} said: ${suffix}`)
-      let chan = msg.channel
-      msg.delete(100)
-      chan.send(suffix)
+      if (suffix && suffix != '') {
+        console.log(`${msg.member.nickname} said: ${suffix}`)
+        let chan = msg.channel
+        msg.delete(100)
+        chan.send(suffix)
+      }
+      else {
+        commands['speak'].alt(msg)
+      }
     },
     alt: function(msg, suffix) {
       let rand = Math.floor(Math.random()*5)
