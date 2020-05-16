@@ -289,6 +289,17 @@ const commands = {
       
     }// process
   },//report
+  "speak": {
+    usage: `;speak text`,
+    description: `Isabelle is well trained and can speak on command!`,
+    admin:true,
+    process: function(msg, suffix) {
+      console.log(`${msg.member.nickname} said: ${suffix}`)
+      let chan = msg.channel
+      msg.delete(100)
+      chan.send(suffix)
+    }
+  },//speak
   "character": {
     usage: `;character charactername`,
     description: `Adds a role for that character to your Discord profile.`,
@@ -350,28 +361,23 @@ const commands = {
     description: `Pulls the current data from the database to update the given list\nif no list is given, updates all lists`,
     admin:true,
     process: function(msg, suffix) {
-      if (msg.member.roles.has('369948375530995712')) { // consul
-        if (suffix && suffix != '') {
-          switch(suffix.toLowerCase()) {
-            case 'ranks':
-              updateRanks()
-              break;
-            case 'rivals':
-              updateRivals()
-              break;
-            default:
-              msg.channel.send('Oops! I didn\'t understand which list you wanted me to update!')
-          }
-        }
-        else {
-          updateRivals()
-          setTimeout(() => { // so we don't post too soon after updateRivals
+      if (suffix && suffix != '') {
+        switch(suffix.toLowerCase()) {
+          case 'ranks':
             updateRanks()
-          }, 2000)          
+            break;
+          case 'rivals':
+            updateRivals()
+            break;
+          default:
+            msg.channel.send('Oops! I didn\'t understand which list you wanted me to update!')
         }
       }
       else {
-        msg.channel.send('Sorry! Only *admins* can update the lists!')
+        updateRivals()
+        setTimeout(() => { // so we don't post too soon after updateRivals
+          updateRanks()
+        }, 2000)          
       }
     }
   },//update
