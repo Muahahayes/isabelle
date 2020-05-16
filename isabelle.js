@@ -1699,11 +1699,11 @@ var roulettecommands = {
 		process: function(msg,suffix)
 		{
 			msg.channel.send("```\nRussian Roulette!\nCommands:\n" + 
-    				"!roulette <name> (Fires the gun! if the bullet is in the chamber, you die!)\n" + 
-    				"!roulette spin (Spin the cylinder. Muahahayes, why do you die if there's a bullet in the cylinder when you spin it?)\n" + 
-    				"!roulette empty (Clears the cylinder)\n" + 
-    				"!roulette count (Checks the number of bullets in the gun. Cheater.)\n" + 
-    				"!roulette reload|load (Loads a new bullet)\n```");
+    				";roulette <name> (Fires the gun! if the bullet is in the chamber, you die!)\n" + 
+    				";roulette spin (Spin the cylinder.\n" + 
+    				";roulette empty (Clears the cylinder)\n" + 
+    				";roulette count (Checks the number of bullets in the gun. Cheater.)\n" + 
+    				";roulette reload|load (Loads a new bullet)\n```");
 		}
 	}
 }
