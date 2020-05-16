@@ -191,7 +191,7 @@ const commands = {
         }, 200)
       }
       else {
-        let rand = Math.floor(Math.random()*3)
+        let rand = Math.floor(Math.random()*4)
         switch(rand) {
           case 0:
             msg.channel.send(`Sorry, I'll only give my life for the Mayor!`)
@@ -201,6 +201,9 @@ const commands = {
             break;
           case 2:
             msg.channel.send('W-why would you do this??')
+            break;
+          case 3:
+            msg.channel.send(`You're such a bully!`)
             break;
         }
       }
@@ -290,7 +293,7 @@ const commands = {
     }// process
   },//report
   "speak": {
-    usage: `;speak text`,
+    usage: `;speak`,
     description: `Isabelle is well trained and can speak on command!`,
     admin:true,
     process: function(msg, suffix) {
@@ -298,6 +301,28 @@ const commands = {
       let chan = msg.channel
       msg.delete(100)
       chan.send(suffix)
+    },
+    alt: function(msg, suffix) {
+      let rand = Math.floor(Math.random()*5)
+      let reply = ''
+      switch(rand) {
+        case 0:
+          reply = 'Woof!'
+          break;
+        case 1:
+          reply = 'Bark Bark!'
+          break;
+        case 2:
+          reply = 'Awooo!~'
+          break;
+        case 3:
+          reply = 'Grrrrrr...'
+          break;
+        case 4:
+          reply = 'Arf!'
+          break;
+      }
+      msg.channel.send(reply)
     }
   },//speak
   "character": {
@@ -578,7 +603,12 @@ function parseMessage(msg) {
             cmd.process(msg, suffix)
           }
           else {
-            msg.channel.send(`Sorry! Only mods can use the ${cmdTxt.toLowerCase()} command!`)
+            if (cmd.alt) {
+              cmd.alt(msg,suffix)
+            }
+            else {
+              msg.channel.send(`Sorry! Only mods can use the ${cmdTxt.toLowerCase()} command!`)
+            }            
           }
         }
         else {          
