@@ -618,9 +618,6 @@ function parseMessage(msg) {
         msg.channel.send(`Command "${cmdTxt}" failed!`)
       }
     }
-    else if (msg.channel.name == 'bot-maintanence' && msg.content.toLowerCase().startsWith('hi')) {
-      msg.channel.send(`Hi ${msg.member.nickname}!`)
-    }
   }
   else if (msg.author.id === bot.user.id) { //messages from bot to clean up
     switch(msg.content) {
@@ -628,6 +625,9 @@ function parseMessage(msg) {
         msg.delete(4000)
         break;
     }
+  }  
+  else if (msg.channel.name == 'bot-maintanence' && msg.content.toLowerCase().startsWith('hi')) {
+    msg.channel.send(`Hi ${msg.member.nickname}!`)
   }
 }// parseMessage
 
