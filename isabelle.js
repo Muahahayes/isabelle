@@ -1373,7 +1373,7 @@ function siwmn(msg, suffix) {
   var masda = ""
   for (var i = 0; i < mystring.length; i++) {
     if (mystring[i] == '\n') continue;
-    if (!mystring[i].match(/[a-z]|[0-9]/)) continue;
+    if (!mystring[i].match(/[a-z]/) && !mystring[i].match(/[0-9]/)) continue;
     if (mystring[i].match(/[0-9]/)) {
       switch(mystring[i]) {
         case 0:
