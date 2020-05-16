@@ -618,6 +618,9 @@ function parseMessage(msg) {
         msg.channel.send(`Command "${cmdTxt}" failed!`)
       }
     }
+    else if (msg.content.startsWith('Hi') && msg.channel.id == '369959016555872270') {
+      msg.channel.send(`Hi ${msg.member.nickname}!`)
+    }
   }
   else if (msg.author.id === bot.user.id) { //messages from bot to clean up
     switch(msg.content) {
