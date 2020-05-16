@@ -330,6 +330,74 @@ const commands = {
       msg.channel.send(reply)
     }
   },//speak
+  "smug": {
+    usage: ';smug #',
+    description: 'Displays a smug anime girl!',
+    admin:false,
+    process: function(msg,suffix) {
+      if(suffix)
+        smug = Math.floor(suffix)
+        if (Number.isNaN(smug)) smug = -1
+      else
+        smug = -1
+      smugPic(msg,smug)
+    }
+  },//smug
+  "sign": {
+    usage: ';sign text',
+    description: 'Isabelle will attempt to repeat you in sign language! (She\'s not very good...)',
+    admin:false,
+    process: function(msg,suffix) {
+      if(suffix){
+        signLang(msg,suffix);
+      }
+      else {
+        msg.channel.send('Oops! You didn\'t give me anything to sign!')
+      }
+    }
+  },
+  "siwmn": {
+    usage: ';siwmn text',
+    description: 'Isabelle will yell your phrase.',
+    admin:false,
+    process: function(msg, suffix) {
+      if (suffix) {
+        siwmn(msg, suffix)
+      }
+      else {
+        msg.channel.send('Oops! You didn\'t give me anything to yell!')
+      }
+    }
+  },
+  "roulette" :{
+    usage: ";roulette <roulette command>",
+    description: "pre-command for roulette functions, see ;roulette help",
+    process: function(msg,suffix) {
+      message = msg.content.replace(';roulette ', "");
+      var cmdTxt = message.split(" ")[0];
+      var roulettesuffix = message.substring(cmdTxt.length+1);
+      var cmd = roulettecommands[cmdTxt];
+      if(cmd) {
+        try {
+          cmd.process(msg,roulettesuffix);
+        } 
+        catch(e) {
+          var msgTxt = "command " + cmdTxt + " failed :(";
+          msg.channel.send(e + msgTxt);
+        }
+      } 
+      else {
+        try {
+          cmd = roulettecommands["fire"]
+          cmd.process(msg,suffix);
+        } 
+        catch(e) {
+          var msgTxt = "command " + cmdTxt + " failed :(";
+          msg.channel.send(e + msgTxt);
+        }
+      }
+    }
+  },
   "character": {
     usage: `;character charactername`,
     description: `Adds a role for that character to your Discord profile.`,
@@ -1219,6 +1287,112 @@ Every week you will be given a random rival from the ranking database. You can c
     })
   })// con query
 }// updateRivals
+
+function smugPic(msg, sSmug){
+	var smugURL = [
+	"https://cdn.discordapp.com/attachments/229744007666728961/333096132869881858/smuglestia.png",
+	"https://cdn.discordapp.com/attachments/229744007666728961/333064012394921984/tumblr_ooteuayn8Z1tpxzemo1_1280.gif",
+	"https://68.media.tumblr.com/18f52db4a0cbc5c661749d73426b12d8/tumblr_o05ju3cLhi1rg7cf3o1_500.jpg",
+	"http://i2.kym-cdn.com/entries/icons/facebook/000/004/403/Girls.jpg",
+	"http://i1.kym-cdn.com/photos/images/original/000/928/178/ea4.gif",
+	"https://s3-eu-west-1.amazonaws.com/mordhau-media/spirit/images/2903/4ed1d74cfaf1de8f553a833d3384351f.jpeg",
+	"https://ih1.redbubble.net/image.306792406.5643/st%2Csmall%2C215x235-pad%2C210x230%2Cf8f8f8.lite-1u2.jpg",
+	"https://cdn.discordapp.com/attachments/292112441750323200/334583543797645314/Lookssmugenoughformyfolder_b1e8155d7a827c033f8856fdddd4d99e.jpg",
+	"https://cdn.discordapp.com/attachments/229744007666728961/334843038075453451/the_smuggest_snake_alive.png",
+	"https://cdn.discordapp.com/attachments/289620719208235010/335255629428031498/MGGHZpp_.jpg",
+	"https://cdn.discordapp.com/attachments/289620719208235010/335256354493300756/3_racoons.png",
+	"https://cdn.discordapp.com/attachments/229744007666728961/335259517963206663/laughing-cheetah.jpg",
+	];
+
+	var smugCount = smugURL.length + 58;
+  // Pick a smug
+  if(sSmug <= smugURL.length + 58 && Math.floor(sSmug) >= 0){
+    smug = Math.floor(sSmug);
+  }
+  else{
+    smug = Math.ceil(Math.random() * smugURL.length + 58);
+  }
+  // Displaying the smug
+	if(smug < 59 && smug > 0){
+	    msg.channel.sendFile("http://smug.moe/smg/" + smug + ".png");
+	}
+	else if(smug == 0){
+		msg.channel.send("There are currently " + smugCount + " smugs!");
+	}
+	else{
+		msg.channel.sendFile(smugURL[smug - 59])
+	}
+}// smugPic
+
+function signLang(msg, suffix){
+	var hands = [
+	" :ok_hand:",
+	" :point_right:",
+	" :vulcan:",
+	" :middle_finger:",
+	" :fist:",
+	" :point_left:",
+	" :metal:",
+	" :raised_hands:",
+	" :clap:",
+	" :wave:",
+	" :thumbsup:",
+	" :thumbsdown:",
+	" :punch:",
+	" :v:",
+	" :raised_hand:",
+	" :open_hands:",
+	" :point_up:",
+	" :point_up_2:",
+	" :point_down:",
+	" :hand_splayed:",
+	" :call_me:",
+	" :raised_back_of_hand:",
+	" :fingers_crossed:",
+	" :right_facing_fist:",
+	" :left_facing_fist:",
+	" :muscle:",
+	];
+	var signHands = "";
+	var letterSign;
+	var letterHand;
+	var words = suffix.split(" ");
+	for(var i = 0; i < words.length; i++){
+		letterSign = words[i];
+		letterHand = letterSign.toUpperCase().charCodeAt(0)-65;
+		if(letterHand >= 0 && letterHand <= 25)
+			signHands += hands[letterHand];
+		else
+			signHands += hands[Math.floor(Math.random() * hands.length)];
+	}
+	msg.channel.guild.fetchMember(msg.author.id).then(guildMember =>{
+	var nickname = guildMember.nickname;
+	msg.channel.send(nickname + " signs:" + signHands);
+	});	
+}//signLang
+
+function siwmn(msg, suffix) {
+  mystring = suffix.split("")
+  var masda = ""
+  for (var i = 0; i < mystring.length; i++) {
+    if (mystring[i] == '\n') continue;
+    if (mystring[i] != "a" && mystring[i] != "b" && mystring[i] != "o" && mystring[i] != ' '){
+    masda += " :regional_indicator_"+mystring[i]+": "
+    }
+    else if (mystring[i] != "o" && mystring[i] != ' '){
+      masda += " :" + mystring[i] + ": "
+    }
+    else if (mystring[i] != ' ')
+    {
+      masda += " :o2: "
+    }
+    else {
+      masda += ' '
+    }
+  }
+  msg.channel.send(masda);
+}//siwmn
+
 /*
 for pretty messages use this
 let embed = new Discord.RichEmbed()
@@ -1229,3 +1403,273 @@ let embed = new Discord.RichEmbed()
   .setAuthor('name', 'pic')
 msg.channel.send(embed)
 */
+
+
+var rouletteBullets = {
+	"0"	: 	0,
+	"1" 	: 	0,
+	"2" 	: 	0,
+	"3" 	: 	0,
+	"4" 	: 	0,
+	"5" 	: 	0,
+	'count' : function() // Gives the number of bullets currently avalaible
+	{
+		return 	rouletteBullets["0"] + 
+				rouletteBullets["1"] + 
+				rouletteBullets["2"] + 
+				rouletteBullets["3"] + 
+				rouletteBullets["4"] + 
+				rouletteBullets["5"];
+
+	},
+	"load" : 	function() //loads a bullet, returns false if full
+	{
+		if (rouletteBullets.count() == 6)
+		{
+			return false;
+		}
+		else
+		{
+			var loaded = false;
+			// Randomly insert Bullet
+			// while (!loaded)
+			// {
+			// 	var rand = Math.floor(Math.abs((Math.random() * 6) - 0.001));
+			// 	if(rouletteBullets[rand.toString()] == 0)
+			// 	{
+			// 		rouletteBullets[rand.toString()] = 1;
+			// 		loaded = true;
+			// 	}	
+			// }
+
+			// Insert bullet at position
+			if (rouletteBullets[rouletteBullets.current.toString()] == 0)
+			{
+				rouletteBullets[rouletteBullets.current.toString()] = 1;
+				loaded = true;
+			}
+			rouletteBullets.spun = false;
+			rouletteBullets.rotateback();
+			if (loaded)
+			{
+				return true;
+			}
+			else
+			{
+				return false
+			}
+			
+		}
+	},
+	"current" : 0,
+	"rotate" : function()
+	{
+		if (rouletteBullets.current < 5)
+			rouletteBullets.current += 1;
+		else
+			rouletteBullets.current = 0;
+	},
+	"rotateback" : function()
+	{
+		if (rouletteBullets.current > 0)
+			rouletteBullets.current -= 1;
+		else
+			rouletteBullets.current = 5;
+	},
+	"spin" : function()
+	{
+		rouletteBullets.current = Math.floor(Math.abs((Math.random() * 6) - 0.001))
+		rouletteBullets.spun = true;
+	},
+	"spun" : false,
+	"fire" : function()
+	{
+		rouletteBullets.rotate();
+		if (rouletteBullets[rouletteBullets.current.toString()] == 1)
+		{
+			rouletteBullets[rouletteBullets.current.toString()] = 0;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	},
+	"empty" : function()
+	{
+		cartridges = rouletteBullets.count();
+		rouletteBullets["0"] = 0;
+		rouletteBullets["1"] = 0;
+		rouletteBullets["2"] = 0;	
+		rouletteBullets["3"] = 0;
+		rouletteBullets["4"] = 0;
+		rouletteBullets["5"] = 0;
+		return cartridges;
+	}
+
+};
+
+var roulettecommands = {
+	"reload":{
+		process: function(msg,suffix){
+			var loadcount = parseInt(suffix);
+			if (!isNaN(loadcount))
+			{
+				var loaded = 0;
+				for (var i = 0; i < loadcount; i++)
+				{
+					if (rouletteBullets.load())
+					{
+						loaded += 1;
+					}
+				}
+				loadcount = loadcount - loaded;
+				if(loaded == 1)
+					msg.channel.send(":ok_hand: You loaded " + loaded + " bullet and dropped " + loadcount+ " on the floor");
+				else
+					msg.channel.send(":ok_hand: You loaded " + loaded + " bullets and dropped " + loadcount+ " on the floor");
+			}
+			
+
+			else if (rouletteBullets.load())// if you actually load the bullet
+			{
+				msg.channel.send(":ok_hand: Gun Reloaded!");
+			}
+			else	// if you fail to load the bullet. i.e. it's full already, or you try to insert it over a different bullet
+			{
+				msg.channel.send(":thinking: You dropped the bullet on the ground.");
+			}
+		}
+	},
+	"load":{
+		process: function(msg,suffix){
+			var loadcount = parseInt(suffix);
+			if (!isNaN(loadcount))
+			{
+				var loaded = 0;
+				for (var i = 0; i < loadcount; i++)
+				{
+					if (rouletteBullets.load())
+					{
+						loaded += 1;
+					}
+				}
+				loadcount = loadcount - loaded;
+				if(loaded == 1)
+					msg.channel.send(":ok_hand: You loaded " + loaded + " bullet and dropped " + loadcount+ " on the floor");
+				else
+					msg.channel.send(":ok_hand: You loaded " + loaded + " bullet(s) and dropped " + loadcount+ " on the floor");
+			}
+			
+
+			else if (rouletteBullets.load())// if you actually load the bullet
+			{
+				msg.channel.send(":ok_hand: Gun Reloaded!");
+			}
+			else	// if you fail to load the bullet. i.e. it's full already, or you try to insert it over a different bullet
+			{
+				msg.channel.send(":thinking: You dropped the bullet on the ground.");
+			}
+		}
+	},
+	"spin":{
+		process: function(msg,suffix){
+			rouletteBullets.spin();
+    		msg.channel.send(":nerd: Spinning the cylinders has randomized the bullet!");
+		}
+	},
+	"count":{
+		process: function(msg,suffix){
+			msg.channel.send(":eyes: you cheat and check the number of bullets in the cylinder. There are " + rouletteBullets.count())
+		}
+	},
+	"fire":{
+		process: function(msg,suffix){
+			msg1 = "";
+			msg2 = "";
+			msg3 = "";
+			msg4 = ""
+			if(suffix == ""){
+				msg1 = ":joy: :gun:";
+				msg2 = msg1 + "\n...";
+		    		if (rouletteBullets.fire()){
+		    			msg3 = msg2 + "\n:boom: **BANG!** You died!!";
+		    			if (rouletteBullets.spun == false){
+		    				msg4 = msg3 + "\n:clap: Did you intend to shoot the bullet you just loaded?. Use !roulette spin";
+		    			}
+		    		}
+		    		else{
+						msg3 = msg2 + "\n.....*Click!*";
+						if (rouletteBullets.count() == 0){
+		    				msg4 = msg3 +"\n:expressionless: What were you expecting. It's empty. Use !roulette reload";
+		    			}
+		    		}
+		    }
+		    else if(suffix.includes("<@")){
+		    	var thisid = suffix.replace(/[^0-9\.]/g, '')
+		    	
+		    	var found = false;
+				for(var i = 0; i < msg.guild.members.array().length; i++) {
+				    if (msg.guild.members.array()[i].user.id == thisid) {
+				        found = true;
+				        break;
+				    }
+				}
+				if (found)
+				{
+					msg1 = ":scream:  :gun: :joy:";
+					msg2 = msg1 + "\n...";
+		    		if (rouletteBullets.fire()){
+		    			msg3 = msg2 + "\n:boom: **BANG!** You killed <@"+ thisid+  ">!!";
+		    			if (rouletteBullets.spun == false){
+		    				msg4 = msg3 + "\n:clap: Did you intend to shoot the bullet you just loaded?. Use !roulette spin";
+		    			}
+		    		}
+		    		else{
+						msg.channel.send("\n.....*Click!*\n :disappointed_relieved: :gun: :rolling_eyes:");
+						if (rouletteBullets.count() == 0){
+		    				msg4 = msg3 +"\n:expressionless: What were you expecting. It's empty. Use !roulette reload";
+		    			}
+		    		}
+				}
+			}
+			var mes;
+			msg.channel.send(msg1).then((message => {
+				mes = message;
+				if(msg2 != "")
+				setTimeout(function(){mes.edit(msg2)}, 1000)
+				if(msg3 != "")
+				setTimeout(function(){mes.edit(msg3)}, 2000)
+				if(msg4 != "")
+					setTimeout(function(){mes.edit(msg4)}, 2250)
+			}));
+		}
+	},
+	"empty":{
+		process: function(msg,suffix)
+		{
+			if (rouletteBullets.count() == 0){
+				msg.channel.send(":dash: You attempt to empty the gun. Only an undetermined number of casings fall on the ground.");
+			}
+			else if (rouletteBullets.count() == 1)
+			{
+				msg.channel.send(":v: Peace! Peace! \nYou empty the gun and " + rouletteBullets.empty() + " cartridge along with an undetermined number of casings fall on the ground.");
+			}
+			else
+			{
+				msg.channel.send(":v: Peace! Peace! \nYou empty the gun and " + rouletteBullets.empty() + " cartridges along with an undetermined number of casings fall on the ground.");
+			}
+		}
+	},
+	"help":{
+		process: function(msg,suffix)
+		{
+			msg.channel.send("```\nRussian Roulette!\nCommands:\n" + 
+    				"!roulette <name> (Fires the gun! if the bullet is in the chamber, you die!)\n" + 
+    				"!roulette spin (Spin the cylinder. Muahahayes, why do you die if there's a bullet in the cylinder when you spin it?)\n" + 
+    				"!roulette empty (Clears the cylinder)\n" + 
+    				"!roulette count (Checks the number of bullets in the gun. Cheater.)\n" + 
+    				"!roulette reload|load (Loads a new bullet)\n```");
+		}
+	}
+}
