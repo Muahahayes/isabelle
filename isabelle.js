@@ -618,7 +618,7 @@ function parseMessage(msg) {
         msg.channel.send(`Command "${cmdTxt}" failed!`)
       }
     }
-    else if (msg.content.startsWith('Hi') && msg.channel.id == '369959016555872270') {
+    else if (msg.channel.name == 'bot-maintanence' && msg.content.toLowerCase().startsWith('hi')) {
       msg.channel.send(`Hi ${msg.member.nickname}!`)
     }
   }
