@@ -245,7 +245,7 @@ const commands = {
   "edit": {
     usage: `;edit variable value name`,
     description: 'changes the value of the given variable of the named player\n'+
-                  'eg. ;edit rating 1300 Player 9 (sets Player 9\'s ELO rating to 1300)',
+                  'eg. ;edit elo 1300 Player 9 (sets Player 9\'s ELO rating to 1300)',
     admin:true,
     process: function(msg, suffix) {
       editValue(msg, suffix)
@@ -489,7 +489,7 @@ const commands = {
   },//rival
   "join": {
     usage: `;join name @player tag`,
-    description: 'Adds a player into the database with the given name and tag, and gets their discord ID from the @ mention.\nNames with spaces are ok here.',
+    description: 'Adds a player into the database with the given name and tag, and gets their discord ID from the @ mention.\nTags with spaces are ok here.\neg. ;join Alex @Muahahayes Player 9 (Alex joins the database, with the tag Player 9)',
     admin: true,
     process: function(msg, suffix) {
       if (msg.mentions.users.size) {
@@ -1030,7 +1030,7 @@ function updateRanks() {
 Work your way up to higher ranked belt colors by sparring with other members and raising your rating.
 The higher your opponent the more points you gain on a win, and the less you lose on a loss! (and vice versa)
 During your first 5 games you are in 'Placement' and receive 3x the points (both up and down)
-Check #weekly-rivals for a weekly challenge, its worth 2x points if you win!`
+Check #weekly-rivals for a weekly challenge, its worth 2x points if you win! Use the command \`;rival in\` to be put into the weekly challenge.`
       let chan = bot.channels.find(x => x.name === 'dojo-ratings')
       chan.bulkDelete(20).catch((result) => console.log('Promise rejected from bulkDelete inside updateRanks'))
       chan.send(greeting).then(msg => {
@@ -1148,7 +1148,7 @@ function updateRivals() {
     }
     //fs.writeFileSync('data/rivals.json', JSON.stringify(oldRivals))
     let greeting = `CHALLENGE YOUR RIVAL! (Best of 3)
-Every week you will be given a random rival from the ranking database. You can challenge them once that week for double the points! You have 2 weeks to do that rival challenge before it goes away, meaning you have 2 rivals at one time and each week the older of the two gets replaced.
+Every week you will be given a random rival from the ranking database. You can challenge them once that week for double the points! You have 1 week to do that rival challenge before it goes away.
 (loser only loses the normal amount so don't be afraid!)`
 
     // print output
