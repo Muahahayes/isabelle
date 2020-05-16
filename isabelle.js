@@ -1374,9 +1374,9 @@ function siwmn(msg, suffix) {
   for (var i = 0; i < mystring.length; i++) {
     console.log('siwmn: ' + mystring[i])
     if (mystring[i] == '\n') continue;
-    if (mystring[i].match(/[a-z]/) || mystring[i].match(/[0-9]/)) {
-      if (mystring[i].match(/[0-9]/)) {
-        switch(mystring[i]) {
+    if (mystring[i].match(/[a-z]/) || Number(mystring[i])) {
+      if (Number(mystring[i])) {
+        switch(Number(mystring[i])) {
           case 0:
             masda += ' :zero: '
             break;
