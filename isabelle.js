@@ -627,7 +627,10 @@ function parseMessage(msg) {
     }
   }  
   else if (msg.channel.name == 'bot-maintanence' && msg.content.toLowerCase().startsWith('hi')) {
-    msg.channel.send(`Hi ${msg.member.nickname}!`)
+    let name = msg.member.nickname
+    name = name.replace(' (Mod)','')
+    name = name.replace(' (Admin)','')
+    msg.channel.send(`Hi ${name}!`)
   }
 }// parseMessage
 
