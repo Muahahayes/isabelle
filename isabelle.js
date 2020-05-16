@@ -857,7 +857,7 @@ function editValue(msg, suffix) {
 
     con.query(`SELECT * FROM players WHERE tag=${name}`, (err, result) => {
       if (err) {
-        msg.channel.send(`Oops! Couldn't find a player with the tag ${name} in the database!`)
+        msg.channel.send(`${err}\n\nOops! Couldn't find a player with the tag ${name} in the database!`)
       }
       else {
         if (result[0][variable]) {
