@@ -874,7 +874,7 @@ function editValue(msg, suffix) {
           })
         }
         else {
-          msg.channel.send(`Oops! The variable ${variable} isn't valid!`)
+          msg.channel.send(`Result = ${JSON.stringify(result)}\nOops! The variable ${variable} isn't valid!`)
         }
       }
     })
