@@ -860,8 +860,14 @@ function editValue(msg, suffix) {
         msg.channel.send(`${err}\n\nOops! Couldn't find a player with the tag ${name} in the database!`)
       }
       else {
-        variable = variable.replace(`'`,'')
-        value = value.replace(`'`, '')
+        variable = variable.split('')
+        variable.pop()
+        variable.shift()
+        variable = variable.join('')
+        value = value.split('')
+        value.pop()
+        value.shift()
+        value = value.join('')
         if (result[0][variable]) {
           output += `Found player with the tag ${name}, their ${variable} is ${result[0][variable]}`
           let query = `UPDATE players SET ${variable}=${value} WHERE tag=${name}`
