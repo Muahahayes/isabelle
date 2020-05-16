@@ -242,6 +242,15 @@ const commands = {
       })
     }// process
   },//rating
+  "edit": {
+    usage: `;edit variable value name`,
+    description: 'changes the value of the given variable of the named player\n'+
+                  'eg. ;edit rating 1300 Player 9 (sets Player 9\'s ELO rating to 1300)',
+    admin:true,
+    process: function(msg, suffix) {
+      editValue(msg, suffix)
+    }
+  },//edit
   "set": {
     usage: `;set winner loser wins losses [optional] rt`,
     description: 'inputs the results of a set into the database, with an optional r or t to flag it as a rival/tournament match.\n' +
@@ -748,7 +757,7 @@ function inputSet(msg, suffix) {
                     loserNew = Math.ceil(loserELO + ((lK * (0 - e2)) * s1))
                   }
 
-                  let loserCoins = K * (Number(wins) + Number(losses))
+                  let loserCoins = newK * (Number(wins) + Number(losses))
                   if (winnerELO > loserELO) {// coins based on better player's odds of winning, fighting big guys helps
                     loserCoins *= e1
                   }
@@ -760,7 +769,7 @@ function inputSet(msg, suffix) {
 
                   if (loserELO > winnerELO) {
                     loserCoins = loserCoins*((winnerELO-1000)/(loserELO-1000)) // scale based on how much of an upset it was, 
-                                                                                      //great players should be punished for losing to weak players
+                                                                               //great players should be punished for losing to weak players
                   }
                   loserCurrency += Math.ceil(loserCoins)
 
@@ -830,6 +839,49 @@ function inputSet(msg, suffix) {
     }
   }
 }// inputSet
+
+// editValue
+// takes the current message, and its suffix
+// changes a value in the db for a given player
+function editValue(msg, suffix) {
+  if (!suffix) {
+    msg.channel.send('Oops! You\'re missing the details of this command!')
+  }
+  else {
+    let details = suffix.split(' ')
+    let variable = details[0]
+    let value = details[1]
+    let name = details.splice(2)
+    let output = ''
+    name = name.join(' ')
+
+    con.query(`SELECT * FROM players WHERE tag=${name}`, (err, result) => {
+      if (err) {
+        msg.channel.send(`Oops! Couldn't find a player with the tag ${name} in the database!`)
+      }
+      else {
+        if (result[0][variable]) {
+          output += `Found player with the tag ${name}, their ${variable} is ${result[0][variable]}`
+          let query = `UPDATE players SET ${variable}=${value} WHERE tag=${name}`
+          con.query(query, (err, result) => {
+            if (err) {
+              msg.channel.send(`Oops! Something went wrong while setting that value in the database!`)
+            }
+            else {
+              output += `\nSuccess! Set the player's ${variable} to ${value}`
+              msg.channel.send(output)
+            }
+          })
+        }
+        else {
+          msg.channel.send(`Oops! The variable ${variable} isn't valid!`)
+        }
+      }
+    })
+
+    
+  }
+}// editValue
 
 // matchHistory
 // takes the current message and the name of a player

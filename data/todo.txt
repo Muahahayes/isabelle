@@ -2,10 +2,9 @@ Waifu Stocks
   S1:
     Setup DB (see whiteboard for schema)
     Move over WIP code from earlier, check it works, make commands that call these and pass discord ids
-    sellToMarket (sells a girl to the market for 0.9x her current listed price, 
-      market has internal value from the lost 10% which is distributed evenly next update to all girls for "market inflation" over time)
+    sellToMarket (sells a girl to the market for 0.9x her current listed price, market has internal value from the lost 10% which is distributed evenly next update to all girls for "market inflation" over time)
     dailyUpdate (does the trades vs par value shift algorithm I came up with on the whiteboard, with a minor amount of rng to simulate market uncertainty)
-    elo boosts (when a ;set is recorded, the waifus the winning player has at least 1 stock in gain a small boost to the next dailyUpdate)
+    elo boosts (when a ;set is recorded, the waifus the winning player has at least 1 stock gain a small boost to the next dailyUpdate)
   S2:
     insertGirl (make it a command, takes Name, Series, Description, PictureURL, all are \n delimited)
     profile (refactor with smash profile, so it shows both things)
@@ -16,7 +15,27 @@ Waifu Stocks
     command to see an individual girl by name
   S4:
     add reaction button to verify buying from a player (seller has to click reaction)
-    work on concurrency stuff (lock a girl while doing things to that stock, 
-      if a request comes in and hits a locked girl it waits, whenever a request finishes it tells queue
-      to pop and check if the next is a request for a still locked girl, if it is it puts it to the back of the queue
-      and checks the next one, until it reaches a girl that isn't locked)    
+    work on concurrency stuff (lock a gID while doing things to that stock, if a request comes in and hits a locked gID it waits, whenever a request finishes it tells queue to pop and check if the next is a request for a still locked gID, if it is it puts it to the back of the queue and checks the next one, until it reaches a gID that isn't locked)    
+
+
+Girl
+  gID int
+  name varchar64
+  desc varchar64
+  img varchar64
+  value double
+  stocks int
+  trades int
+
+Stocks
+  sID int
+  gID int
+  pID int
+  quantity int
+
+log transaction history
+
+V = V * g
+g = 1 + ((trades - par)/par)*k
+g = ((par - gap)/par)*k
+par = max - (best+worst)/2
