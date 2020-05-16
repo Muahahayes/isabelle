@@ -1373,7 +1373,42 @@ function siwmn(msg, suffix) {
   var masda = ""
   for (var i = 0; i < mystring.length; i++) {
     if (mystring[i] == '\n') continue;
-    if (mystring[i] != "a" && mystring[i] != "b" && mystring[i] != "o" && mystring[i] != ' '){
+    if (!mystring[i].match(/[a-z]|[0-9]/)) continue;
+    if (mystring[i].match(/[0-9]/)) {
+      switch(mystring[i]) {
+        case 0:
+          masda += ' :zero: '
+          break;
+        case 1:
+          masda += ' :one '
+          break;
+        case 2:
+          masda += ' :two: '
+          break;
+        case 3:
+          masda += ' :three: '
+          break;
+        case 4:
+          masda += ' :four: '
+          break;
+        case 5:
+          masda += ' :five: '
+          break;
+        case 6:
+          masda += ' :six: '
+          break;
+        case 7:
+          masda += ' :seven: '
+          break;
+        case 8:
+          masda += ' :eight: '
+          break;
+        case 9:
+          masda += ' :nine: '
+          break;
+      }
+    }
+    else if (mystring[i] != "a" && mystring[i] != "b" && mystring[i] != "o" && mystring[i] != ' '){
     masda += " :regional_indicator_"+mystring[i]+": "
     }
     else if (mystring[i] != "o" && mystring[i] != ' '){
