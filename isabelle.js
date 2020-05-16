@@ -335,11 +335,11 @@ const commands = {
     description: 'Displays a smug anime girl!',
     admin:false,
     process: function(msg,suffix) {
-      if(suffix)
+      let smug = -1
+      if(suffix) {
         smug = Math.floor(suffix)
         if (Number.isNaN(smug)) smug = -1
-      else
-        smug = -1
+      }
       smugPic(msg,smug)
     }
   },//smug
@@ -1365,14 +1365,11 @@ function signLang(msg, suffix){
 		else
 			signHands += hands[Math.floor(Math.random() * hands.length)];
 	}
-	msg.channel.guild.fetchMember(msg.author.id).then(guildMember =>{
-	var nickname = guildMember.nickname;
-	msg.channel.send(nickname + " signs:" + signHands);
-	});	
+	msg.channel.send(signHands);
 }//signLang
 
 function siwmn(msg, suffix) {
-  mystring = suffix.split("")
+  mystring = suffix.toLowerCase().split("")
   var masda = ""
   for (var i = 0; i < mystring.length; i++) {
     if (mystring[i] == '\n') continue;
