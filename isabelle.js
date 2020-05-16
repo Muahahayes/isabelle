@@ -383,7 +383,7 @@ const commands = {
         } 
         catch(e) {
           var msgTxt = "command " + cmdTxt + " failed :(";
-          msg.channel.send(e + msgTxt);
+          msg.channel.send(e +'\n'+ msgTxt);
         }
       } 
       else {
@@ -393,7 +393,7 @@ const commands = {
         } 
         catch(e) {
           var msgTxt = "command " + cmdTxt + " failed :(";
-          msg.channel.send(e + msgTxt);
+          msg.channel.send(e +'\n'+ msgTxt);
         }
       }
     }
@@ -688,7 +688,7 @@ function parseMessage(msg) {
         cmd.process(msg,suffix)
         }
       } catch(e) {
-        msg.channel.send(`Command "${cmdTxt}" failed!`)
+        msg.channel.send(`${e}\n Command "${cmdTxt}" failed!`)
       }
     }
   }
