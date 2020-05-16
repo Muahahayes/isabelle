@@ -849,11 +849,11 @@ function editValue(msg, suffix) {
   }
   else {
     let details = suffix.split(' ')
-    let variable = details[0]
-    let value = details[1]
+    let variable = mysql.escape(details[0])
+    let value = mysql.escape(details[1])
     let name = details.splice(2)
     let output = ''
-    name = name.join(' ')
+    name = mysql.escape(name.join(' '))
 
     con.query(`SELECT * FROM players WHERE tag=${name}`, (err, result) => {
       if (err) {
