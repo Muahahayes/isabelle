@@ -11,4 +11,3 @@ log.txt
 !package.json
 *.code-workspace
 !todo.txt
-stocks.js
