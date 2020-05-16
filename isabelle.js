@@ -662,7 +662,7 @@ function parseMessage(msg) {
       else {
         let embed = new Discord.RichEmbed().setColor('#cecece').setTitle('Help: all commands')
         for (let command in commands) {
-          if (!command.admin || msg.member.roles.has('494878132143128616') || msg.member.roles.has('369948375530995712')) {
+          if (!command.admin || msg.member.roles.has('494878132143128616') || msg.member.roles.has('369948375530995712') || msg.member.roles.has('232012677147394048')) {
             embed.addField(`${command} Usage: ${commands[command].usage}`, `Description: ${commands[command].description}`, false)
           }
         }
@@ -672,7 +672,7 @@ function parseMessage(msg) {
     else if (cmd) {
       try {
         if (cmd.admin) {
-          if(msg.member.roles.has('494878132143128616') || msg.member.roles.has('369948375530995712')) { // senator or consul
+          if(msg.member.roles.has('494878132143128616') || msg.member.roles.has('369948375530995712') || msg.member.roles.has('232012677147394048')) { // senator or consul
             cmd.process(msg, suffix)
           }
           else {
@@ -699,7 +699,7 @@ function parseMessage(msg) {
         break;
     }
   }  
-  else if (msg.channel.name == 'bot-maintanence' && msg.content.toLowerCase().startsWith('hi')) {
+  else if ((msg.channel.name == 'bot-maintanence' || msg.channel.name == 'bot_maintanence') && msg.content.toLowerCase().startsWith('hi')) {
     let name = msg.member.nickname
     name = name.replace(' (Mod)','')
     name = name.replace(' (Admin)','')
