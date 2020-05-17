@@ -661,7 +661,7 @@ function parseMessage(msg) {
           break;
         }        
       }
-      while (taken = true) {
+      while (taken == true) {
       alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
       taken = false
       for (let anon in anons) {
