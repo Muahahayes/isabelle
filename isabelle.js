@@ -54,6 +54,8 @@ var prefix;
 var K;
 var logChan;
 var reportChan;
+var anons = {}
+var letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 con.query(`SELECT * FROM config`, function (err, result) {
   if (err) {
     console.error(err)
@@ -644,6 +646,39 @@ function parseMessage(msg) {
     let cmdTxt = msg.content.split(" ")[0].substring(prefix.length)
     let suffix = msg.content.substring(cmdTxt.length+prefix.length+1)
     let cmd = commands[cmdTxt.toLowerCase()]
+    if (msg.channel.name == 'anonymous') {
+      let authorID = msg.author.id
+      let chan = msg.channel
+      let content = msg.content
+      if (anons[authorID]) {
+        msg.delete(0).then(p => {
+          chan.send(`${anons[authorID]}: ` + content)
+        })
+      }
+      else {
+        let alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
+        let taken = false
+        for (let anon of anons) {
+          if (anon == alias) {
+            taken = true
+            break;
+          }        
+        }
+        while (taken = true) {
+        alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
+        taken = false
+        for (let anon of anons) {
+          if (anon == alias) {
+            taken = true
+            break;
+          }        
+        }
+        }
+        msg.delete(0).then(p => {
+          chan.send(`${anons[authorID]}: ` + content)
+        })
+      }
+    }
     if (cmdTxt == 'help') {
       if (suffix) {
         let cmdH = suffix.split(" ")[0]
@@ -1629,13 +1664,13 @@ var roulettecommands = {
 		    		if (rouletteBullets.fire()){
 		    			msg3 = msg2 + "\n:boom: **BANG!** You died!!";
 		    			if (rouletteBullets.spun == false){
-		    				msg4 = msg3 + "\n:clap: Did you intend to shoot the bullet you just loaded?. Use !roulette spin";
+		    				msg4 = msg3 + "\n:clap: Did you intend to shoot the bullet you just loaded?. Use ;roulette spin";
 		    			}
 		    		}
 		    		else{
 						msg3 = msg2 + "\n.....*Click!*";
 						if (rouletteBullets.count() == 0){
-		    				msg4 = msg3 +"\n:expressionless: What were you expecting. It's empty. Use !roulette reload";
+		    				msg4 = msg3 +"\n:expressionless: What were you expecting. It's empty. Use ;roulette reload";
 		    			}
 		    		}
 		    }
@@ -1656,13 +1691,13 @@ var roulettecommands = {
 		    		if (rouletteBullets.fire()){
 		    			msg3 = msg2 + "\n:boom: **BANG!** You killed <@"+ thisid+  ">!!";
 		    			if (rouletteBullets.spun == false){
-		    				msg4 = msg3 + "\n:clap: Did you intend to shoot the bullet you just loaded?. Use !roulette spin";
+		    				msg4 = msg3 + "\n:clap: Did you intend to shoot the bullet you just loaded?. Use ;roulette spin";
 		    			}
 		    		}
 		    		else{
 						msg.channel.send("\n.....*Click!*\n :disappointed_relieved: :gun: :rolling_eyes:");
 						if (rouletteBullets.count() == 0){
-		    				msg4 = msg3 +"\n:expressionless: What were you expecting. It's empty. Use !roulette reload";
+		    				msg4 = msg3 +"\n:expressionless: What were you expecting. It's empty. Use ;roulette reload";
 		    			}
 		    		}
 				}
@@ -1675,7 +1710,7 @@ var roulettecommands = {
 				if(msg3 != "")
 				setTimeout(function(){mes.edit(msg3)}, 2000)
 				if(msg4 != "")
-					setTimeout(function(){mes.edit(msg4)}, 2250)
+				setTimeout(function(){mes.edit(msg4)}, 2250)
 			}));
 		}
 	},
@@ -1702,7 +1737,7 @@ var roulettecommands = {
     				";roulette <name> (Fires the gun! if the bullet is in the chamber, you die!)\n" + 
     				";roulette spin (Spin the cylinder.\n" + 
     				";roulette empty (Clears the cylinder)\n" + 
-    				";roulette count (Checks the number of bullets in the gun. Cheater.)\n" + 
+    				";roulette count (Checks the number of bullets in the gun.)\n" + 
     				";roulette reload|load (Loads a new bullet)\n```");
 		}
 	}
