@@ -1753,20 +1753,23 @@ var roulettecommands = {
 	}
 }
 
-function clearAnon() {
+async function clearAnon() {
   console.log('clearAnon function')
   let anonChans = ['711476887960027146','711482868421099550']
   let anonC
   anons = {}
   for (let id of anonChans) {
     anonC = bot.channels.find(x => x.id === id)
-    anonC.bulkDelete(100).then(r => {
-      console.log(r)
-      let embed = new Discord.RichEmbed()
-      .setColor('#101020')
-      .setTitle('Welcome to Anonymous!')
-      .setDescription('All posts in this channel are anonymized by Isabelle, speak whatever is on your mind!')
-      anonC.send(embed)
-    })
+    await anonC.bulkDelete(100)
+    let msgs = await anonC.messages.fetch({limit: 3})
+    while (msgs.size >= 2) {
+      await anonC.bulkDelete(100)
+      msgs = await anonC.messages.fetch({limit: 3})
+    }
+    let embed = new Discord.RichEmbed()
+    .setColor('#101020')
+    .setTitle('Welcome to Anonymous!')
+    .setDescription('All posts in this channel are anonymized by Isabelle, speak whatever is on your mind!')
+    await anonC.send(embed)
   }
 }
