@@ -54,6 +54,7 @@ var prefix;
 var K;
 var logChan;
 var reportChan;
+var anonChan;
 var anons = {}
 var letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 con.query(`SELECT * FROM config`, function (err, result) {
@@ -98,6 +99,7 @@ bot.on('ready', () => {
   bot.user.setActivity('Super Smash Bros. Ultimate')
   logChan = bot.channels.find(x => x.name === 'logs')
   reportChan = bot.channels.find(x => x.name === 'reports')
+  anonChan = bot.channels.find(x => x.id == '711689236457455691')
   for (let i in commands) {
     commands[i].usage = commands[i].usage.replace(';',prefix) // replace default with defined prefix
     commands[i].description = commands[i].description.replace(';',prefix)
@@ -126,6 +128,9 @@ bot.on('disconnected', () => {
 })
 bot.on('message', (msg) => {
   parseMessage(msg)
+})
+bot.on('guildMemberAdd', member => {
+  member.setNickname('Anonymous')
 })
 
 const miscRoles = [
@@ -341,6 +346,14 @@ const commands = {
       clearAnon()
     }
   },//clearAnon
+  "a": {
+    usage: ';a text',
+    description: 'Gives Isabelle a message to post in the anonymous channel on Isabelle Channel',
+    admin:false,
+    process: function(msg, suffix) {
+      anonPost(msg, suffix)
+    }
+  },
   "smug": {
     usage: ';smug #',
     description: 'Displays a smug anime girl!',
@@ -652,38 +665,7 @@ const commands = {
 // functions
 function parseMessage(msg) {
   if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'anonymous') { //anonymous message in the anonymous channel
-    let authorID = msg.author.id
-    let chan = msg.channel
-    let content = msg.content
-    if (anons[authorID]) {
-      msg.delete(0).then(p => {
-        chan.send(`${anons[authorID]}: ` + content)
-      })
-    }
-    else {
-      let alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
-      let taken = false
-      for (let anon in anons) {
-        if (anons[anon] == alias) {
-          taken = true
-          break;
-        }        
-      }
-      while (taken == true) {
-      alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
-      taken = false
-      for (let anon in anons) {
-        if (anons[anon] == alias) {
-          taken = true
-          break;
-        }        
-      }
-      }
-      anons[authorID] = alias
-      msg.delete(0).then(p => {
-        chan.send(`${anons[authorID]}: ` + content)
-      })
-    }
+    anonPost(msg, msg.content)
   }
   else if (msg.author.id != bot.user.id && msg.content.startsWith(prefix) && msg.author.id != '85614143951892480') { //command from user (not UB3R-B0T)
     let cmdTxt = msg.content.split(" ")[0].substring(prefix.length)
@@ -717,7 +699,7 @@ function parseMessage(msg) {
     else if (cmd) {
       try {
         if (cmd.admin) {
-          if(msg.member.roles.has('494878132143128616') || msg.member.roles.has('369948375530995712') || msg.member.roles.has('232012677147394048')) { // senator or consul
+          if(msg.member.roles.has('494878132143128616') || msg.member.roles.has('369948375530995712') || msg.member.roles.has('232012677147394048') || msg.author.id == 142893548134596608) { // senator or consul
             cmd.process(msg, suffix)
           }
           else {
@@ -1754,17 +1736,24 @@ var roulettecommands = {
 }
 
 function clearAnon() {
-  let anonChans = ['711476887960027146','711482868421099550']
+  // let anonChans = ['711476887960027146','711482868421099550','711689236457455691']
   anons = {}
-  for (let id of anonChans) {
-    try {
-      clearAnonymous(id)
-    }
-    catch (e) {
-      console.log('Error while clearing anonymous channels!')
-      console.log(e)
-    }
+  try {
+    clearAnonymous('711689236457455691')
   }
+  catch (e) {
+    console.log('Error while clearing the anonymous channel!')
+    console.log(e)
+  }
+  // for (let id of anonChans) {
+  //   try {
+  //     clearAnonymous(id)
+  //   }
+  //   catch (e) {
+  //     console.log('Error while clearing anonymous channels!')
+  //     console.log(e)
+  //   }
+  // }
 }
 
 async function clearAnonymous(id) {
@@ -1778,8 +1767,41 @@ async function clearAnonymous(id) {
     msgs = await anonC.fetchMessages({limit: 3})
   }
   let embed = new Discord.RichEmbed()
-  .setColor('#303850')
+  .setColor('#404050')
   .setTitle('Welcome to Anonymous!')
-  .setDescription('All posts in this channel are anonymized by Isabelle, speak whatever is on your mind!')
+  .setDescription('All posts in this channel are anonymized by Isabelle, speak whatever is on your mind! For extra anonymity, you can DM Isabelle your message! Use the `;a` command when giving her a message privately.')
   await anonC.send(embed)
+}
+
+function anonPost(msg, content) {
+  let authorID = msg.author.id
+  if (anons[authorID]) {
+    msg.delete(0).then(p => {
+      anonChan.send(`${anons[authorID]}: ` + content)
+    })
+  }
+  else {
+    let alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
+    let taken = false
+    for (let anon in anons) {
+      if (anons[anon] == alias) {
+        taken = true
+        break;
+      }        
+    }
+    while (taken == true) {
+    alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
+    taken = false
+    for (let anon in anons) {
+      if (anons[anon] == alias) {
+        taken = true
+        break;
+      }        
+    }
+    }
+    anons[authorID] = alias
+    msg.delete(0).then(p => {
+      anonChan.send(`${anons[authorID]}: ` + content)
+    })
+  }
 }
