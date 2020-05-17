@@ -647,6 +647,7 @@ function parseMessage(msg) {
     let suffix = msg.content.substring(cmdTxt.length+prefix.length+1)
     let cmd = commands[cmdTxt.toLowerCase()]
     if (msg.channel.name == 'anonymous') {
+      console.log('saw anonymous')
       let authorID = msg.author.id
       let chan = msg.channel
       let content = msg.content
@@ -679,7 +680,7 @@ function parseMessage(msg) {
         })
       }
     }
-    if (cmdTxt == 'help') {
+    else if (cmdTxt == 'help') {
       if (suffix) {
         let cmdH = suffix.split(" ")[0]
         if (commands[cmdH.toLowerCase()]) {
