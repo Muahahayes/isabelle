@@ -114,6 +114,7 @@ bot.on('ready', () => {
       }
     }
     else if ((currentTime - config.rankUpdate) > 86400000) {
+      clearAnon()
       updateRanks()  
     }
     //fs.writeFileSync('data/config.json',JSON.stringify(config))
@@ -332,6 +333,15 @@ const commands = {
       msg.channel.send(reply)
     }
   },//speak
+  "clearAnon": {
+    usage: ';clearAnon',
+    description: 'Clears the anonymous channels',
+    admin:true,
+    process: function(msg, suffix) {
+      clearAnon()
+      anons = {}
+    }
+  },
   "smug": {
     usage: ';smug #',
     description: 'Displays a smug anime girl!',
@@ -643,7 +653,6 @@ const commands = {
 // functions
 function parseMessage(msg) {
   if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'anonymous') {
-    console.log('saw anonymous')
     let authorID = msg.author.id
     let chan = msg.channel
     let content = msg.content
@@ -1743,4 +1752,13 @@ var roulettecommands = {
     				";roulette reload|load (Loads a new bullet)\n```");
 		}
 	}
+}
+
+async function clearAnon() {
+let anonChans = ['711476887960027146','711482868421099550']
+for (let id of anonChans) {
+  bot.channel.fetch(id).then(channel => {
+    channel.bulkDelete(1000)
+  })
+}
 }
