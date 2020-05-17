@@ -1753,23 +1753,28 @@ var roulettecommands = {
 	}
 }
 
-async function clearAnon() {
+function clearAnon() {
   console.log('clearAnon function')
   let anonChans = ['711476887960027146','711482868421099550']
-  let anonC
   anons = {}
   for (let id of anonChans) {
-    anonC = bot.channels.find(x => x.id === id)
-    await anonC.bulkDelete(100)
-    let msgs = await anonC.messages.fetch({limit: 3})
-    while (msgs.size >= 2) {
-      await anonC.bulkDelete(100)
-      msgs = await anonC.messages.fetch({limit: 3})
-    }
-    let embed = new Discord.RichEmbed()
-    .setColor('#101020')
-    .setTitle('Welcome to Anonymous!')
-    .setDescription('All posts in this channel are anonymized by Isabelle, speak whatever is on your mind!')
-    await anonC.send(embed)
+    clearAnonymous(id)
   }
+}
+
+async function clearAnonymous(id) {
+  let anonC = bot.channels.find(x => x.id === id)
+  console.log('deleting messages from anonymous channel')
+  await anonC.bulkDelete(100)
+  let msgs = await anonC.messages.fetch({limit: 3})
+  while (msgs.size >= 2) {
+    console.log('deleting extras')
+    await anonC.bulkDelete(100)
+    msgs = await anonC.messages.fetch({limit: 3})
+  }
+  let embed = new Discord.RichEmbed()
+  .setColor('#303850')
+  .setTitle('Welcome to Anonymous!')
+  .setDescription('All posts in this channel are anonymized by Isabelle, speak whatever is on your mind!')
+  await anonC.send(embed)
 }
