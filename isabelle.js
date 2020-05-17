@@ -332,11 +332,12 @@ const commands = {
       msg.channel.send(reply)
     }
   },//speak
-  "clearAnon": {
+  "clearanon": {
     usage: ';clearAnon',
     description: 'Clears the anonymous channels',
     admin:true,
     process: function(msg, suffix) {
+      console.log('clearAnon command')
       clearAnon()
     }
   },//clearAnon
@@ -650,7 +651,7 @@ const commands = {
 
 // functions
 function parseMessage(msg) {
-  if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'anonymous') {
+  if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'anonymous') { //anonymous message in the anonymous channel
     let authorID = msg.author.id
     let chan = msg.channel
     let content = msg.content
@@ -1753,7 +1754,7 @@ var roulettecommands = {
 }
 
 function clearAnon() {
-  console.log('clearAnon')
+  console.log('clearAnon function')
   let anonChans = ['711476887960027146','711482868421099550']
   let anonC
   anons = {}
