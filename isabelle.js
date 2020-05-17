@@ -646,6 +646,7 @@ function parseMessage(msg) {
     let cmdTxt = msg.content.split(" ")[0].substring(prefix.length)
     let suffix = msg.content.substring(cmdTxt.length+prefix.length+1)
     let cmd = commands[cmdTxt.toLowerCase()]
+    console.log(JSON.stringify(msg.channel))
     if (msg.channel.name == 'anonymous') {
       console.log('saw anonymous')
       let authorID = msg.author.id
