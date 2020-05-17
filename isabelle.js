@@ -1760,7 +1760,8 @@ function clearAnon() {
   anons = {}
   for (let id of anonChans) {
     anonC = bot.channels.find(x => x.id === id)
-    anonC.bulkDelete(1000).then(r => {
+    anonC.bulkDelete(100).then(r => {
+      console.log(r)
       let embed = new Discord.RichEmbed()
       .setColor('#101020')
       .setTitle('Welcome to Anonymous!')
