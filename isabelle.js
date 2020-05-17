@@ -642,46 +642,46 @@ const commands = {
 
 // functions
 function parseMessage(msg) {
-  if (msg.author.id != bot.user.id && msg.content.startsWith(prefix) && msg.author.id != '85614143951892480') { //command from user (not UB3R-B0T)
+  if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'anonymous') {
+    console.log('saw anonymous')
+    let authorID = msg.author.id
+    let chan = msg.channel
+    let content = msg.content
+    if (anons[authorID]) {
+      msg.delete(0).then(p => {
+        chan.send(`${anons[authorID]}: ` + content)
+      })
+    }
+    else {
+      let alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
+      let taken = false
+      for (let anon in anons) {
+        if (anons[anon] == alias) {
+          taken = true
+          break;
+        }        
+      }
+      while (taken = true) {
+      alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
+      taken = false
+      for (let anon in anons) {
+        if (anons[anon] == alias) {
+          taken = true
+          break;
+        }        
+      }
+      }
+      anons[authorID] = alias
+      msg.delete(0).then(p => {
+        chan.send(`${anons[authorID]}: ` + content)
+      })
+    }
+  }
+  else if (msg.author.id != bot.user.id && msg.content.startsWith(prefix) && msg.author.id != '85614143951892480') { //command from user (not UB3R-B0T)
     let cmdTxt = msg.content.split(" ")[0].substring(prefix.length)
     let suffix = msg.content.substring(cmdTxt.length+prefix.length+1)
     let cmd = commands[cmdTxt.toLowerCase()]
-    console.log(JSON.stringify(msg.channel))
-    if (msg.channel.name == 'anonymous') {
-      console.log('saw anonymous')
-      let authorID = msg.author.id
-      let chan = msg.channel
-      let content = msg.content
-      if (anons[authorID]) {
-        msg.delete(0).then(p => {
-          chan.send(`${anons[authorID]}: ` + content)
-        })
-      }
-      else {
-        let alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
-        let taken = false
-        for (let anon of anons) {
-          if (anon == alias) {
-            taken = true
-            break;
-          }        
-        }
-        while (taken = true) {
-        alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
-        taken = false
-        for (let anon of anons) {
-          if (anon == alias) {
-            taken = true
-            break;
-          }        
-        }
-        }
-        msg.delete(0).then(p => {
-          chan.send(`${anons[authorID]}: ` + content)
-        })
-      }
-    }
-    else if (cmdTxt == 'help') {
+    if (cmdTxt == 'help') {
       if (suffix) {
         let cmdH = suffix.split(" ")[0]
         if (commands[cmdH.toLowerCase()]) {
