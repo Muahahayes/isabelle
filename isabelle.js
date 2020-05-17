@@ -1766,11 +1766,11 @@ async function clearAnonymous(id) {
   let anonC = bot.channels.find(x => x.id === id)
   console.log('deleting messages from anonymous channel')
   await anonC.bulkDelete(100)
-  let msgs = await anonC.messages.fetch({limit: 3})
+  let msgs = await anonC.fetchMessages({limit: 3})
   while (msgs.size >= 2) {
     console.log('deleting extras')
     await anonC.bulkDelete(100)
-    msgs = await anonC.messages.fetch({limit: 3})
+    msgs = await anonC.fetchMessages({limit: 3})
   }
   let embed = new Discord.RichEmbed()
   .setColor('#303850')
