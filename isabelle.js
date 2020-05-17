@@ -292,7 +292,7 @@ const commands = {
       let time = new Date()
       let rep = `[${time.toString()}]\n${(msg.member.nickname)?msg.member.nickname:msg.author.username}: ${suffix}\n\n`
       //reportStream.write(rep)
-      msg.delete(3000)
+      if (msg.guild) msg.delete(3000)
       reportChan.send(rep).then(result => {
         msg.channel.send('Thanks! I\'ll write this down right away!')
       })
@@ -304,7 +304,7 @@ const commands = {
     description: `Isabelle is well trained and can speak on command!`,
     admin:true,
     process: function(msg, suffix) {
-      if (suffix && suffix != '') {
+      if (suffix && suffix != '' && msg.guild) {
         console.log(`${msg.member.nickname} said: ${suffix}`)
         let chan = msg.channel
         msg.delete(100)
@@ -648,7 +648,7 @@ const commands = {
               msg.channel.send(`Ok, I've added ${tag} to the database! Welcome to the ranking system ${tag}!\nIf you want to join the rivals system (weekly challenges) use the \`;rival in\` command.`)
                 .then(result => {
                 logChan.send(`[${time.toString()}]\n${logstr}\n\n`).then(result => {
-                  msg.delete(500) // keep first name private
+                  if (msg.guild) msg.delete(500) // keep first name private
                 })
               })
             }
