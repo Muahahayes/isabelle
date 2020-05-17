@@ -1754,11 +1754,16 @@ var roulettecommands = {
 }
 
 function clearAnon() {
-  console.log('clearAnon function')
   let anonChans = ['711476887960027146','711482868421099550']
   anons = {}
   for (let id of anonChans) {
-    clearAnonymous(id)
+    try {
+      clearAnonymous(id)
+    }
+    catch (e) {
+      console.log('Error while clearing anonymous channels!')
+      console.log(e)
+    }
   }
 }
 
