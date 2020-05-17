@@ -223,8 +223,7 @@ const commands = {
       if (suffix){
         query = `SELECT * FROM players WHERE tag = ${mysql.escape(suffix)}`
       }
-      else {
-        
+      else {        
         query = `SELECT * FROM players WHERE dID = ${msg.author.id}`
       }
       con.query(query, function(err, result) {
@@ -339,9 +338,8 @@ const commands = {
     admin:true,
     process: function(msg, suffix) {
       clearAnon()
-      anons = {}
     }
-  },
+  },//clearAnon
   "smug": {
     usage: ';smug #',
     description: 'Displays a smug anime girl!',
@@ -367,7 +365,7 @@ const commands = {
         msg.channel.send('Oops! You didn\'t give me anything to sign!')
       }
     }
-  },
+  },//sign
   "siwmn": {
     usage: ';siwmn text',
     description: 'Isabelle will yell your phrase.',
@@ -380,7 +378,7 @@ const commands = {
         msg.channel.send('Oops! You didn\'t give me anything to yell!')
       }
     }
-  },
+  },//siwmn
   "roulette" :{
     usage: ";roulette <roulette command>",
     description: "pre-command for roulette functions, see ;roulette help",
@@ -409,7 +407,7 @@ const commands = {
         }
       }
     }
-  },
+  },//roulette
   "character": {
     usage: `;character charactername`,
     description: `Adds a role for that character to your Discord profile.`,
@@ -1754,11 +1752,19 @@ var roulettecommands = {
 	}
 }
 
-async function clearAnon() {
-let anonChans = ['711476887960027146','711482868421099550']
-for (let id of anonChans) {
-  bot.channel.fetch(id).then(channel => {
-    channel.bulkDelete(1000)
-  })
-}
+function clearAnon() {
+  console.log('clearAnon')
+  let anonChans = ['711476887960027146','711482868421099550']
+  let anonC
+  anons = {}
+  for (let id of anonChans) {
+    anonC = bot.channels.find(x => x.id === id)
+    anonC.bulkDelete(1000).then(r => {
+      let embed = new Discord.RichEmbed()
+      .setColor('#101020')
+      .setTitle('Welcome to Anonymous!')
+      .setDescription('All posts in this channel are anonymized by Isabelle, speak whatever is on your mind!')
+      anonC.send(embed)
+    })
+  }
 }
