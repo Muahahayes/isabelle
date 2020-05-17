@@ -1776,9 +1776,14 @@ async function clearAnonymous(id) {
 function anonPost(msg, content) {
   let authorID = msg.author.id
   if (anons[authorID]) {
-    msg.delete(0).then(p => {
+    if (msg.guild) {
+      msg.delete(0).then(p => {
+        anonChan.send(`${anons[authorID]}: ` + content)
+      })
+    }
+    else {
       anonChan.send(`${anons[authorID]}: ` + content)
-    })
+    }
   }
   else {
     let alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
@@ -1800,8 +1805,13 @@ function anonPost(msg, content) {
     }
     }
     anons[authorID] = alias
-    msg.delete(0).then(p => {
+    if (msg.guild) {
+      msg.delete(0).then(p => {
+        anonChan.send(`${anons[authorID]}: ` + content)
+      })
+    }
+    else {
       anonChan.send(`${anons[authorID]}: ` + content)
-    })
+    }
   }
 }
