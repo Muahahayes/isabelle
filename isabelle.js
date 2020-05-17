@@ -104,6 +104,7 @@ bot.on('ready', () => {
     commands[i].usage = commands[i].usage.replace(';',prefix) // replace default with defined prefix
     commands[i].description = commands[i].description.replace(';',prefix)
   }
+  clearAnon()
   bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!')
   setInterval(() => { // update loop 
     let currentTime = Date.now()
