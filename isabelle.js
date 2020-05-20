@@ -104,8 +104,11 @@ bot.on('ready', () => {
     commands[i].usage = commands[i].usage.replace(';',prefix) // replace default with defined prefix
     commands[i].description = commands[i].description.replace(';',prefix)
   }
-  clearAnon()
-  bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!')
+  bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!').then( () => {
+    let embed = Discord.RichEmbed().setTitle('Bot Reset!').setDescription('2 Letter names are reset.').setColor('#ff52b1')
+    anonChan.send(embed)
+  }
+  )
   setInterval(() => { // update loop 
     let currentTime = Date.now()
     if ((currentTime - config.rivalUpdate) > 604800000) {
