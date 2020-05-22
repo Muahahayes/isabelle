@@ -863,11 +863,11 @@ function inputSet(msg, suffix) {
                   let wK = newK
                   let lK = newK
                   if (winnerP > 0) {
-                    wK = K + newK
+                    wK = K + K + newK
                     winnerP--
                   }
                   if (loserP > 0) {
-                    lK = K + newK
+                    lK = K + K + newK
                     loserP--
                   }
 
