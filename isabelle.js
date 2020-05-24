@@ -50,12 +50,13 @@ else {
 
 // bot config
 const bot = new Discord.Client()
-var prefix;
-var K;
-var logChan;
-var reportChan;
-var anonChan;
+var prefix
+var K
+var logChan
+var reportChan
+var anonChan
 var anons = {}
+var aliases = {}
 var letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 con.query(`SELECT * FROM config`, function (err, result) {
   if (err) {
@@ -1779,43 +1780,162 @@ async function clearAnonymous(id) {
 
 function anonPost(msg, content) {
   let authorID = msg.author.id
+  let anonNoun = [
+    'Watermelon',
+    'Grapes',
+    'Oregano',
+    'Apple',
+    'Strawberry',
+    'Kiwi',
+    'Lime',
+    'Lemon',
+    'Pineapple',
+    'Dog',
+    'Cat',
+    'Bird',
+    'Fox',
+    'Elephant',
+    'Person',
+    'Fork',
+    'Spoon',
+    'Knife',
+    'Bus',
+    'Car',
+    'Truck',
+    'Armadillo',
+    'Racoon',
+    'Squirrel',
+    'Meanie',
+    'Bully',
+    'Hero',
+    'Villain',
+    'Demon',
+    'Angel',
+    'Ninja',
+    'Pirate',
+    'Knight',
+    'Samurai',
+    'Rock',
+    'Tree',
+    'Flower',
+    'Leaf',
+    'Mushroom',
+    'Sun',
+    'Moon',
+    'Star',
+    'Diamond',
+    'Amethyst',
+    'Ruby',
+    'Sapphire',
+    'Emerald',
+    'Jade',
+    'Gamer',
+    'Bunny'
+  ]
+  let anonAdj = [
+    'Red',
+    'Blue',
+    'Yellow',
+    'Green',
+    'Orange',
+    'Purple',
+    'Teal',
+    'Black',
+    'White',
+    'Grey',
+    'Gray',
+    'Brown',
+    'Violet',
+    'Indigo',
+    'Cool',
+    'Sassy',
+    'Mean',
+    'Nice',
+    'Angry',
+    'Obtuse',
+    'Scared',
+    'Shy',
+    'Happy',
+    'Excited',
+    'Hyped',
+    'Lewd',
+    'Big',
+    'Small',
+    'Extra',
+    'Large',
+    'Tiny',
+    'Huge',
+    'Revered',
+    'Holy',
+    'Cursed',
+    'Blessed',
+    'Unholy',
+    'Favorite',
+    'Famous',
+    'Infamous',
+    'Relaxed',
+    'Loved',
+    'Hated',
+    'Feared',
+    'Respected'
+  ]
   if (anons[authorID]) {
     if (msg.guild) {
       msg.delete(0).then(p => {
-        anonChan.send(`${anons[authorID]}: ` + content)
+        anonChan.send(`\`${anons[authorID]}\`: ` + content)
       })
     }
     else {
-      anonChan.send(`${anons[authorID]}: ` + content)
+      anonChan.send(`\`${anons[authorID]}\`: ` + content)
     }
   }
   else {
-    let alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
-    let taken = false
-    for (let anon in anons) {
-      if (anons[anon] == alias) {
-        taken = true
-        break;
-      }        
-    }
-    while (taken == true) {
-    alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
-    taken = false
-    for (let anon in anons) {
-      if (anons[anon] == alias) {
-        taken = true
-        break;
-      }        
-    }
-    }
-    anons[authorID] = alias
-    if (msg.guild) {
-      msg.delete(0).then(p => {
-        anonChan.send(`${anons[authorID]}: ` + content)
-      })
+    // let alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]    
+    // let taken = false
+    // for (let anon in anons) {
+    //   if (anons[anon] == alias) {
+    //     taken = true
+    //     break;
+    //   }        
+    // }
+    // while (taken == true) {
+    // // alias = '' + letters[Math.floor(Math.random()*26)] + letters[Math.floor(Math.random()*26)]
+    // taken = false
+    // for (let anon in anons) {
+    //   if (anons[anon] == alias) {
+    //     taken = true
+    //     break;
+    //   }        
+    // }
+    // }
+    // anons[authorID] = alias
+    // if (msg.guild) {
+    //   msg.delete(0).then(p => {
+    //     anonChan.send(`${anons[authorID]}: ` + content)
+    //   })      
+    // }
+    // else {
+    //   anonChan.send(`${anons[authorID]}: ` + content)
+    // }
+    
+    if (aliases.length < anonAdj.length * anonNoun.length) {
+      let alias = anonAdj[Math.floor(Math.random()*anonAdj.length)] + ' ' + anonNoun[Math.floor(Math.random()*anonNoun.length)]
+      while (aliases[alias]) {
+        alias = anonAdj[Math.floor(Math.random()*anonAdj.length)] + ' ' + anonNoun[Math.floor(Math.random()*anonNoun.length)]
+      }
+      aliases[alias] = true
+      anons[authorID] = alias
+      if (msg.guild) {
+        msg.delete(0).then(p => {
+          anonChan.send(`\`${anons[authorID]}\`: ` + content)
+        })      
+      }
+      else {
+        anonChan.send(`\`${anons[authorID]}\`: ` + content)
+      }
     }
     else {
-      anonChan.send(`${anons[authorID]}: ` + content)
+      msg.channel.send('Sorry! We\'ve reached anon capacity!')
     }
   }
 }
