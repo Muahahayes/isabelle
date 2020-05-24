@@ -1878,17 +1878,18 @@ var anonAdj = [
 ]
 var anons = {}
 var aliases = {}
+var anonLast
 var letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 function anonPost(msg, content) {
   let authorID = msg.author.id
   if (anons[authorID]) {
     if (msg.guild) {
       msg.delete(0).then(p => {
-        anonChan.send(`\`${anons[authorID]}\`: ` + content)
+        anonMsg(authorID, content)
       })
     }
     else {
-      anonChan.send(`\`${anons[authorID]}\`: ` + content)
+      anonMsg(authorID, content)
     }
   }
   else {
@@ -1929,15 +1930,26 @@ function anonPost(msg, content) {
       anons[authorID] = alias
       if (msg.guild) {
         msg.delete(0).then(p => {
-          anonChan.send(`\`${anons[authorID]}\`: ` + content)
+          anonMsg(authorID, content)
         })      
       }
       else {
-        anonChan.send(`\`${anons[authorID]}\`: ` + content)
+        anonMsg(authorID, content)
       }
     }
     else {
-      msg.channel.send('Sorry! We\'ve reached anon capacity!')
+      msg.channel.send('Sorry! We\'ve reached max anon capacity!')
     }
+  }
+}
+
+function anonMsg(id, text) {
+  if (anonLast && anonLast.author.id == id) {
+    anonLast.edit(anonLast.content + '\n' + text)
+  }
+  else {
+    anonChan.send(`> \`${anons[id]}\`\n${text}`).then(msg => {
+      anonLast = msg
+    })
   }
 }
