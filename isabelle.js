@@ -106,7 +106,7 @@ bot.on('ready', () => {
     commands[i].description = commands[i].description.replace(';',prefix)
   }
   bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!').then( () => {
-    let embed = new Discord.RichEmbed().setTitle('Bot Reset!').setDescription('2 Letter names are reset.').setColor('#ff52b1')
+    let embed = new Discord.RichEmbed().setTitle('Bot Reset!').setDescription('Anon Aliases are reset.').setColor('#ff52b1')
     anonChan.send(embed)
   }
   )
