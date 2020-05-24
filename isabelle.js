@@ -1944,11 +1944,12 @@ function anonPost(msg, content) {
 }
 
 function anonMsg(id, text) {
-  if (anonLast && anonLast.author.id == id) {
+  let lastAlias = anonLast.content.match(/ `.+`/)[0].split('`')[1]
+  if (anonLast && lastAlias == anons[id]) {
     anonLast.edit(anonLast.content + '\n' + text)
   }
   else {
-    anonChan.send(`> \`${anons[id]}\`\n${text}`).then(msg => {
+    anonChan.send(`>>> \`${anons[id]}\`\n${text}`).then(msg => {
       anonLast = msg
     })
   }
