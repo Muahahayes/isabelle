@@ -1944,7 +1944,7 @@ function anonPost(msg, content) {
 }
 
 function anonMsg(id, text) {
-  let lastAlias = anonLast.content.match(/ `.+`/)[0].split('`')[1]
+  let lastAlias = (anonLast)?anonLast.content.match(/ `.+`/)[0].split('`')[1]:null
   if (anonLast && lastAlias == anons[id]) {
     anonLast.edit(anonLast.content + '\n' + text)
   }
