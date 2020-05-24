@@ -1740,6 +1740,7 @@ var roulettecommands = {
 function clearAnon() {
   // let anonChans = ['711476887960027146','711482868421099550','711689236457455691']
   anons = {}
+  aliases = {}
   try {
     clearAnonymous('711689236457455691')
   }
