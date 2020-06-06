@@ -2,8 +2,6 @@
   TODO:
   add a weekly decay feature (add a 'active' field to players table, when a match is put in set active to 1,
     when rivals is called anyone that's 0 gets decayed, then set everyone to 0)
-  Refactor database, add a 'dID' field to players table, tweak commands to use that to find people without suffix
-  ;name change your tag in the database (checks dID)
 
   far future:
   add waifu stocks
@@ -174,7 +172,8 @@ const miscRoles = [
   'Tatsumaki',
   'namelock',
   'rp',
-  'shhh'
+  'shhh',
+  'Octave'
 ]
 
 // commands
@@ -1954,3 +1953,73 @@ function anonMsg(id, text) {
     })
   }
 }
+
+/*
+  MAFIA GAME
+    Program Design:
+      !active:
+        players can opt into the next game (set active=true)
+        on the second night of being !active the next game starts (set active=true) 
+        when night triggers, !active and date=-1: 
+            set date=1
+        when night triggers, !active and date=0:
+            randomize players' roles
+            assign discord roles to players based on their game role
+            lock the town_hall channel and begin first night (set day=false)
+            set config active=true
+      active:
+        two phases, night and day (based on day bool)
+        a phase lasts 12 hours (9 to 9)
+        night:
+            lock town_hall channel
+            unlock role channels
+            players can do role actions (can only do if action==true, after doing action set action=false)
+            players can only post in their team's channel and cannot see other channels
+        day:
+          set date=date+1
+          reveal who died (and set alive=false)
+          if mafia >= town, mafia wins
+          unlock town_hall channel
+          lock role channels
+          set all protected=false, action=true
+          players may vote for a target to hang (set vote=id)
+          when day ends, reveal the votes and say who died
+          if mafia >= town+neutral and there's no serial killer, mafia wins
+          if mafia+sk==0, town wins
+      end:
+        announce the winners, and everyone's roles
+        remove roles from all players
+        set all player's active=false
+        set config active=false
+        set date=-1
+
+    DB Design:
+      Players (int id, varchar name, varchar role, int team, bool alive, bool action, int voteID, bool active, bool protected, bool used, bool blackmailed, int vests)
+      Config (bool active, bool day, int hour, int date, int server, int town, int mafia, bool mayor)
+      Deaths (int id, int date)
+      Visits (int id, int otherid, bool violent) record player, target, and violence for each interaction during the night
+
+    Roles:
+    Players have 2 discord roles, a Player role (which lets them talk in town_hall) and Role role (which gives them channel access to their hidden channel), roles are colorless and all named the same to hide them
+      Villager: No night action
+      Investigator: Investigate a person and learn if they are a violence related role (check their role, respond with yes/no)
+      Lookout: Watch one person at night (at the end of night, send message to them with a list of any players that matched on Visits table)
+      Veteran: Can go on alert (at end of night, kill anyone that matched on Visits table)
+      Vigilante: Can kill one player once per game, if they kill Town the vig will die the following night from guilt (set bool used to true)
+      Doctor: Protect one person each night (flags them at protected=true)
+      Escort: Distracts one person each night, nullifying their action (make a big switch statement of how to reverse actions done by each player)
+      Mayor: May reveal self at any time, and bot will confirm. After being revealed their vote counts as 3 (set Config mayor to true and bool used to true)
+      Medium: Speak with the dead at night (bot will anonymize messages from the dead in the mediums private channel)
+      Retributionist: May revive a dead Town once per game (set bool used to true)
+
+      Godfather: Choose one person to kill each night, if no Mafioso the GF does the killing
+      Mafioso: Kill a person the Godfather chooses (do a violent visit)
+      Blackmailer: Choose one person to blackmail, they can't talk during the next day (change their Player role to one without send message rights in town_hall)
+      Consigliere: Check one person for their exact role each night
+      Consort: Distracts one person each night, nullifying their action
+
+      Survivor: May use a bulletproof vest once per night, up to 4 per game, to protect you from attacks (vests-- in db), you win if you survive to the end
+      Executioner: You win if the Town lynches your target (chosen randomly on night 1, always Town), become a Jester if your target dies at night
+      Jester: You win if the Town lynches you, you may kill one player that voted to lynch you during the following night
+      Serial Killer: Kill someone each night, you win if you are the only survivor, if an Escort or Consort distracts you they die instead of your target
+*/
