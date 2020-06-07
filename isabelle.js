@@ -129,10 +129,9 @@ bot.on('disconnected', () => {
 bot.on('message', (msg) => {
   parseMessage(msg)
 })
-bot.on('guildMemberAdd', (guild, member) => {
+bot.on('guildMemberAdd', (member) => {
   console.log(member)
-  console.log(guild)
-  if (guild.id == '711689236457455688') {
+  if (member.guild.id == '711689236457455688') {
     member.setNickname('Anonymous')
   }
 })
