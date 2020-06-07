@@ -130,7 +130,6 @@ bot.on('message', (msg) => {
   parseMessage(msg)
 })
 bot.on('guildMemberAdd', (member) => {
-  console.log(member)
   if (member.guild.id == '711689236457455688') {
     member.setNickname('Anonymous')
   }
