@@ -130,7 +130,9 @@ bot.on('message', (msg) => {
   parseMessage(msg)
 })
 bot.on('guildMemberAdd', member => {
-  member.setNickname('Anonymous')
+  if (member.guild == '711689236457455688') {
+    member.setNickname('Anonymous')
+  }
 })
 
 const miscRoles = [
