@@ -1798,6 +1798,7 @@ async function clearAnonymous(id) {
 let asides = []
 let noNews = []
 function vietnam() {
+  console.log('vietnam()')
   let str = ''
   str += asides[randNum(asides.length)]
   str += '\n'
@@ -2048,6 +2049,7 @@ let tvIntro = [
   `Don't tell anyone, but I kinda like that weird show that aired last night... `
 ]
 function tvShow() {
+  console.log('tvShow()')
   let str = ''
   str += tvIntro[randNum(tvIntro.length)]
   let libs = [
@@ -2057,6 +2059,7 @@ function tvShow() {
     `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`
   ]
   str += madLib(libs[randNum(libs.length)])
+  console.log('tvShow return ' + str)
   return str
 }
 
@@ -2069,6 +2072,7 @@ function factoid() {
 }
 
 function madLib(lib) {
+  console.log('madLib()')
   lib = lib.replace('{n}', nouns[randNum(nouns.length)])
   let Un = nouns[randNum(nouns.length)]
   Un = Un.split('')
@@ -2084,6 +2088,7 @@ function madLib(lib) {
   lib = lib.replace('{Uadj}', Uadj)
   lib = lib.replace('{adj}', adj.replace[randNum(adj.length)])
   lib = lib.replace('{name}', libNames[randNum(libNames.length)])
+  console.log(`madLib() return ${lib}`)
   return lib
 }
 
