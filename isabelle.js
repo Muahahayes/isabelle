@@ -1817,7 +1817,8 @@ function vietnam() {
   str += asides[randNum(asides.length)]
   str += '\n'
   str += noNews[randNum(noNews.length)]
-  let genre = randNum(0)
+  str += ``
+  let genre = randNum(2)
   switch(genre) {
     case 0:
       str += tvShow()
@@ -1832,7 +1833,7 @@ function vietnam() {
       str += factoid()
       break;
   }
-  str += `\n...Have a good day everyone!`
+  str += `\nHave a good day everyone!`
   return str
   /*
     Good Morning! (some kind of friendly aside)
@@ -2076,8 +2077,25 @@ function tvShow() {
   return str
 }
 
+let sawThing = [
+  'I looked outside my window this morning and saw the weirdest thing! ',
+  'While watering my garden, I looked behind me and was startled by something! ',
+  'I was sitting on my porch soaking in the sunrise, and saw something rustling in the bushes in my yard! ',
+  'I saw something I just felt like telling you all about! '
+]
 function sawAnimal() {
-  
+  let str = ''
+  str += sawThing[randNum(sawThing.length)]
+  let libs = [
+    `It was a {adj} {n} roaming around the village. I hear some people saw it {v} {adv} behind some houses. Weird right?`,
+    `There was a {n} that I saw {v} right before my eyes! I've never seen anything like it!`,
+    `I think it was a {n}? By the time I tried to get a good look it was already gone! Let me know if anyone spots it!`,
+    `It was a {adj} {n}! I was so scared I had to {v}! I hope I didn't upset it...`,
+    `There was a {adj} {n} but it {v} {adv} before I knew it! I wonder what happened to it?`
+  ]
+  str += madLib(libs[randNum(libs.length)])
+  console.log(`sawAnimal return ${str}`)
+  return str
 }
 
 function factoid() {
