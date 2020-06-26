@@ -1818,7 +1818,7 @@ function vietnam() {
   str += '\n'
   str += noNews[randNum(noNews.length)]
   str += ``
-  let genre = randNum(2)
+  let genre = randNum(3)
   switch(genre) {
     case 0:
       str += tvShow()
