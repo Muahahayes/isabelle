@@ -2099,13 +2099,13 @@ function sawAnimal() {
 }
 
 let factIntro = [
-  `Here's a random Fact of the Day! `,
-  `Here's a random Fact of the Day! `,
-  `Did you guys know? `,
-  `Fact of the Day! `,
-  `Fact of the Day! `,
+  `here's a random Fact of the Day! `,
+  `here's a random Fact of the Day! `,
+  `did you guys know? `,
+  `fact of the Day! `,
+  `fact of the Day! `,
   `I read about something interesting! `,
-  `Guess what! `
+  `guess what! `
 ]
 function factoid() {
   let str = ''
