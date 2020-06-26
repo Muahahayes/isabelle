@@ -2069,7 +2069,7 @@ function tvShow() {
   str += tvIntro[randNum(tvIntro.length)]
   let libs = [
     `It was a documentary about a {n} that could {v} {adv}! Can you believe it?`,
-    `It was a gritty crime drama called {Uadj} {Un}! It was about a {adj} {n} with nothing to lose, who needs to {v} {adv} to save their city. I was at the edge of my seat!`,
+    `It was a gritty crime drama called {Uadj} {Un}! It was about {name}, a {adj} {n} with nothing to lose who needs to {v} {adv} to save their city. I was at the edge of my seat!`,
     `It was a cute cartoon with a {adj} {n} named {name} who can {v} all day long with their friends.\n...I may have stayed up all night watching the whole series.`,
     `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`,
     `It was a romcom where a woman falls in love with a {adj} {n}! It was so sweet, and I laughed when they began to {v}. I'd really recommend it!`
@@ -2080,7 +2080,7 @@ function tvShow() {
 
 let sawThing = [
   'I looked outside my window this morning and saw the weirdest thing! ',
-  'While watering my garden, I looked behind me and was startled by something! ',
+  'while watering my garden, I looked behind me and was startled by something! ',
   'I was sitting on my porch soaking in the sunrise, and saw something rustling in the bushes in my yard! ',
   'I saw something I just felt like telling you all about! '
 ]
