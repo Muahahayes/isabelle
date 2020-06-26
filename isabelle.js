@@ -2086,7 +2086,7 @@ function madLib(lib) {
   Uadj[0] = Uadj[0].toUpperCase()
   Uadj = Uadj.join('')
   lib = lib.replace('{Uadj}', Uadj)
-  lib = lib.replace('{adj}', adj.replace[randNum(adj.length)])
+  lib = lib.replace('{adj}', adj[randNum(adj.length)])
   lib = lib.replace('{name}', libNames[randNum(libNames.length)])
   console.log(`madLib() return ${lib}`)
   return lib
