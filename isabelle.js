@@ -2113,7 +2113,7 @@ function factoid() {
   let libs = [
     `A {adj} {n} can only {v} once in its lifetime? Weird right?`,
     `A {adj} {n} can {v}? I never knew!`,
-    `Only {adj} {n} can {v} {adv}? I thought they all could do it!`,
+    `Only a {adj} {n} can {v} {adv}? I thought they all could do it!`,
     `Doctors say if you {v} every day it's good for your health! Take care of yourselves!`,
     `Experts say if you {v} it will keep the {adj} {n} away! I should try that...`
   ]
