@@ -370,6 +370,18 @@ const commands = {
       smugPic(msg,smug)
     }
   },//smug
+  "morning": {
+    usage: ';morning',
+    description: 'Prints a morning announcement.',
+    admin:true,
+    process: function(msg, suffix) {
+      let greeting = new Discord.RichEmbed()
+      .setColor('#e163c0')
+      .setTitle('Good Morning!')
+      .setDescription(vietnam())
+      msg.channel.send(greeting)
+    }
+  },
   "sign": {
     usage: ';sign text',
     description: 'Isabelle will attempt to repeat you in sign language! (She\'s not very good...)',
@@ -1775,8 +1787,309 @@ async function clearAnonymous(id) {
   .setTitle('Welcome to Anonymous!')
   .setDescription('All posts in this channel are anonymized by Isabelle, speak whatever is on your mind! For extra anonymity, you can DM Isabelle your message! Use the `;a` command when giving her a message privately.')
   await anonC.send(embed)
+  let greeting = new Discord.RichEmbed()
+  .setColor('#e163c0')
+  .setTitle('Good Morning!')
+  .setDescription(vietnam())
+  anonC.send(greeting)
 }
 
+
+let asides = []
+let noNews = []
+function vietnam() {
+  let str = ''
+  str += asides[randNum(asides.length)]
+  str += '\n'
+  str += noNews[randNum(noNews.length)]
+  let genre = randNum(0)
+  switch(genre) {
+    case 0:
+      str += tvShow()
+      break;
+    case 1:
+      str += sawAnimal()
+      break;
+    case 2:
+      str += factoid()
+      break;
+    default: // just in case we somehow get 3 or whatever the magic number I used on genre??
+      str += factoid()
+      break;
+  }
+  str += `\n...Have a good day everyone!`
+  return str
+  /*
+    Good Morning! (some kind of friendly aside)
+    Right now its (time) on (day), (date)
+    (doesn't really have any news today)
+    (random goofy stuff)
+  */
+}
+
+let nouns = [
+  'pickle',
+  'bear',
+  'squirrel',
+  'man',
+  'man',
+  'man',
+  'woman',
+  'woman',
+  'woman',
+  'boy',
+  'boy',
+  'girl',
+  'girl',
+  'cat',
+  'cat',
+  'dog',
+  'dog',
+  'flower',
+  'uranium',
+  'belly button',
+  'bubble gum',
+  'bubble gum',
+  'gun',
+  'sword',
+  'apple',
+  'pear',
+  'peach',
+  'cherry',
+  'orange',
+  'bunny',
+  'pirate',
+  'ninja',
+  'bird',
+  'fox'
+]
+let verbs = [
+  'run','run',
+  'jump','jump',
+  'swim',
+  'dance','dance',
+  'play the flute',
+  'save money',
+  'hide',
+  'hula dance',
+  'find Waldo',
+  'shake trees',
+  'sing','sing',
+  'rage',
+  'make friends',
+  'file taxes',
+  'play Smash',
+  'post on Discord',
+  'watch Youtube',
+  'watch TV',
+  'play video games',
+  'hunt',
+  'eat','eat',
+  'run','run',
+  'jump','jump',
+  'swim',
+  'dance','dance',
+  'play the flute',
+  'save money',
+  'hide',
+  'hula dance',
+  'find Waldo',
+  'shake trees',
+  'sing','sing',
+  'rage',
+  'make friends',
+  'file taxes',
+  'play Smash',
+  'post on Discord',
+  'watch Youtube',
+  'watch TV',
+  'play video games',
+  'hunt',
+  'eat','eat',
+  'run','run',
+  'jump','jump',
+  'swim',
+  'dance','dance',
+  'play the flute',
+  'save money',
+  'hide',
+  'hula dance',
+  'find Waldo',
+  'shake trees',
+  'sing','sing',
+  'rage',
+  'make friends',
+  'file taxes',
+  'play Smash',
+  'post on Discord',
+  'watch Youtube',
+  'watch TV',
+  'play video games',
+  'hunt',
+  'eat','eat',
+  'read announcements to ungrateful villagers'
+]
+let adj = [
+  'red',
+  'blue',
+  'yellow',
+  'green',
+  'orange',
+  'purple',
+  'teal',
+  'black',
+  'white',
+  'grey',
+  'gray',
+  'brown',
+  'violet',
+  'indigo',
+  'cool',
+  'dassy',
+  'mean',
+  'nice',
+  'angry',
+  'obtuse',
+  'scared',
+  'shy',
+  'happy',
+  'excited',
+  'hyped',
+  'lewd',
+  'big',
+  'small',
+  'extra',
+  'large',
+  'tiny',
+  'huge',
+  'revered',
+  'holy',
+  'cursed',
+  'blessed',
+  'unholy',
+  'favorite',
+  'famous',
+  'infamous',
+  'relaxed',
+  'loved',
+  'hated',
+  'feared',
+  'respected',
+  'responsible',
+  'endearing',
+  'friendly',
+  'incredible',
+  'slutty'
+]
+let adv = [
+  'quickly',
+  'responsibly',
+  'easily',
+  'abruptly',
+  'beautifully',
+  'delicately',
+  'delightfully',
+  'firmly',
+  'lightly',
+  'truthfully',
+  'wearily',
+  'willfully',
+  'brutally',
+  'expertly',
+  'wickedly',
+  'everywhere',
+  'inside',
+  'outside',
+  'somewhere',
+  'first',
+  'last',
+  'regularly',
+  'today'
+]
+let libNames = [
+  'Rick',
+  'Morty',
+  'Sean',
+  'Erin Hanson',
+  'Danny Sexbang',
+  'Summer',
+  'Alex',
+  'Ryan',
+  'Karen',
+  'Chad',
+  'Susan',
+  'Joseph',
+  'Greg',
+  'Robbie',
+  'Peter',
+  'Homer',
+  'Marge',
+  'Shaggy',
+  'Fred',
+  'Velma',
+  'Daphne',
+  'Scooby',
+  'Bruce',
+  'Chris',
+  'Aly',
+  'Sunny',
+  'Belle',
+  'Stacy',
+  'Tiffany',
+  'Natalie',
+  'Thot',
+  'Simp'
+]
+let tvIntro = [
+  'I stayed up last night watching TV again... ',
+  'Did you guys see that new show on PBS? ',
+  `I saw a new show and I've been thinking about it all day. `,
+  'Does anyone remember that old TV show from our childhood? ',
+  `Don't tell anyone, but I kinda like that weird show that aired last night... `
+]
+function tvShow() {
+  let str = ''
+  str += tvIntro[randNum(tvIntro.length)]
+  let libs = [
+    `It was a documentary about a {n} that could {v} {adv}! Can you believe it?`,
+    `It was a gritty crime drama called {Uadj} {Un}! It was about a {adj} {n} with nothing to lose, who needs to {v} {adv} to save their city. I was at the edge of my seat!`,
+    `It was a cute cartoon with a {adj} {n} named {name} who can {v} all day long with their friends.\n...I may have stayed up all night watching the whole series.`
+    `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`
+  ]
+  str += madLib(libs[randNum(libs.length)])
+  return str
+}
+
+function sawAnimal() {
+  
+}
+
+function factoid() {
+
+}
+
+function madLib(lib) {
+  lib = lib.replace('{n}', nouns[randNum(nouns.length)])
+  let Un = nouns[randNum(nouns.length)]
+  Un = Un.split('')
+  Un[0] = Un[0].toUpperCase()
+  Un = Un.join('')
+  lib = lib.replace('{Un}', Un)
+  lib = lib.replace('{v}', verbs[randNum(verbs.length)])
+  lib = lib.replace('{adv}', adv[randNum(adv.length)])
+  let Uadj = adj[randNum(adj.length)]
+  Uadj = Uadj.split('')
+  Uadj[0] = Uadj[0].toUpperCase()
+  Uadj = Uadj.join('')
+  lib = lib.replace('{Uadj}', Uadj)
+  lib = lib.replace('{adj}', adj.replace[randNum(adj.length)])
+  lib = lib.replace('{name}', libNames[randNum(libNames.length)])
+  return lib
+}
+
+function randNum(length) {
+  return Math.floor(Math.random()*length)
+}
 // globals for anonPost, so they only get initialized once
 var anonNoun = [
   'Watermelon',
@@ -1875,7 +2188,12 @@ var anonAdj = [
   'Loved',
   'Hated',
   'Feared',
-  'Respected'
+  'Respected',
+  'Responsible',
+  'Endearing',
+  'Friendly',
+  'Incredible',
+  'Slutty'
 ]
 var anons = {}
 var aliases = {}
