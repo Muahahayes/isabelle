@@ -2055,7 +2055,7 @@ function tvShow() {
   let libs = [
     `It was a documentary about a {n} that could {v} {adv}! Can you believe it?`,
     `It was a gritty crime drama called {Uadj} {Un}! It was about a {adj} {n} with nothing to lose, who needs to {v} {adv} to save their city. I was at the edge of my seat!`,
-    `It was a cute cartoon with a {adj} {n} named {name} who can {v} all day long with their friends.\n...I may have stayed up all night watching the whole series.`
+    `It was a cute cartoon with a {adj} {n} named {name} who can {v} all day long with their friends.\n...I may have stayed up all night watching the whole series.`,
     `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`
   ]
   str += madLib(libs[randNum(libs.length)])
