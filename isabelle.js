@@ -1795,10 +1795,24 @@ async function clearAnonymous(id) {
 }
 
 
-let asides = []
-let noNews = []
+let asides = [
+  `How's everyone doing today?`,
+  `I hope you all are having a good day so far!`,
+  `I stayed up too late last night... again.`,
+  `You're all wonderful people!`,
+  `Today looks like it'll be a good day!`,
+  `How's everyone liking the weather today?`,
+  `It's the start of another great day!`
+]
+let noNews = [
+  `There's no news today, but `,
+  `I don't have any announcements today... `,
+  `I was going to read some news, but `,
+  `I forgot to bring the news with me today, `,
+  `There wasn't really anything interesting in the news day, so, `,
+  `...oh! Sorry I got a little distracted. I was thinking about something, `
+]
 function vietnam() {
-  console.log('vietnam()')
   let str = ''
   str += asides[randNum(asides.length)]
   str += '\n'
@@ -2043,13 +2057,12 @@ let libNames = [
 ]
 let tvIntro = [
   'I stayed up last night watching TV again... ',
-  'Did you guys see that new show on PBS? ',
+  'did you guys see that new show on PBS? ',
   `I saw a new show and I've been thinking about it all day. `,
-  'Does anyone remember that old TV show from our childhood? ',
-  `Don't tell anyone, but I kinda like that weird show that aired last night... `
+  'does anyone remember that old TV show from our childhood? ',
+  `don't tell anyone, but I kinda like that weird show that aired last night... `
 ]
 function tvShow() {
-  console.log('tvShow()')
   let str = ''
   str += tvIntro[randNum(tvIntro.length)]
   let libs = [
@@ -2072,7 +2085,6 @@ function factoid() {
 }
 
 function madLib(lib) {
-  console.log('madLib()')
   lib = lib.replace('{n}', nouns[randNum(nouns.length)])
   let Un = nouns[randNum(nouns.length)]
   Un = Un.split('')
