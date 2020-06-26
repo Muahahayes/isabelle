@@ -1961,7 +1961,7 @@ let adj = [
   'violet',
   'indigo',
   'cool',
-  'dassy',
+  'sassy',
   'mean',
   'nice',
   'angry',
@@ -2058,6 +2058,7 @@ let libNames = [
 ]
 let tvIntro = [
   'I stayed up last night watching TV again... ',
+  'I stayed up last night watching TV again... ',
   'did you guys see that new show on PBS? ',
   `I saw a new show and I've been thinking about it all day. `,
   'does anyone remember that old TV show from our childhood? ',
@@ -2073,7 +2074,6 @@ function tvShow() {
     `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`
   ]
   str += madLib(libs[randNum(libs.length)])
-  console.log('tvShow return ' + str)
   return str
 }
 
@@ -2094,12 +2094,30 @@ function sawAnimal() {
     `There was a {adj} {n} but it {v} {adv} before I knew it! I wonder what happened to it?`
   ]
   str += madLib(libs[randNum(libs.length)])
-  console.log(`sawAnimal return ${str}`)
   return str
 }
 
+let factIntro = [
+  `Here's a random Fact of the Day! `,
+  `Here's a random Fact of the Day! `,
+  `Did you guys know? `,
+  `Fact of the Day! `,
+  `Fact of the Day! `,
+  `I read about something interesting! `,
+  `Guess what! `
+]
 function factoid() {
-
+  let str = ''
+  str += factIntro[randNum(factIntro.length)]
+  let libs = [
+    `A {adj} {n} can only {v} once in its lifetime? Weird right?`,
+    `A {adj} {n} can {v}? I never knew!`,
+    `Only {adj} {n} can {v} {adv}? I thought they all could do it!`,
+    `Doctors say if you {v} every day it's good for your health! Take care of yourselves!`,
+    `Experts say if you {v} it will keep away the {adj} {n}! I should try that...`
+  ]
+  str += madLib(libs[randNum(libs.length)])
+  return str
 }
 
 function madLib(lib) {
@@ -2118,7 +2136,6 @@ function madLib(lib) {
   lib = lib.replace('{Uadj}', Uadj)
   lib = lib.replace('{adj}', adj[randNum(adj.length)])
   lib = lib.replace('{name}', libNames[randNum(libNames.length)])
-  console.log(`madLib() return ${lib}`)
   return lib
 }
 
