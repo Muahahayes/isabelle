@@ -2071,7 +2071,8 @@ function tvShow() {
     `It was a documentary about a {n} that could {v} {adv}! Can you believe it?`,
     `It was a gritty crime drama called {Uadj} {Un}! It was about a {adj} {n} with nothing to lose, who needs to {v} {adv} to save their city. I was at the edge of my seat!`,
     `It was a cute cartoon with a {adj} {n} named {name} who can {v} all day long with their friends.\n...I may have stayed up all night watching the whole series.`,
-    `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`
+    `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`,
+    `It was a romcom where a woman falls in love with a {adj} {n}! It was so sweet, and I laughed when they began to {v}. I'd really recommend it!`
   ]
   str += madLib(libs[randNum(libs.length)])
   return str
@@ -2089,9 +2090,9 @@ function sawAnimal() {
   let libs = [
     `It was a {adj} {n} roaming around the village. I hear some people saw it {v} {adv} behind some houses. Weird right?`,
     `There was a {n} that I saw {v} right before my eyes! I've never seen anything like it!`,
-    `I think it was a {n}? By the time I tried to get a good look it was already gone! Let me know if anyone spots it!`,
+    `I think it was a {n}? By the time I tried to {v} it was already gone! Let me know if anyone spots it!`,
     `It was a {adj} {n}! I was so scared I had to {v}! I hope I didn't upset it...`,
-    `There was a {adj} {n} but it {v} {adv} before I knew it! I wonder what happened to it?`
+    `There was a {adj} {n} but it started to {v} {adv} before I knew it! I wonder what happened to it?`
   ]
   str += madLib(libs[randNum(libs.length)])
   return str
@@ -2114,7 +2115,7 @@ function factoid() {
     `A {adj} {n} can {v}? I never knew!`,
     `Only {adj} {n} can {v} {adv}? I thought they all could do it!`,
     `Doctors say if you {v} every day it's good for your health! Take care of yourselves!`,
-    `Experts say if you {v} it will keep away the {adj} {n}! I should try that...`
+    `Experts say if you {v} it will keep the {adj} {n} away! I should try that...`
   ]
   str += madLib(libs[randNum(libs.length)])
   return str
