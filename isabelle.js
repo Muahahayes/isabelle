@@ -1834,6 +1834,16 @@ function vietnam() {
       break;
   }
   str += `\nHave a good day everyone!`
+  str = str.replace(' a a', ' an a')
+  str = str.replace(' a e', ' an e')
+  str = str.replace(' a i', ' an i')
+  str = str.replace(' a o', ' an o')
+  str = str.replace(' a u', ' an u')
+  str = str.replace(' A a', ' An a')
+  str = str.replace(' A e', ' An e')
+  str = str.replace(' A i', ' An i')
+  str = str.replace(' A o', ' An o')
+  str = str.replace(' A u', ' An u')
   return str
   /*
     Good Morning! (some kind of friendly aside)
@@ -2137,16 +2147,6 @@ function madLib(lib) {
   lib = lib.replace('{Uadj}', Uadj)
   lib = lib.replace('{adj}', adj[randNum(adj.length)])
   lib = lib.replace('{name}', libNames[randNum(libNames.length)])
-  lib = lib.replace(' a a', ' an a')
-  lib = lib.replace(' a e', ' an e')
-  lib = lib.replace(' a i', ' an i')
-  lib = lib.replace(' a o', ' an o')
-  lib = lib.replace(' a u', ' an u')
-  lib = lib.replace(' A a', ' An a')
-  lib = lib.replace(' A e', ' An e')
-  lib = lib.replace(' A i', ' An i')
-  lib = lib.replace(' A o', ' An o')
-  lib = lib.replace(' A u', ' An u')
   return lib
 }
 
