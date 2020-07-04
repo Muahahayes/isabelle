@@ -2137,12 +2137,23 @@ function madLib(lib) {
   lib = lib.replace('{Uadj}', Uadj)
   lib = lib.replace('{adj}', adj[randNum(adj.length)])
   lib = lib.replace('{name}', libNames[randNum(libNames.length)])
+  lib = lib.replace(' a a', ' an a')
+  lib = lib.replace(' a e', ' an e')
+  lib = lib.replace(' a i', ' an i')
+  lib = lib.replace(' a o', ' an o')
+  lib = lib.replace(' a u', ' an u')
+  lib = lib.replace(' A a', ' An a')
+  lib = lib.replace(' A e', ' An e')
+  lib = lib.replace(' A i', ' An i')
+  lib = lib.replace(' A o', ' An o')
+  lib = lib.replace(' A u', ' An u')
   return lib
 }
 
 function randNum(length) {
   return Math.floor(Math.random()*length)
 }
+
 // globals for anonPost, so they only get initialized once
 var anonNoun = [
   'Watermelon',
