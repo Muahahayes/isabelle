@@ -220,6 +220,19 @@ const commands = {
       }
     }// process
   },//die
+  "debugAlias": {
+    usage: ';debugAlias',
+    description: 'used for debugging (bot owner only!)',
+    admin:true,
+    process: function(msg, suffix) {
+      if (msg.author.id == 142893548134596608) {
+        msg.channel.send(`Alias list:\n${JSON.stringify(anons)}`)
+      }
+      else {
+        msg.channel.send('This command is only for debugging during code development.')
+      }
+    }
+  },
   "rating": {
     usage: `;rating name`,
     description: 'prints the current ELO rating of the named player\n'+
@@ -1812,7 +1825,7 @@ let noNews = [
   `There wasn't really anything interesting in the news day, so, `,
   `...oh! Sorry I got a little distracted. I was thinking about something, `
 ]
-function vietnam() {
+function vietnam() { // GOOD MORNING VIETNAM
   let str = ''
   str += asides[randNum(asides.length)]
   str += '\n'
