@@ -220,7 +220,7 @@ const commands = {
       }
     }// process
   },//die
-  "debugAlias": {
+  "debugalias": {
     usage: ';debugAlias',
     description: 'used for debugging (bot owner only!)',
     admin:true,
