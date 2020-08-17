@@ -2469,6 +2469,7 @@ function updatePostNum() {
 
 function updateTrip(msg, text) {
   let id = msg.author.id
+  let rawText = text
   text = mysql.escape(text)
   con.query(`SELECT * FROM chan WHERE dID = ${id}`, function(err, result) {
     if (err) {
@@ -2484,7 +2485,7 @@ function updateTrip(msg, text) {
         }
         else {
           console.log(result)
-          trips[id] = text
+          trips[id] = rawText
           msg.channel.send(`Tripcode: ${text} saved!`)
         }
       })
@@ -2498,7 +2499,7 @@ function updateTrip(msg, text) {
         }
         else {
           console.log(result)
-          trips[id] = text
+          trips[id] = rawText
           msg.channel.send(`Tripcode: ${text} changed!`)
         }
       })
@@ -2512,6 +2513,7 @@ function tripHash(pass) {
 
 function updateColor(msg, color) {
   let id = msg.author.id
+  let rawColor = color
   color = mysql.escape(color)
   con.query(`SELECT * FROM chan WHERE dID=${id}`, function(err, result) {
     if (err) {
@@ -2527,7 +2529,7 @@ function updateColor(msg, color) {
         }
         else {
           console.log(result)
-          chanColors[id] = color
+          chanColors[id] = rawColor
           msg.channel.send(`Color: ${color} saved!`)
         }
       })
@@ -2541,7 +2543,7 @@ function updateColor(msg, color) {
         }
         else {
           console.log(result)
-          chanColors[id] = color
+          chanColors[id] = rawColor
           msg.channel.send(`Color: ${color} changed!`)
         }
       })
