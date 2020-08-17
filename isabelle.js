@@ -2477,7 +2477,7 @@ function updateTrip(msg, text) {
     }
     else if (!result[0]) {
       //first time user
-      con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id}, "${text}", "#FDFFB4")`, function(err, result) {
+      con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id}, ${text}, "#FDFFB4")`, function(err, result) {
         if (err) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
@@ -2491,7 +2491,7 @@ function updateTrip(msg, text) {
     }
     else {
       //returning user
-      con.query(`UPDATE chan SET trip = "${text}" WHERE dID = ${id}`, function(err,result) {
+      con.query(`UPDATE chan SET trip = ${text} WHERE dID = ${id}`, function(err,result) {
         if (err) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
@@ -2520,7 +2520,7 @@ function updateColor(msg, color) {
     }
     else if (!result[0]) {
       // first time user
-      con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id},"Anonymous","${color}")`, function(err, result) {
+      con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id},"Anonymous",${color})`, function(err, result) {
         if (err) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
@@ -2534,7 +2534,7 @@ function updateColor(msg, color) {
     }
     else {
       // returning user
-      con.query(`UPDATE chan SET color="${color}" WHERE dID = ${id}`, function(err, result) {
+      con.query(`UPDATE chan SET color=${color} WHERE dID = ${id}`, function(err, result) {
         if (err) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
