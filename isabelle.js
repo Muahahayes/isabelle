@@ -2530,7 +2530,7 @@ function tripHash(pass) {
   }
   console.log(vals)
   for (let i in vals) {
-    vals[i] = val % 93
+    vals[i] = vals[i] % 93
     vals[i] += 33
   }
   console.log(vals)
