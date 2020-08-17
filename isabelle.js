@@ -2524,7 +2524,7 @@ function tripHash(pass) {
   pass = pass.split('')
   let j = 0
   let vals = [1,1,1,1,1,1,1,1,1]
-  for (let i=0; i<36; i+=2) {
+  for (let i=0; i<72; i+=2) {
     vals[i%9] *= pass[j%pass.length].charCodeAt(0)
     j++
   }
