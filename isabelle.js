@@ -2486,7 +2486,7 @@ function updateTrip(msg, text) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          trips[id] = rawText
+          trips[msg.author.id] = rawText
           console.log(trips)
           msg.channel.send(`Tripcode: ${rawText} saved!`)
         }
@@ -2500,7 +2500,7 @@ function updateTrip(msg, text) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          trips[id] = rawText
+          trips[msg.author.id] = rawText
           console.log(trips)
           msg.channel.send(`Tripcode: ${rawText} changed!`)
         }
@@ -2530,7 +2530,7 @@ function updateColor(msg, color) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {          
-          chanColors[id] = rawColor
+          chanColors[msg.author.id] = rawColor
           console.log(chanColors)
           msg.channel.send(`Color: ${rawColor} saved!`)
         }
@@ -2544,7 +2544,7 @@ function updateColor(msg, color) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {          
-          chanColors[id] = rawColor
+          chanColors[msg.author.id] = rawColor
           console.log(chanColors)
           msg.channel.send(`Color: ${rawColor} changed!`)
         }
