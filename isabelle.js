@@ -110,8 +110,8 @@ bot.on('ready', () => {
     }
     else {
       for (let row of result) {
-        trips[`${row.dID}`] = row.trip
-        chanColors[`${row.dID}`] = row.color
+        trips[row.dID] = row.trip
+        chanColors[row.dID] = row.color
       }
       console.log(trips)
       console.log(chanColors)
@@ -2430,9 +2430,9 @@ function anonMsg(id, text) {
   }
 }
 
-let trips = {}
-let chanColors = {}
-let postNum = 0
+var trips = {}
+var chanColors = {}
+var postNum = 0
 
 function chanPost(msg, content) {
   let authorID = `${msg.author.id}`
@@ -2470,7 +2470,7 @@ async function updatePostNum() {
 }
 
 function updateTrip(msg, text) {
-  let id = msg.author.id
+  let id = mysql.escape(`${msg.author.id}`)
   let rawText = text
   text = mysql.escape(text)
   con.query(`SELECT * FROM chan WHERE dID = ${id}`, function(err, result) {
@@ -2486,8 +2486,8 @@ function updateTrip(msg, text) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          console.log(trips)
           trips[id] = rawText
+          console.log(trips)
           msg.channel.send(`Tripcode: ${rawText} saved!`)
         }
       })
@@ -2500,8 +2500,8 @@ function updateTrip(msg, text) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          console.log(trips)
           trips[id] = rawText
+          console.log(trips)
           msg.channel.send(`Tripcode: ${rawText} changed!`)
         }
       })
@@ -2514,7 +2514,7 @@ function tripHash(pass) {
 }
 
 function updateColor(msg, color) {
-  let id = msg.author.id
+  let id = mysql.escape(`${msg.author.id}`)
   let rawColor = color
   color = mysql.escape(color)
   con.query(`SELECT * FROM chan WHERE dID=${id}`, function(err, result) {
@@ -2529,9 +2529,9 @@ function updateColor(msg, color) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
         }
-        else {
-          console.log(chanColors)
+        else {          
           chanColors[id] = rawColor
+          console.log(chanColors)
           msg.channel.send(`Color: ${rawColor} saved!`)
         }
       })
@@ -2543,9 +2543,9 @@ function updateColor(msg, color) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
         }
-        else {
-          console.log(chanColors)
+        else {          
           chanColors[id] = rawColor
+          console.log(chanColors)
           msg.channel.send(`Color: ${rawColor} changed!`)
         }
       })
