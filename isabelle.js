@@ -1520,7 +1520,6 @@ function siwmn(msg, suffix) {
   mystring = suffix.toLowerCase().split("")
   var masda = ""
   for (var i = 0; i < mystring.length; i++) {
-    console.log('siwmn: ' + mystring[i])
     if (mystring[i] == '\n') continue;
     if (mystring[i].match(/[a-z]/) || Number(mystring[i])) {
       if (Number(mystring[i])) {
@@ -2500,7 +2499,6 @@ function updateTrip(msg, text) {
         }
         else {
           trips[msg.author.id] = rawText
-          console.log(trips)
           msg.channel.send(`Tripcode: ${rawText} saved!`)
         }
       })
@@ -2514,7 +2512,6 @@ function updateTrip(msg, text) {
         }
         else {
           trips[msg.author.id] = rawText
-          console.log(trips)
           msg.channel.send(`Tripcode: ${rawText} changed!`)
         }
       })
@@ -2531,10 +2528,12 @@ function tripHash(pass) {
     vals[i%9] *= pass[j%pass.length].charCodeAt(0)
     j++
   }
+  console.log(vals)
   for (let val of vals) {
     val = val % 93
     val += 33
   }
+  console.log(vals)
   return String.fromCharCode(...vals)
 }
 
@@ -2556,7 +2555,6 @@ function updateColor(msg, color) {
         }
         else {          
           chanColors[msg.author.id] = rawColor
-          console.log(chanColors)
           msg.channel.send(`Color: ${rawColor} saved!`)
         }
       })
@@ -2570,7 +2568,6 @@ function updateColor(msg, color) {
         }
         else {          
           chanColors[msg.author.id] = rawColor
-          console.log(chanColors)
           msg.channel.send(`Color: ${rawColor} changed!`)
         }
       })
