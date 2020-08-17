@@ -2388,7 +2388,7 @@ function chanPost(msg, content) {
   output.setDescription(content)
 
   postNum++
-  msg.send(output)
+  msg.channel.send(output)
 
 }
 
