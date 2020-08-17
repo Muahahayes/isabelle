@@ -750,7 +750,7 @@ const commands = {
           }
           hash = tripHash(hash)
         }
-        let trip = ((name)?name+' ':'') + '!' + hash
+        let trip = ((name)?name+' ':'') + '!`' + hash + '`'
         updateTrip(msg, trip)
       }
       
@@ -2532,8 +2532,9 @@ function tripHash(pass) {
     j++
   }
   for (let i in vals) {
-    vals[i] = vals[i] % 93
-    vals[i] += 33
+    vals[i] = vals[i] % 92
+    vals[i] += 34
+    if (vals[i] == 96) vals[i] = 39
   }
   return String.fromCharCode(...vals)
 }
