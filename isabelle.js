@@ -2445,10 +2445,10 @@ function chanPost(msg, content) {
 
   if (image) {
     image = image[0]
-    output.setImage(image)
+    output.setThumbnail(image)
     content = content.split(' ')
     content.shift()
-    content = content.join('')
+    content = content.join(' ')
   }
   output.setDescription(content)
   
