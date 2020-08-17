@@ -99,7 +99,7 @@ bot.on('ready', () => {
   logChan = bot.channels.find(x => x.name === 'logs')
   reportChan = bot.channels.find(x => x.name === 'reports')
   anonChan = bot.channels.find(x => x.id == '711689236457455691')
-  chanChan = bot.channels.find(x => x.id == '744825098074325022')
+  chanChan = bot.channels.find(x => x.id == '744888215399301202')
   for (let i in commands) {
     commands[i].usage = commands[i].usage.replace(';',prefix) // replace default with defined prefix
     commands[i].description = commands[i].description.replace(';',prefix)
