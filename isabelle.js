@@ -739,18 +739,21 @@ const commands = {
       if (!suffix.includes('#')) {
         msg.channel.send('Oops! No password given, remember to include a password after a # sign.')
       }
-      let hash = suffix.split(' ')[0]
-      let name
-      if (hash) {
-        name = hash.split('#')[0]
-        hash = hash.split('#')[1]
-        if (hash.length>20) {
-          hash = hash.splice(0,20)
+      else {
+        let hash = suffix.split(' ')[0]
+        let name
+        if (hash) {
+          name = hash.split('#')[0]
+          hash = hash.split('#')[1]
+          if (hash.length>20) {
+            hash = hash.splice(0,20)
+          }
+          hash = tripHash(hash)
         }
-        hash = tripHash(hash)
+        let trip = ((name)?name+' ':'') + '!' + hash
+        updateTrip(msg, trip)
       }
-      let trip = (name)?name+' ':'' + '!' + hash
-      updateTrip(msg, trip)
+      
       msg.delete(0)
     }
   },//trip
@@ -2528,12 +2531,10 @@ function tripHash(pass) {
     vals[i%9] *= pass[j%pass.length].charCodeAt(0)
     j++
   }
-  console.log(vals)
   for (let i in vals) {
     vals[i] = vals[i] % 93
     vals[i] += 33
   }
-  console.log(vals)
   return String.fromCharCode(...vals)
 }
 
