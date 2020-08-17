@@ -749,7 +749,11 @@ const commands = {
   },
   "post": {
     usage: ';post [url] text',
-    description: 'Posts your message on Isabelle Chan in $chan-posting. If the first thing in your post is a url for an image she\'ll include your image in the post! (please don\'t use non-image urls)'
+    description: 'Posts your message on Isabelle Chan in $chan-posting. If the first thing in your post is a url for an image she\'ll include your image in the post! (please don\'t use non-image urls)',
+    admin:false,
+    process: function(msg, suffix) {
+      chanPost(msg, suffix)
+    }
   }
 }
 
@@ -2422,7 +2426,7 @@ let postNum = 0
 
 function chanPost(msg, content) {
   let authorID = msg.author.id
-  let image = content.split(' ')[0].match(/.+\.([a-z]|[A-Z])+$/)[0]
+  let image = content.split(' ')[0].match(/.+\.([a-z]|[A-Z])+$/)
   let trip = (trips[authorID]) ? trips[authorID] : 'Anonymous'
   let color = (chanColors[authorID]) ? chanColors[authorID] : '#FDFFB4'
   let output = new Discord.RichEmbed()
@@ -2430,6 +2434,7 @@ function chanPost(msg, content) {
   .setTitle(`${trip}   >>${postNum}`)
 
   if (image) {
+    image = image[0]
     output.setImage(image)
     content = content.split(' ')
     content.shift()
