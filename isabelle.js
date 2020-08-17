@@ -2475,12 +2475,13 @@ function updateTrip(msg, text) {
     }
     else if (result[0]) {
       //first time user
-      con.query(`INSERT INTO chan (dID, trip, color) VALUES(${id}, "${text}", "#FDFFB4")`, function(err, result) {
+      con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id}, "${text}", "#FDFFB4")`, function(err, result) {
         if (err) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
+          trips[id] = text
           msg.channel.send(`Tripcode: ${text} saved!`)
         }
       })
@@ -2493,6 +2494,7 @@ function updateTrip(msg, text) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
+          trips[id] = text
           msg.channel.send(`Tripcode: ${text} saved!`)
         }
       })
@@ -2514,13 +2516,14 @@ function updateColor(msg, color) {
     }
     else if (result[0]) {
       // first time user
-      con.query(`INSERT INTO chan (dID, trip, color) VALUES(${id}, "Anonymous", "${color}")`, function(err, result) {
+      con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id}, "Anonymous", "${color}")`, function(err, result) {
         if (err) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
           console.log(result)
+          chanColors[id] = color
           msg.channel.send(`Color: ${color} saved!`)
         }
       })
@@ -2534,6 +2537,7 @@ function updateColor(msg, color) {
         }
         else {
           console.log(result)
+          chanColors[id] = color
           msg.channel.send(`Color: ${color} saved!`)
         }
       })
