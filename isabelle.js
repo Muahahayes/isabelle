@@ -110,8 +110,8 @@ bot.on('ready', () => {
     }
     else {
       for (let row of result) {
-        trips[row.dID] = row.trip
-        chanColors[row.dID] = row.color
+        trips[`${row.dID}`] = row.trip
+        chanColors[`${row.dID}`] = row.color
       }
       console.log(trips)
       console.log(chanColors)
@@ -2486,7 +2486,7 @@ function updateTrip(msg, text) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          console.log(result)
+          console.log(trips)
           trips[id] = rawText
           msg.channel.send(`Tripcode: ${rawText} saved!`)
         }
@@ -2500,7 +2500,7 @@ function updateTrip(msg, text) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          console.log(result)
+          console.log(trips)
           trips[id] = rawText
           msg.channel.send(`Tripcode: ${rawText} changed!`)
         }
@@ -2530,7 +2530,7 @@ function updateColor(msg, color) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          console.log(result)
+          console.log(chanColors)
           chanColors[id] = rawColor
           msg.channel.send(`Color: ${rawColor} saved!`)
         }
@@ -2544,7 +2544,7 @@ function updateColor(msg, color) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          console.log(result)
+          console.log(chanColors)
           chanColors[id] = rawColor
           msg.channel.send(`Color: ${rawColor} changed!`)
         }
