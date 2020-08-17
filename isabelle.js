@@ -707,6 +707,9 @@ function parseMessage(msg) {
   if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'anonymous') { //anonymous message in the anonymous channel
     anonPost(msg, msg.content)
   }
+  else if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'chan-posting') {
+    chanPost(msg, msg.content)
+  }
   else if (msg.author.id != bot.user.id && msg.content.startsWith(prefix) && msg.author.id != '85614143951892480') { //command from user (not UB3R-B0T)
     let cmdTxt = msg.content.split(" ")[0].substring(prefix.length)
     let suffix = msg.content.substring(cmdTxt.length+prefix.length+1)
@@ -2287,7 +2290,6 @@ var anonAdj = [
 var anons = {}
 var aliases = {}
 var anonLast
-var letters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 function anonPost(msg, content) {
   let authorID = msg.author.id
   if (anons[authorID]) {
@@ -2361,6 +2363,33 @@ function anonMsg(id, text) {
       anonLast = msg
     })
   }
+}
+
+let trips = {}
+let chanColors = {}
+let postNum = 0
+
+function chanPost(msg, content) {
+  let authorID = msg.author.id
+  let image = content.split(' ')[0].match(/\w\.[a-z]+$/)
+  let trip = (trips[authorID]) ? trips[authorID] : 'Anonymous'
+  let color = (chanColors[authorID]) ? chanColors[authorID] : '#FDFFB4'
+  let output = new Discord.RichEmbed()
+  .setColor(color)
+  .setTitle(trip)
+  .setFooter(postNum)
+
+  if (image) {
+    output.setImage(image)
+    content = content.split(' ')
+    content.shift()
+    content = content.join('')
+  }
+  output.setDescription(content)
+
+  postNum++
+  msg.send(output)
+
 }
 
 /*
