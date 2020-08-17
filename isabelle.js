@@ -2451,7 +2451,8 @@ var postNum = 0
 
 function chanPost(msg, content) {
   let authorID = `${msg.author.id}`
-  let image = content.split(' ')[0].match(/.+\.([a-z]|[A-Z])+$/)
+  let reg = /^[^\n\r ]+\.([a-z]|[A-Z])+( |\n)/
+  let image = content.match(reg)
   let trip = (trips[authorID]) ? trips[authorID] : 'Anonymous'
   let color = (chanColors[authorID]) ? chanColors[authorID] : '#FDFFB4'
   let output = new Discord.RichEmbed()
@@ -2459,11 +2460,9 @@ function chanPost(msg, content) {
   .setTitle(`${trip}   Post:${postNum}`)
 
   if (image) {
-    image = image[0]
+    image = image[0].split(' ')[0] //gets rid of the trailing space, if any
     output.setThumbnail(image)
-    content = content.split(' ')
-    content.shift()
-    content = content.join(' ')
+    content = content.replace(reg, "")
   }
   output.setDescription(content)
   
