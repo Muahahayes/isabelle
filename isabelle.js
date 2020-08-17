@@ -732,11 +732,24 @@ const commands = {
     }
   },//hash
   "trip": {
-    usage: ';trip password',
-    description: 'Will hash the password into an alias [tripcode] and store it in the db for your posts in Isabelle Chan.',
+    usage: ';trip name#password',
+    description: 'Will hash the password (up to 20 characters) into an alias (tripcode) and store it in the db for your posts in Isabelle Chan. Saves the name and alias as "name !alias" to be used in chan posts. Name is optional but password is not!',
     admin:false,
     process: function(msg, suffix) {
-      let trip = tripHash(suffix.split(' ')[0])
+      if (!suffix.includes('#')) {
+        msg.channel.send('Oops! No password given, remember to include a password after a # sign.')
+      }
+      let hash = suffix.split(' ')[0]
+      let name
+      if (hash) {
+        name = hash.split('#')[0]
+        hash = hash.split('#')[1]
+        if (hash.length>20) {
+          hash = hash.splice(0,20)
+        }
+        hash = tripHash(hash)
+      }
+      let trip = (name)?name+' ':'' + '!' + hash
       updateTrip(msg, trip)
       msg.delete(0)
     }
@@ -772,7 +785,7 @@ function parseMessage(msg) {
   if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'anonymous') { //anonymous message in the anonymous channel
     anonPost(msg, msg.content)
   }
-  else if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'chan-posting') {
+  else if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'chan') {
     chanPost(msg, msg.content)
   }
   else if (msg.author.id != bot.user.id && msg.content.startsWith(prefix) && msg.author.id != '85614143951892480') { //command from user (not UB3R-B0T)
@@ -2509,8 +2522,20 @@ function updateTrip(msg, text) {
   })
 }
 
+//33-126
 function tripHash(pass) {
-  return pass.toUpperCase()
+  pass = pass.split('')
+  let j = 0
+  let vals = [1,1,1,1,1,1,1,1,1]
+  for (let i=0; i<36; i+=2) {
+    vals[i%9] *= pass[j%pass.length].charCodeAt(0)
+    j++
+  }
+  for (let val of vals) {
+    val = val % 93
+    val += 33
+  }
+  return String.fromCharCode(...vals)
 }
 
 function updateColor(msg, color) {
