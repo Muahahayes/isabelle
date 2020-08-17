@@ -2475,7 +2475,7 @@ function updateTrip(msg, text) {
       console.log(err)
       msg.channel.send('Oops! Something went wrong with the database!')
     }
-    else if (result[0]) {
+    else if (!result[0]) {
       //first time user
       con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id}, "${text}", "#FDFFB4")`, function(err, result) {
         if (err) {
@@ -2518,7 +2518,7 @@ function updateColor(msg, color) {
       console.log(err)
       msg.channel.send('Oops! Something went wrong with the database!')
     }
-    else if (result[0]) {
+    else if (!result[0]) {
       // first time user
       con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id},"Anonymous","${color}")`, function(err, result) {
         if (err) {
