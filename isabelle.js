@@ -231,8 +231,8 @@ const commands = {
       else {
         msg.channel.send('This command is only for debugging during code development.')
       }
-    }
-  },
+    }// process
+  },//debugalias
   "rating": {
     usage: `;rating name`,
     description: 'prints the current ELO rating of the named player\n'+
@@ -393,6 +393,18 @@ const commands = {
       .setTitle('Good Morning!')
       .setDescription(vietnam())
       msg.channel.send(greeting)
+    }
+  },
+  "debugembed": {
+    usage: ';debugembed',
+    description: 'debugging thing don\'t worry about it',
+    admin:true,
+    process: function(msg, suffix) {
+      let debugEmbed = new Discord.RichEmbed()
+      .setColor('#008080')
+      .setTitle('Debug')
+      .setDescription(suffix)
+      msg.channel.send(debugEmbed)
     }
   },
   "sign": {
