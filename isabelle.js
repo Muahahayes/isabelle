@@ -2451,7 +2451,7 @@ var postNum = 0
 
 function chanPost(msg, content) {
   let authorID = `${msg.author.id}`
-  let reg = /^[^\n\r ]+\.([a-z]|[A-Z])+( |\n)/
+  let reg = /^[^\n\r ]+\.([a-z]|[A-Z])+( |\n|$)/
   let image = content.match(reg)
   let trip = (trips[authorID]) ? trips[authorID] : 'Anonymous'
   let color = (chanColors[authorID]) ? chanColors[authorID] : '#FDFFB4'
