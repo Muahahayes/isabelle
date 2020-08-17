@@ -2431,7 +2431,7 @@ function chanPost(msg, content) {
   let color = (chanColors[authorID]) ? chanColors[authorID] : '#FDFFB4'
   let output = new Discord.RichEmbed()
   .setColor(color)
-  .setTitle(`${trip}   >>${postNum}`)
+  .setTitle(`${trip}   Post:${postNum}`)
 
   if (image) {
     image = image[0]
@@ -2465,17 +2465,17 @@ function updateTrip(msg, text) {
   con.query(`SELECT * FROM chan WHERE dID = ${id}`, function(err, result) {
     if (err) {
       console.log(err)
-      msg.send('Oops! Something went wrong with the database!')
+      msg.channel.send('Oops! Something went wrong with the database!')
     }
     else if (result[0]) {
       //first time user
       con.query(`INSERT INTO chan (dID, trip, color) VALUES(${id}, "${text}", "#FDFFB4")`, function(err, result) {
         if (err) {
           console.log(err)
-          msg.send('Oops! Something went wrong with the database!')
+          msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          msg.send(`Tripcode: ${text} saved!`)
+          msg.channel.send(`Tripcode: ${text} saved!`)
         }
       })
     }
@@ -2484,14 +2484,18 @@ function updateTrip(msg, text) {
       con.query(`UPDATE chan SET trip = "${text}" WHERE dID = ${id}`, function(err,result) {
         if (err) {
           console.log(err)
-          msg.send('Oops! Something went wrong with the database!')
+          msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          msg.send(`Tripcode: ${text} saved!`)
+          msg.channel.send(`Tripcode: ${text} saved!`)
         }
       })
     }
   })
+}
+
+function tripHash(pass) {
+  return pass.toUpperCase()
 }
 
 function updateColor(msg, color) {
@@ -2500,17 +2504,17 @@ function updateColor(msg, color) {
   con.query(`SELECT * FROM chan WHERE dID = ${id}`, function(err, result) {
     if (err) {
       console.log(err)
-      msg.send('Oops! Something went wrong with the database!')
+      msg.channel.send('Oops! Something went wrong with the database!')
     }
     else if (result[0]) {
       // first time user
       con.query(`INSERT INTO chan (dID, trip, color) VALUES(${id}, "Anonymous", "${color}")`, function(err, result) {
         if (err) {
           console.log(err)
-          msg.send('Oops! Something went wrong with the database!')
+          msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          msg.send(`Color: ${color} saved!`)
+          msg.channel.send(`Color: ${color} saved!`)
         }
       })
     }
@@ -2519,10 +2523,10 @@ function updateColor(msg, color) {
       con.query(`UPDATE chan SET color = "${color}" WHERE dID = ${id}`, function(err, result) {
         if (err) {
           console.log(err)
-          msg.send('Oops! Something went wrong with the database!')
+          msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
-          msg.send(`Color: ${color} saved!`)
+          msg.channel.send(`Color: ${color} saved!`)
         }
       })
     }
