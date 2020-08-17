@@ -2525,7 +2525,7 @@ function updateTrip(msg, text) {
 function tripHash(pass) {
   pass = pass.split('')
   let j = 0
-  let vals = [1,1,1,1,1,1,1,1,1]
+  let vals = [1,2,3,4,5,6,7,8,9]
   for (let i=0; i<72; i+=2) {
     vals[i%9] *= pass[j%pass.length].charCodeAt(0)
     j++
