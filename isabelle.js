@@ -2529,9 +2529,9 @@ function tripHash(pass) {
     j++
   }
   console.log(vals)
-  for (let val of vals) {
-    val = val % 93
-    val += 33
+  for (let i in vals) {
+    vals[i] = val % 93
+    vals[i] += 33
   }
   console.log(vals)
   return String.fromCharCode(...vals)
