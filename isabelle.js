@@ -69,6 +69,7 @@ con.query(`SELECT * FROM config`, function (err, result) {
       config.prefix = (result[0].prefix)?result[0].prefix:';'
       prefix = config.prefix
       config.K = (result[0].K)?result[0].K:16
+      postNum = (result[0])?result[0].postNum:0
       K = config.K
       config.failedLoad = (result[0])?false:true
       if (config.failedLoad) console.error('Failed to load from database, using default values.')
@@ -80,6 +81,7 @@ con.query(`SELECT * FROM config`, function (err, result) {
       config.prefix = (configlocal)?configlocal.prefix:';'
       prefix = config.prefix
       config.K = (configlocal)?configlocal.K:16
+      postNum = (configlocal)?configlocal.postNum:0
       K = config.K
       config.failedLoad = (configlocal)?false:true
       if (config.failedLoad) console.error('Failed to load from local, using default values.')
@@ -2463,7 +2465,7 @@ function chanPost(msg, content) {
   }
 }
 
-function updatePostNum() {
+async function updatePostNum() {
   con.query(`UPDATE config SET postNum=${postNum} WHERE id=2`)
 }
 
@@ -2486,7 +2488,7 @@ function updateTrip(msg, text) {
         else {
           console.log(result)
           trips[id] = rawText
-          msg.channel.send(`Tripcode: ${text} saved!`)
+          msg.channel.send(`Tripcode: ${rawText} saved!`)
         }
       })
     }
@@ -2500,7 +2502,7 @@ function updateTrip(msg, text) {
         else {
           console.log(result)
           trips[id] = rawText
-          msg.channel.send(`Tripcode: ${text} changed!`)
+          msg.channel.send(`Tripcode: ${rawText} changed!`)
         }
       })
     }
@@ -2530,7 +2532,7 @@ function updateColor(msg, color) {
         else {
           console.log(result)
           chanColors[id] = rawColor
-          msg.channel.send(`Color: ${color} saved!`)
+          msg.channel.send(`Color: ${rawColor} saved!`)
         }
       })
     }
@@ -2544,7 +2546,7 @@ function updateColor(msg, color) {
         else {
           console.log(result)
           chanColors[id] = rawColor
-          msg.channel.send(`Color: ${color} changed!`)
+          msg.channel.send(`Color: ${rawColor} changed!`)
         }
       })
     }
