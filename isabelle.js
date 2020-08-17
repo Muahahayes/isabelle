@@ -742,8 +742,14 @@ const commands = {
     description: 'Sets the hex value as your color in the db for your posts in Isabelle Chan.',
     admin:false,
     process: function(msg, suffix) {
-      let color = suffix.split(' ')[0]
-      updateColor(msg, color)
+      let color = suffix.match(/#([0-9]|[a-f]|[A-F])([0-9]|[a-f]|[A-F])([0-9]|[a-f]|[A-F])([0-9]|[a-f]|[A-F])([0-9]|[a-f]|[A-F])([0-9]|[a-f]|[A-F])/)
+      if (color) {
+        color = color[0]
+        updateColor(msg, color)
+      }
+      else {
+        msg.channel.send('Oops! That doesn\'t look like a hex number! Make sure your color is a hex code (#000000 for black, #FFFFFF for white, ect).')
+      }      
       msg.delete(0)
     }
   },
@@ -2514,6 +2520,7 @@ function updateColor(msg, color) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
+          console.log(result)
           msg.channel.send(`Color: ${color} saved!`)
         }
       })
@@ -2526,6 +2533,7 @@ function updateColor(msg, color) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
+          console.log(result)
           msg.channel.send(`Color: ${color} saved!`)
         }
       })
