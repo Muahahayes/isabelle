@@ -111,6 +111,8 @@ bot.on('ready', () => {
         trips[row.dID] = row.trip
         chanColors[row.dID] = row.color
       }
+      console.log(trips)
+      console.log(chanColors)
     }
   })
   bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!').then( () => {
@@ -2447,15 +2449,15 @@ function chanPost(msg, content) {
     content = content.join('')
   }
   output.setDescription(content)
-
-  postNum++
+  
   chanChan.send(output)
+  postNum++
 
   if (msg.guild) {
     msg.delete(0)
   }
 
-  if (postNum % 10 === 0) {
+  if (postNum % 10 === 9) {
     // every 10 posts, update postNum on the db
     updatePostNum()
   }
@@ -2481,6 +2483,7 @@ function updateTrip(msg, text) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
+          console.log(result)
           trips[id] = text
           msg.channel.send(`Tripcode: ${text} saved!`)
         }
@@ -2494,8 +2497,9 @@ function updateTrip(msg, text) {
           msg.channel.send('Oops! Something went wrong with the database!')
         }
         else {
+          console.log(result)
           trips[id] = text
-          msg.channel.send(`Tripcode: ${text} saved!`)
+          msg.channel.send(`Tripcode: ${text} changed!`)
         }
       })
     }
@@ -2509,14 +2513,14 @@ function tripHash(pass) {
 function updateColor(msg, color) {
   let id = msg.author.id
   color = mysql.escape(color)
-  con.query(`SELECT * FROM chan WHERE dID = ${id}`, function(err, result) {
+  con.query(`SELECT * FROM chan WHERE dID=${id}`, function(err, result) {
     if (err) {
       console.log(err)
       msg.channel.send('Oops! Something went wrong with the database!')
     }
     else if (result[0]) {
       // first time user
-      con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id}, "Anonymous", "${color}")`, function(err, result) {
+      con.query(`INSERT INTO chan (dID, trip, color) VALUES (${id},"Anonymous","${color}")`, function(err, result) {
         if (err) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
@@ -2530,7 +2534,7 @@ function updateColor(msg, color) {
     }
     else {
       // returning user
-      con.query(`UPDATE chan SET color = "${color}" WHERE dID = ${id}`, function(err, result) {
+      con.query(`UPDATE chan SET color="${color}" WHERE dID = ${id}`, function(err, result) {
         if (err) {
           console.log(err)
           msg.channel.send('Oops! Something went wrong with the database!')
@@ -2538,7 +2542,7 @@ function updateColor(msg, color) {
         else {
           console.log(result)
           chanColors[id] = color
-          msg.channel.send(`Color: ${color} saved!`)
+          msg.channel.send(`Color: ${color} changed!`)
         }
       })
     }
