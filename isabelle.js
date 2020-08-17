@@ -53,6 +53,7 @@ var K
 var logChan
 var reportChan
 var anonChan
+var chanChan
 con.query(`SELECT * FROM config`, function (err, result) {
   if (err) {
     console.error(err)
@@ -96,15 +97,30 @@ bot.on('ready', () => {
   logChan = bot.channels.find(x => x.name === 'logs')
   reportChan = bot.channels.find(x => x.name === 'reports')
   anonChan = bot.channels.find(x => x.id == '711689236457455691')
+  chanChan = bot.channels.find(x => x.id == '744825098074325022')
   for (let i in commands) {
     commands[i].usage = commands[i].usage.replace(';',prefix) // replace default with defined prefix
     commands[i].description = commands[i].description.replace(';',prefix)
   }
+  con.query(`SELECT * FROM chan`, function(err, result) {
+    if(err) {
+      console.log(err)
+    }
+    else {
+      for (let row of result) {
+        trips[row.dID] = row.trip
+        chanColors[row.dID] = row.color
+      }
+    }
+  })
   bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!').then( () => {
     let embed = new Discord.RichEmbed().setTitle('Bot Reset!').setDescription('Anon Aliases are reset.').setColor('#ff52b1')
     anonChan.send(embed)
   }
   )
+  // get trips and colors from db
+
+
   setInterval(() => { // update loop 
     let currentTime = Date.now()
     if ((currentTime - config.rivalUpdate) > 604800000) {
@@ -120,6 +136,7 @@ bot.on('ready', () => {
       updateRanks()  
     }
     //fs.writeFileSync('data/config.json',JSON.stringify(config))
+    updatePostNum()
   }, 60000)
 })
 bot.on('disconnected', () => {
@@ -369,7 +386,7 @@ const commands = {
     process: function(msg, suffix) {
       anonPost(msg, suffix)
     }
-  },
+  },//a
   "smug": {
     usage: ';smug #',
     description: 'Displays a smug anime girl!',
@@ -394,7 +411,7 @@ const commands = {
       .setDescription(vietnam())
       msg.channel.send(greeting)
     }
-  },
+  },//morning
   "debugembed": {
     usage: ';debugembed',
     description: 'debugging thing don\'t worry about it',
@@ -406,7 +423,7 @@ const commands = {
       .setDescription(suffix)
       msg.channel.send(debugEmbed)
     }
-  },
+  },//debugembed
   "sign": {
     usage: ';sign text',
     description: 'Isabelle will attempt to repeat you in sign language! (She\'s not very good...)',
@@ -699,7 +716,41 @@ const commands = {
         msg.channel.send('Sorry! I need you to @mention the person you\'re trying to add!\n```' + commands['join'].usage + '```')
       }
     }// process
-  }//join
+  },//join,
+  "hash": {
+    usage: ';hash password',
+    description: 'Will hash the password given and give you an alias [tripcode]. Used for finding a code you like and then using ;trip to set it as your tripcode in #chan-posting on the Isabelle Chan server.',
+    admin:false,
+    process: function(msg, suffix) {
+      let trip = tripHash(suffix.split(' ')[0])
+      msg.channel.send(`Tripcode: ${trip}`)
+      msg.delete(0)
+    }
+  },//hash
+  "trip": {
+    usage: ';trip password',
+    description: 'Will hash the password into an alias [tripcode] and store it in the db for your posts in Isabelle Chan.',
+    admin:false,
+    process: function(msg, suffix) {
+      let trip = tripHash(suffix.split(' ')[0])
+      updateTrip(msg, trip)
+      msg.delete(0)
+    }
+  },//trip
+  "color": {
+    usage: ';color #hex',
+    description: 'Sets the hex value as your color in the db for your posts in Isabelle Chan.',
+    admin:false,
+    process: function(msg, suffix) {
+      let color = suffix.split(' ')[0]
+      updateColor(msg, color)
+      msg.delete(0)
+    }
+  },
+  "post": {
+    usage: ';post [url] text',
+    description: 'Posts your message on Isabelle Chan in $chan-posting. If the first thing in your post is a url for an image she\'ll include your image in the post! (please don\'t use non-image urls)'
+  }
 }
 
 // functions
@@ -2371,13 +2422,12 @@ let postNum = 0
 
 function chanPost(msg, content) {
   let authorID = msg.author.id
-  let image = content.split(' ')[0].match(/\w\.[a-z]+$/)
+  let image = content.split(' ')[0].match(/.+\.([a-z]|[A-Z])+$/)[0]
   let trip = (trips[authorID]) ? trips[authorID] : 'Anonymous'
   let color = (chanColors[authorID]) ? chanColors[authorID] : '#FDFFB4'
   let output = new Discord.RichEmbed()
   .setColor(color)
-  .setTitle(trip)
-  .setFooter(postNum)
+  .setTitle(`${trip}   >>${postNum}`)
 
   if (image) {
     output.setImage(image)
@@ -2388,8 +2438,90 @@ function chanPost(msg, content) {
   output.setDescription(content)
 
   postNum++
-  msg.channel.send(output)
+  chanChan.send(output)
 
+  if (msg.guild) {
+    msg.delete(0)
+  }
+
+  if (postNum % 10 === 0) {
+    // every 10 posts, update postNum on the db
+    updatePostNum()
+  }
+}
+
+function updatePostNum() {
+  con.query(`UPDATE config SET postNum=${postNum} WHERE id=2`)
+}
+
+function updateTrip(msg, text) {
+  let id = msg.author.id
+  text = mysql.escape(text)
+  con.query(`SELECT * FROM chan WHERE dID = ${id}`, function(err, result) {
+    if (err) {
+      console.log(err)
+      msg.send('Oops! Something went wrong with the database!')
+    }
+    else if (result[0]) {
+      //first time user
+      con.query(`INSERT INTO chan (dID, trip, color) VALUES(${id}, "${text}", "#FDFFB4")`, function(err, result) {
+        if (err) {
+          console.log(err)
+          msg.send('Oops! Something went wrong with the database!')
+        }
+        else {
+          msg.send(`Tripcode: ${text} saved!`)
+        }
+      })
+    }
+    else {
+      //returning user
+      con.query(`UPDATE chan SET trip = "${text}" WHERE dID = ${id}`, function(err,result) {
+        if (err) {
+          console.log(err)
+          msg.send('Oops! Something went wrong with the database!')
+        }
+        else {
+          msg.send(`Tripcode: ${text} saved!`)
+        }
+      })
+    }
+  })
+}
+
+function updateColor(msg, color) {
+  let id = msg.author.id
+  color = mysql.escape(color)
+  con.query(`SELECT * FROM chan WHERE dID = ${id}`, function(err, result) {
+    if (err) {
+      console.log(err)
+      msg.send('Oops! Something went wrong with the database!')
+    }
+    else if (result[0]) {
+      // first time user
+      con.query(`INSERT INTO chan (dID, trip, color) VALUES(${id}, "Anonymous", "${color}")`, function(err, result) {
+        if (err) {
+          console.log(err)
+          msg.send('Oops! Something went wrong with the database!')
+        }
+        else {
+          msg.send(`Color: ${color} saved!`)
+        }
+      })
+    }
+    else {
+      // returning user
+      con.query(`UPDATE chan SET color = "${color}" WHERE dID = ${id}`, function(err, result) {
+        if (err) {
+          console.log(err)
+          msg.send('Oops! Something went wrong with the database!')
+        }
+        else {
+          msg.send(`Color: ${color} saved!`)
+        }
+      })
+    }
+  })
 }
 
 /*
