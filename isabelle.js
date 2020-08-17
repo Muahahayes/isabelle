@@ -733,7 +733,7 @@ const commands = {
   },//hash
   "trip": {
     usage: ';trip name#password',
-    description: 'Will hash the password (up to 20 characters) into an alias (tripcode) and store it in the db for your posts in Isabelle Chan. Saves the name and alias as "name !alias" to be used in chan posts. Name is optional but password is not!',
+    description: 'Will hash the password (up to 20 characters) into an alias (tripcode) and store it in the db for your posts in Isabelle Chan. Saves the name and alias as "name [alias]" to be used in chan posts. Name is optional but password is not!',
     admin:false,
     process: function(msg, suffix) {
       if (!suffix.includes('#')) {
@@ -750,7 +750,7 @@ const commands = {
           }
           hash = tripHash(hash)
         }
-        let trip = ((name)?name+' ':'') + '!`' + hash + '`'
+        let trip = ((name)?name+' ':'') + '[`' + hash + '`]'
         updateTrip(msg, trip)
       }
       
