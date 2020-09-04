@@ -2202,8 +2202,8 @@ function tvShow() {
     `It was a cute cartoon with a {adj} {n} named {name} who can {v} all day long with their friends.\n...I may have stayed up all night watching the whole series.`,
     `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`,
     `It was a romcom where a woman falls in love with a {adj} {n}! It was so sweet, and I laughed when they began to {v}. I'd really recommend it!`,
-    `It was an anime where a {n} had to {v} {adv}, in highschool! They were {adj} and {adj} which let you know he was the protagonist! It was so cheesy but I couldn't help but watch the whole thing...`,
-    `It was an anime about a pair of {adj} {n} that were in love, but they had to {v} because society didn't want them to be together. So sad...`
+    `It was an anime where a {n} had to {v} {adv}, in highschool! They were {adj} which let you know he was the protagonist! It was so cheesy but I couldn't help but watch the whole thing...`,
+    `It was an anime about a {adj} {n} and their lover, but they had to {v} because society didn't want them to be together. So sad...`
   ]
   str += madLib(libs[randNum(libs.length)])
   return str
@@ -2272,7 +2272,8 @@ function offTopic() {
     'When you look at a {n} do you ever think "what if it was {adj}"?',
     'If I went back to school so I could {v} {adv}, would I have made something of myself?',
     'What if all those times I {v} {adv}, I really should have been finding myself instead.',
-    'Can I ever truly {v} with a {n}?'
+    'Can I ever truly {v} with a {n}?',
+    'What if I was just a {adj} {n} all along...?'
   ]
   str += madLib(libs[randNum(libs.length)])
   return str
