@@ -1910,7 +1910,10 @@ let asides = [
   `You're all wonderful people!`,
   `Today looks like it'll be a good day!`,
   `How's everyone liking the weather today?`,
-  `It's the start of another great day!`
+  `It's the start of another great day!`,
+  `Who's ready for another wonderful day?`,
+  `Keep your chins up! It's time to face another day!`,
+  `I hope you're all doing ok.`
 ]
 let noNews = [
   `There's no news today, but `,
@@ -1918,7 +1921,11 @@ let noNews = [
   `I was going to read some news, but `,
   `I forgot to bring the news with me today, `,
   `There wasn't really anything interesting in the news day, so, `,
-  `...oh! Sorry I got a little distracted. I was thinking about something, `
+  `...oh! Sorry I got a little distracted. I was thinking about something, `,
+  `I hope you're not upset if I don't read any news today. I wanted to talk about something else, `,
+  `So what if I don't have any news? The mayor can't keep this from the public any longer, `,
+  `I dropped my notepad in a puddle on the way to work today. I was so excited to finally have news... I guess I'll just tell you about something else, `,
+  `I've got a bit of a cold today, I hope you don't mind if I didn't prepare any news for you... Um, `
 ]
 function vietnam() { // GOOD MORNING VIETNAM
   let str = ''
@@ -1926,7 +1933,7 @@ function vietnam() { // GOOD MORNING VIETNAM
   str += '\n'
   str += noNews[randNum(noNews.length)]
   str += ``
-  let genre = randNum(3)
+  let genre = randNum(4)
   switch(genre) {
     case 0:
       str += tvShow()
@@ -1937,8 +1944,11 @@ function vietnam() { // GOOD MORNING VIETNAM
     case 2:
       str += factoid()
       break;
+    case 3:
+      str += offTopic()
+      break;
     default: // just in case we somehow get 3 or whatever the magic number I used on genre??
-      str += factoid()
+      str += offTopic()
       break;
   }
   str += `\nHave a good day everyone!`
@@ -2176,11 +2186,12 @@ let libNames = [
 ]
 let tvIntro = [
   'I stayed up last night watching TV again... ',
-  'I stayed up last night watching TV again... ',
+  'I stayed up last night watching Netflix again... ',
   'did you guys see that new show on PBS? ',
   `I saw a new show and I've been thinking about it all day. `,
   'does anyone remember that old TV show from our childhood? ',
-  `don't tell anyone, but I kinda like that weird show that aired last night... `
+  `don't tell anyone, but I kinda like that weird show that aired last night... `,
+  `a friend recommended a new show to me yesterday! `
 ]
 function tvShow() {
   let str = ''
@@ -2190,7 +2201,9 @@ function tvShow() {
     `It was a gritty crime drama called {Uadj} {Un}! It was about {name}, a {adj} {n} with nothing to lose who needs to {v} {adv} to save their city. I was at the edge of my seat!`,
     `It was a cute cartoon with a {adj} {n} named {name} who can {v} all day long with their friends.\n...I may have stayed up all night watching the whole series.`,
     `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`,
-    `It was a romcom where a woman falls in love with a {adj} {n}! It was so sweet, and I laughed when they began to {v}. I'd really recommend it!`
+    `It was a romcom where a woman falls in love with a {adj} {n}! It was so sweet, and I laughed when they began to {v}. I'd really recommend it!`,
+    `It was an anime where a {n} had to {v} {adv}, in highschool! He was {adj} which let you know he was the protagonist! It was so cheesy but I couldn't help but watch the whole thing...`,
+    `It was an anime about a pair of {adj} {n} that were in love, but they had to {v} because society didn't want them to be together. So sad...`
   ]
   str += madLib(libs[randNum(libs.length)])
   return str
@@ -2200,7 +2213,8 @@ let sawThing = [
   'I looked outside my window this morning and saw the weirdest thing! ',
   'while watering my garden, I looked behind me and was startled by something! ',
   'I was sitting on my porch soaking in the sunrise, and saw something rustling in the bushes in my yard! ',
-  'I saw something I just felt like telling you all about! '
+  'I saw something I just felt like telling you all about! ',
+  'I was walking to work and heard something behind me, I turned around and saw something I just had to tell you about!'
 ]
 function sawAnimal() {
   let str = ''
@@ -2210,7 +2224,9 @@ function sawAnimal() {
     `There was a {n} that I saw {v} right before my eyes! I've never seen anything like it!`,
     `I think it was a {n}? By the time I tried to {v} it was already gone! Let me know if anyone spots it!`,
     `It was a {adj} {n}! I was so scared I had to {v}! I hope I didn't upset it...`,
-    `There was a {adj} {n} but it started to {v} {adv} before I knew it! I wonder what happened to it?`
+    `There was a {adj} {n} but it started to {v} {adv} before I knew it! I wonder what happened to it?`,
+    `It was a {n} right behind me! It was {adj} and tried to {v} so I ran and hid. I'm still shaking just thinking about it!`,
+    `It was a {adj} {n}! I tried to {v} but I think I scared it off... Maybe I'll see it again someday?`
   ]
   str += madLib(libs[randNum(libs.length)])
   return str
@@ -2220,10 +2236,10 @@ let factIntro = [
   `here's a random Fact of the Day! `,
   `here's a random Fact of the Day! `,
   `did you guys know? `,
-  `fact of the Day! `,
-  `fact of the Day! `,
-  `I read about something interesting! `,
-  `guess what! `
+  `Fact of the Day! `,
+  `Fact of the Day! `,
+  `oh yeah I read about something interesting today! `,
+  `so guess what! `
 ]
 function factoid() {
   let str = ''
@@ -2231,9 +2247,32 @@ function factoid() {
   let libs = [
     `A {adj} {n} can only {v} once in its lifetime? Weird right?`,
     `A {adj} {n} can {v}? I never knew!`,
-    `Only a {adj} {n} can {v} {adv}? I thought they all could do it!`,
+    `Only a {adj} {n} can {v} {adv}? Unbelievable!`,
     `Doctors say if you {v} every day it's good for your health! Take care of yourselves!`,
-    `Experts say if you {v} it will keep the {adj} {n} away! I should try that...`
+    `Experts say if you {v} it will keep the {adj} {n} away! I should try that...`,
+    'If you ask a {n} to {v}, it can never do it {adv}. Aww...'
+  ]
+  str += madLib(libs[randNum(libs.length)])
+  return str
+}
+
+let offTopics = [
+  'I\'m so tired... ',
+  'I need a drink. ',
+  'it got me thinking. ',
+  'well you know what? ',
+  'I\'ve been wondering about stuff. ',
+  'and I guess I\'ve just been thinking about life a lot lately. '
+]
+function offTopic() {
+  let str = ''
+  str += offTopics[randNum(offTopics.length)]
+  let libs = [
+    'Sometimes I want to just grab my {adj} {n} and just leave this town.',
+    'When you look at a {n} do you ever think "what if it was {adj}"?',
+    'If I went back to school so I could {v} {adv}, would I have made something of myself?',
+    'What if all those times I {v} {adv}, I really should have been finding myself instead.',
+    'Can I ever truly {v} with a {n}?'
   ]
   str += madLib(libs[randNum(libs.length)])
   return str
