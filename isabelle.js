@@ -975,19 +975,20 @@ function inputSet(msg, suffix) {
                 else {
                   let newK = K
                   let r = false
+                  if (rt && rt.includes('t')) newK *= 1.5
+                  let lK = newK
                   if (rt && rt.includes('r')) {
                     newK *= 2
                     r = true
                   }
-                  if (rt && rt.includes('t')) newK *= 1.5
+                  
                   let wK = newK
-                  let lK = newK
                   if (winnerP > 0) {
                     wK = K + K + newK
                     winnerP--
                   }
                   if (loserP > 0) {
-                    lK = K + K + newK
+                    lK = K + newK
                     loserP--
                   }
 
@@ -1005,22 +1006,25 @@ function inputSet(msg, suffix) {
                     winnerNew = winnerELO + (2 * s1)
                   }
                   else if (winnerELO < 1600) {
-                    winnerNew = Math.floor(winnerELO + ((wK * (1 - e1) * 1.1) * s1))
+                    winnerNew = Math.floor(winnerELO + ((wK * (1 - e1) * 1.25) * s1))
                   }
                   else {
-                    winnerNew = Math.floor(winnerELO + ((wK * (1 - e1)) * s1))
+                    winnerNew = Math.floor(winnerELO + ((wK * (1 - e1) * 1.1) * s1))
                   }
 
                   // loser elo
-                  if (r) lK = newK - K
                   if (loserELO <= 1200) {
                     loserNew = 1200
                   }
                   else if (loserELO < 1600) {
-                    loserNew = Math.ceil(loserELO + ((lK * (0 - e2) * 0.9) * s1))
+                    loserNew = Math.ceil(loserELO + ((lK * (0 - e2) * 0.75) * s1))
                   }
                   else {
-                    loserNew = Math.ceil(loserELO + ((lK * (0 - e2)) * s1))
+                    loserNew = Math.ceil(loserELO + ((lK * (0 - e2) * 0.9) * s1))
+                  }
+                  let loserThreshold = Math.floor(loserELO/100) * 100 //eg. will turn 1410 into 1400
+                  if (loserNew < loserThreshold && loserThreshold != loserELO) { // player dropped a 100 and wasn't already at that 100 (eg. 1410 dropped to 1390)
+                    loserNew = loserThreshold // set 1390 back to 1400, gives 1 grace loss before you drop a belt
                   }
 
                   let loserCoins = newK * (Number(wins) + Number(losses))
