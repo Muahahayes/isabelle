@@ -344,7 +344,7 @@ const commands = {
       if (suffix && suffix != '' && msg.guild) {
         console.log(`${msg.member.nickname} said: ${suffix}`)
         let chan = msg.channel
-        msg.delete(100)
+        if (msg.guild) msg.delete(100)
         chan.send(suffix)
       }
       else {
@@ -728,7 +728,7 @@ const commands = {
     process: function(msg, suffix) {
       let trip = tripHash(suffix.split(' ')[0])
       msg.channel.send(`Tripcode: ${trip}`)
-      msg.delete(0)
+      if (msg.guild) msg.delete(0)
     }
   },//hash
   "trip": {
@@ -754,7 +754,7 @@ const commands = {
         updateTrip(msg, trip)
       }
       
-      msg.delete(0)
+      if (msg.guild) msg.delete(0)
     }
   },//trip
   "color": {
@@ -770,7 +770,7 @@ const commands = {
       else {
         msg.channel.send('Oops! That doesn\'t look like a hex number! Make sure your color is a hex code (#000000 for black, #FFFFFF for white, ect).')
       }      
-      msg.delete(0)
+      if (msg.guild) msg.delete(0)
     }
   },
   "post": {
@@ -846,7 +846,7 @@ function parseMessage(msg) {
   else if (msg.author.id === bot.user.id) { //messages from bot to clean up
     switch(msg.content) {
       case "Thanks! I'll write this down right away!" :
-        msg.delete(4000)
+        if (msg.guild) msg.delete(4000)
         break;
     }
   }  
