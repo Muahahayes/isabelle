@@ -1138,7 +1138,7 @@ function editValue(msg, suffix) {
         value.pop()
         value.shift()
         value = value.join('')
-        if (result[0][variable]) {
+        if (result[0][variable] || result[0][variable] === 0) {
           output += `Found player with the tag ${name}, their ${variable} is ${result[0][variable]}`
           let query = `UPDATE players SET ${variable}=${value} WHERE tag=${name}`
           con.query(query, (err, result) => {
