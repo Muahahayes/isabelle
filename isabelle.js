@@ -813,8 +813,13 @@ function parseMessage(msg) {
       else {
         let embed = new Discord.RichEmbed().setColor('#cecece').setTitle('Help: all commands')
         for (let command in commands) {
+          try {
           if (!command.admin || msg.member.roles.has('494878132143128616') || msg.member.roles.has('369948375530995712') || msg.member.roles.has('232012677147394048')) {
             embed.addField(`${command} Usage: ${commands[command].usage}`, `Description: ${commands[command].description}`, false)
+          }
+          }
+          catch(e) {
+            msg.channel.send(e).then(msg.channel.send(JSON.toString(msg)))
           }
         }
         msg.channel.send(embed)
