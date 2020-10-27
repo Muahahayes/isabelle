@@ -780,6 +780,14 @@ const commands = {
     process: function(msg, suffix) {
       chanPost(msg, suffix)
     }
+  },
+  "test": {
+    usage: "test",
+    description: 'used for testing things',
+    admin:false,
+    process: function(msg, suffix) {
+      msg.channel.send(JSON.toString(msg))
+    }
   }
 }
 
