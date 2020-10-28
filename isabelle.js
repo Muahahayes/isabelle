@@ -786,7 +786,7 @@ const commands = {
     description: 'used for testing things',
     admin:false,
     process: function(msg, suffix) {
-      msg.channel.send(JSON.stringify(msg))
+      msg.channel.send(Object.keys(msg))
     }
   }
 }
