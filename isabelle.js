@@ -784,9 +784,9 @@ const commands = {
   "test": {
     usage: "test",
     description: 'used for testing things',
-    admin:false,
+    admin:true,
     process: function(msg, suffix) {
-      msg.channel.send(Object.keys(msg) + `\n\nmsg.member:\n${Object.keys(msg.guild.member(msg.author))}`)
+      msg.channel.send(Object.keys(msg) + `\n\nmsg.member:\n${Object.keys(msg.member)}`)
     }
   }
 }
