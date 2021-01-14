@@ -89,6 +89,11 @@ con.query(`SELECT * FROM config`, function (err, result) {
     bot.login(token)
   }
 })
+/**
+ * con.query()
+ * if (result[0])
+ * blah blah
+ */
 
 // bot event handlers
 bot.on('ready', () => {
@@ -525,7 +530,7 @@ const commands = {
           msg.channel.send(`Sorry! I couldn't find you in the database!`)
         }
         else {
-          con.query(`UPDATE players SET tag=${suffix} WHERE dID=${msg.author.id}`, function(err, result) {
+          con.query(`UPDATE players SET tag="${suffix}" WHERE dID=${msg.author.id}`, function(err, result) {
             if (err) {
               console.error(err)
               msg.channel.send('Oops! Something broke when trying to change your tag.')
@@ -1591,7 +1596,7 @@ function siwmn(msg, suffix) {
       }
     }
   }
-  msg.channel.send(masda);
+  msg.channel.send(masda)
 }//siwmn
 
 /*
@@ -2219,7 +2224,7 @@ function tvShow() {
     `It was a cute cartoon with a {adj} {n} named {name} who can {v} all day long with their friends.\n...I may have stayed up all night watching the whole series.`,
     `It was a sci-fi action adventure show about someone named {name} who turned themselves into a {n}! Funniest thing I've ever seen!`,
     `It was a romcom where a woman falls in love with a {adj} {n}! It was so sweet, and I laughed when they began to {v}. I'd really recommend it!`,
-    `It was an anime where a {n} had to {v} {adv}, in highschool! They were {adj} which let you know he was the protagonist! It was so cheesy but I couldn't help but watch the whole thing...`,
+    `It was an anime where a {n} had to {v} {adv}, in highschool! They were {adj} which let you know they were the protagonist! It was so cheesy but I couldn't help but watch the whole thing...`,
     `It was an anime about a {adj} {n} and their lover, but they had to {v} because society didn't want them to be together. So sad...`
   ]
   str += madLib(libs[randNum(libs.length)])
