@@ -805,7 +805,7 @@ const commands = {
   },
   "pull": {
     usage: ";pull [hash]",
-    description: "Pull a Turnip! If its a Lucky Turnip Isabelle will reward you with some bells. You may include an optional hash (string of alphanumeric characters) of length 1-20, you'll earn 50% more bells if this hash is lucky!",
+    description: "Pull a Turnip! If its a Lucky Turnip Isabelle will reward you with some bells. \nYou may include an optional hash (string of alphanumeric characters) of length 1-20, you'll earn 50% more bells if this hash is lucky!",
     admin:false,
     process: function(msg, suffix) {
       if (config.tfound < 10) {
@@ -823,6 +823,32 @@ const commands = {
     admin:false,
     process: function(msg,suffix) {
       msg.channel.send(`Lucky Turnips <:luckyturnip:821950961819844621> are currently worth ${config.tprice} bells <:bellbag:821950894621851648>`)
+    }
+  },
+  "bag": {
+    usage: ";bag",
+    description: "Isabelle will open your bag and tell you how many bells <:bellbag:821950894621851648> you have and how many lucky turnips you've pulled <:luckyturnip:821950961819844621>",
+    admin:false,
+    process: function(msg, suffix) {
+      con.query(`SELECT * FROM market WHERE dID=${msg.author.id}`, (err,result)=> {
+        if (err) {
+          console.log(err)
+          msg.channel.send('Oops! Something went wrong with the database!')
+        }
+        else if (!result[0]) {
+          msg.channel.send(`It looks like you've never pulled a Lucky Turnip! Use \`;pull\` to get started.`)
+        }
+        else {
+          let bells = result[0].bells
+          let turnips = result[0].turnips
+          let embed = new Discord.RichEmbed()
+          .setColor('#ffd500')
+          .setTitle(`Bellbag`)
+          .addField('<:bellbag:821950894621851648> Bells:', bells, false)
+          .addField('<:luckyturnip:821950961819844621> Lucky Turnips:', turnips, false)
+          msg.channel.send(embed)
+        }
+      }) 
     }
   },
   "test": {
@@ -914,7 +940,7 @@ function parseMessage(msg) {
     msg.channel.send(`Hi ${name}!`)
   }
   else if (msg.channel.guild.id == 369948288277020674 && msg.channel.name != 'politics' && msg.channel.name != 'final-destination' && msg.channel.name != 'suggestions') {
-    let polWords = /(global warming)|(climate change)|(capitalism)|(communism)|(socialism)|(republican)|(democrat)|(biden)|(trump)|(antifa)|(blm)|(black lives matter)|(proud boy)|(right wing)|(left wing)|(facist)|(facism)|(communist)|(capitalist)|(means of production)|(rape)|(impeach)|(socioeconomic)|(socio-economic)|(election)|(electoral college)|(maga)|(make america great again)|(free speech)|(amendment)|(constitution)/g
+    let polWords = /(obama)|(global warming)|(climate change)|(capitalism)|(communism)|(socialism)|(republican)|(democrat)|(biden)|(trump)|(antifa)|(blm)|(black lives matter)|(proud boy)|(right wing)|(left wing)|(facist)|(facism)|(communist)|(capitalist)|(means of production)|(rape)|(impeach)|(socioeconomic)|(socio-economic)|(election)|(electoral college)|(maga)|(make america great again)|(free speech)|(amendment)|(constitution)/gi
     let mat = msg.content.match(polWords)
     if (mat && mat[0]) { // someone posted a political word/phrase
       msg.channel.send(`${msg.author} BIG SISTER WARNING: ${mat} is a political word/phrase! Please move your discussion to the #politics channel, thanks!`).then((reply) => {if(msg.guild){msg.delete(10000)}reply.delete(10000)})
