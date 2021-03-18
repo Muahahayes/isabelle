@@ -2719,7 +2719,7 @@ function pullTurnip(msg, suffix) {
         }
         else if (!result[0]) {
           // add player
-          con.query(`INSERT INTO market (dID,bells) VALUES (${msg.author.id},${price})`,updateTurnip(msg,suffix,price,0,0,reply))
+          con.query(`INSERT INTO market (dID,bells,turnips) VALUES (${msg.author.id},${price},0)`,updateTurnip(msg,suffix,price,0,0,reply))
         }
         else {
           // returning player
