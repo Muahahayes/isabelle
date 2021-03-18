@@ -2723,6 +2723,7 @@ function pullTurnip(msg, suffix) {
         }
         else {
           // returning player
+          if (result[0].turnips == 0) result[0].turnips = 1
           updateTurnip(msg,suffix,price,result[0].bells,result[0].turnips,reply)
         }
       })
