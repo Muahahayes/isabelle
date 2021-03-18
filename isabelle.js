@@ -54,6 +54,7 @@ var logChan
 var reportChan
 var anonChan
 var chanChan
+var claimedTurnips = {}
 con.query(`SELECT * FROM config`, function (err, result) {
   if (err) {
     console.error(err)
@@ -69,8 +70,10 @@ con.query(`SELECT * FROM config`, function (err, result) {
       config.prefix = (result[0].prefix)?result[0].prefix:';'
       prefix = config.prefix
       config.K = (result[0].K)?result[0].K:16
-      postNum = (result[0])?result[0].postNum:0
+      postNum = (result[0].postNum)?result[0].postNum:0
       K = config.K
+      config.tprice = (result[0].tprice)?result[0].tprice:100
+      config.tfound = (result[0].tfound)?result[0].tfound:0
       config.failedLoad = (result[0])?false:true
       if (config.failedLoad) console.error('Failed to load from database, using default values.')
     }
@@ -83,6 +86,8 @@ con.query(`SELECT * FROM config`, function (err, result) {
       config.K = (configlocal)?configlocal.K:16
       postNum = (configlocal)?configlocal.postNum:0
       K = config.K
+      config.tprice = (configlocal)?configlocal.tprice:100
+      config.tfound = (configlocal)?configlocal.tfound:0
       config.failedLoad = (configlocal)?false:true
       if (config.failedLoad) console.error('Failed to load from local, using default values.')
     }
@@ -120,6 +125,18 @@ bot.on('ready', () => {
       }
       console.log(trips)
       console.log(chanColors)
+    }
+  })
+  con.query(`SELECT * from turnips`, function (err, result) {
+    if (err) {
+      console.log(err)
+      process.exit(0)
+    }
+    else {
+      for (let row of result) {
+        claimedTurnips[row['pass']] = true
+      }
+      console.log(JSON.stringify(claimedTurnips))
     }
   })
   bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!').then( () => {
@@ -786,8 +803,30 @@ const commands = {
       chanPost(msg, suffix)
     }
   },
+  "pull": {
+    usage: ";pull [hash]",
+    description: "Pull a Turnip! If its a Lucky Turnip Isabelle will reward you with some bells. You may include an optional hash (string of alphanumeric characters) of length 1-20, you'll earn 50% more bells if this hash is lucky!",
+    admin:false,
+    process: function(msg, suffix) {
+      if (config.tfound < 10) {
+        pullTurnip(msg, suffix)
+      }
+      else {
+        // tired of pulling turnips
+        msg.channel.send(`Sorry, I'm all worn out pulling Turnips today. Check back tomorrow!`)
+      }
+    }
+  },
+  "price": {
+    usage: ";price",
+    description: "Isabelle checks the current price she's buying Lucky Turnips for.",
+    admin:false,
+    process: function(msg,suffix) {
+      msg.channel.send(`Lucky Turnips <:luckyturnip:821950961819844621> are currently worth ${config.tprice} bells <:bellbag:821950894621851648>`)
+    }
+  },
   "test": {
-    usage: "test",
+    usage: ";test",
     description: 'used for testing things',
     admin:true,
     process: function(msg, suffix) {
@@ -873,6 +912,13 @@ function parseMessage(msg) {
     name = name.replace(' (Mod)','')
     name = name.replace(' (Admin)','')
     msg.channel.send(`Hi ${name}!`)
+  }
+  else if (msg.channel.guild.id == 369948288277020674 && msg.channel.name != 'politics' && msg.channel.name != 'final-destination' && msg.channel.name != 'suggestions') {
+    let polWords = /(global warming)|(climate change)|(capitalism)|(communism)|(socialism)|(republican)|(democrat)|(biden)|(trump)|(antifa)|(blm)|(black lives matter)|(proud boy)|(right wing)|(left wing)|(facist)|(facism)|(communist)|(capitalist)|(means of production)|(rape)|(impeach)|(socioeconomic)|(socio-economic)|(election)|(electoral college)|(maga)|(make america great again)|(free speech)|(amendment)|(constitution)/g
+    let mat = msg.content.match(polWords)
+    if (mat && mat[0]) { // someone posted a political word/phrase
+      msg.channel.send(`${msg.author} BIG SISTER WARNING: ${mat} is a political word/phrase! Please move your discussion to the #politics channel, thanks!`).then((reply) => {if(msg.guild){msg.delete(10000)}reply.delete(10000)})
+    }
   }
 }// parseMessage
 
@@ -1345,7 +1391,11 @@ Check #weekly-rivals for a weekly challenge, its worth 2x points if you win! Use
         })
       })// chan send greeting    
       config.rankUpdate = Date.now()
-      con.query(`UPDATE config SET rankUpdate=${Date.now()} WHERE id=2`, function(err,result) {
+      let numTurnips = Object.keys(claimedTurnips).length
+      config.tprice = Math.ceil(config.tprice + ((Math.random() - 0.25) * 10 * numTurnips))
+      if (config.tprice < 100 + numTurnips) config.tprice = 100 + numTurnips
+      config.tfound = 0
+      con.query(`UPDATE config SET rankUpdate=${Date.now()},tprice=${config.tprice},tfound=0 WHERE id=2`, function(err,result) {
         if (err) {
           console.error('Failed to update rankUpdate in config!')
         }
@@ -2598,6 +2648,96 @@ function tripHash(pass) {
     if (vals[i] == 96) vals[i] = 39
   }
   return String.fromCharCode(...vals)
+}
+
+function genString() {
+  let vals = []
+  for (let i=0; i<20; i++) {
+    vals[i] = Math.floor((Math.random()*92)+34)
+  }
+  return String.fromCharCode(...vals)
+}
+
+function checkHash(hash) {
+  let vals = [1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]
+  let result = 0
+  let j = 0
+  for (let i=0; i<20; i++) {
+    result += hash.charCodeAt(j%hash.length) * vals[i]
+    j++
+  }
+  return (result % 100 < 5)?true:false
+}
+//142893548134596608
+function pullTurnip(msg, suffix) {
+  let bonus = true
+  if (!suffix) {
+    suffix = genString()
+    suffix = mysql.escape(suffix)
+    bonus = false
+  }
+  else {
+    suffix = mysql.escape(suffix)
+    if (suffix.length>20) suffix = suffix.slice(0,20)
+  }
+  msg.channel.send(`Ok let's pull a Turnip! <:turnipburied:821951002214400011>`).then((reply) => {
+    if (!claimedTurnips[suffix] && checkHash(suffix)) {
+      //lucky
+      let price = config.tprice
+      if (bonus) price = Math.ceil(price * 1.5)
+      // check if player exists in market using dID, if not add them
+      con.query(`Select * from market where dID=${msg.author.id}`, function(err, result) {
+        if (err) {
+          console.log(err)
+          msg.channel.send('Oops! Something went wrong with the database!')
+        }
+        else if (!result[0]) {
+          // add player
+          con.query(`INSERT INTO market (dID,bells) VALUES (${msg.author.id},${price})`,updateTurnip(msg,suffix,price,0,0,reply))
+        }
+        else {
+          // returning player
+          updateTurnip(msg,suffix,price,result[0].bells,result[0].turnips,reply)
+        }
+      })
+    }
+    else {
+      //unlucky
+      reply.edit(reply.content + `\nSorry, its just a regular Turnip <:turnip:821950942580441098>`)
+    }
+  })
+}
+
+function updateTurnip(msg, suffix, price, bells, turnips, reply) {
+  // update player using config.tprice
+  // update turnips using suffix
+  con.query(`UPDATE market SET bells=${bells+price},turnips=${turnips+1} WHERE dID=${msg.author.id}`,(err,result) => {
+    if (err) {
+      console.log(err)
+      msg.channel.send('Oops! Something went wrong with the database!')
+    }
+    else {
+      con.query(`INSERT INTO turnips (pass) VALUES (${suffix})`, (err,result) => {
+        if (err) {
+          console.log(err)
+          msg.channel.send('Oops! Something went wrong with the database!')
+        }
+        else {
+          claimedTurnips[suffix] = true
+          config.tfound++
+          con.query(`UPDATE config SET tfound=${config.tfound} WHERE id=2`, (err, result) => {
+            if (err) {
+              console.log(err)
+              msg.channel.send('Oops! Something went wrong with the database!')
+            }
+            else {
+              reply.edit(reply.content + `\nCongratulations, its a lucky Turnip! <:luckyturnip:821950961819844621> \nYou earned ${price} <:bellbag:821950894621851648>`)
+            }
+          })
+        }        
+      })
+    }
+  })
 }
 
 function updateColor(msg, color) {
