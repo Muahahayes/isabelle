@@ -2758,7 +2758,7 @@ function updateTurnip(msg, suffix, price, bells, turnips, reply) {
               msg.channel.send('Oops! Something went wrong with the database!')
             }
             else {
-              reply.edit(reply.content + `\nCongratulations, its a lucky Turnip! <:luckyturnip:821950961819844621> \nYou earned ${price} <:bellbag:821950894621851648>`)
+              reply.edit(reply.content + `\nCongratulations, its a lucky Turnip! <:luckyturnip:821950961819844621> \nYou earned ${price} <:bellbag:821950894621851648>\n(Hash: ${suffix})`)
             }
           })
         }        
