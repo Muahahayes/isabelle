@@ -2694,7 +2694,7 @@ function checkHash(hash) {
   }
   return (result % 100 < 5)?true:false
 }
-//142893548134596608
+
 function pullTurnip(msg, suffix) {
   let bonus = true
   if (!suffix) {
@@ -2719,7 +2719,7 @@ function pullTurnip(msg, suffix) {
         }
         else if (!result[0]) {
           // add player
-          con.query(`INSERT INTO market (dID,bells,turnips) VALUES (${msg.author.id},${price},0)`,updateTurnip(msg,suffix,price,0,0,reply))
+          con.query(`INSERT INTO market (dID,bells,turnips) VALUES (${msg.author.id},${price},1)`,updateTurnip(msg,suffix,price,0,0,reply))
         }
         else {
           // returning player
