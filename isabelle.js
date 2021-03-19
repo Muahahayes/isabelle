@@ -55,6 +55,7 @@ var reportChan
 var anonChan
 var chanChan
 var claimedTurnips = {}
+var turnipCounts = {}
 con.query(`SELECT * FROM config`, function (err, result) {
   if (err) {
     console.error(err)
@@ -127,7 +128,7 @@ bot.on('ready', () => {
       console.log(chanColors)
     }
   })
-  con.query(`SELECT * from turnips`, function (err, result) {
+  con.query(`SELECT * FROM turnips`, function (err, result) {
     if (err) {
       console.log(err)
       process.exit(0)
@@ -137,6 +138,18 @@ bot.on('ready', () => {
         claimedTurnips[row['pass']] = true
       }
       console.log(JSON.stringify(claimedTurnips))
+    }
+  })
+  con.query(`SELECT * FROM market`, function (err, result) {
+    if (err) {
+      console.log(err)
+      process.exit(0)
+    }
+    else {
+      for (let row of result) {
+        turnipCounts[row['dID']] = row['pulls']
+      }
+      console.log(JSON.stringify(turnipCounts))
     }
   })
   bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!').then( () => {
@@ -808,8 +821,11 @@ const commands = {
     description: "Pull a Turnip! If its a Lucky Turnip Isabelle will reward you with some bells. \nYou may include an optional hash (string of alphanumeric characters) of length 1-20, you'll earn 50% more bells if this hash is lucky!",
     admin:false,
     process: function(msg, suffix) {
-      if (config.tfound < 10) {
+      if (turnipCounts[msg.author.id] <= 5 && config.tfound <= 50) {
         pullTurnip(msg, suffix)
+      }
+      else if (config.tfound <= 50) {
+        msg.channel.send(`Hey you've been pulling Turnips a lot today, you should take a break!`)
       }
       else {
         // tired of pulling turnips
@@ -1425,6 +1441,16 @@ Check #weekly-rivals for a weekly challenge, its worth 2x points if you win! Use
         if (err) {
           console.error('Failed to update rankUpdate in config!')
         }
+        con.query(`UPDATE market SET pulls=0`, function(err,result) {
+          if (err) {
+            console.error('Failed to update pulls in market!')
+          }
+          else {
+            for (let row in turnipCounts) {
+              turnipCounts[row] = 0
+            }
+          }
+        })
       })
     }// else
   })// con query
@@ -2719,12 +2745,13 @@ function pullTurnip(msg, suffix) {
         }
         else if (!result[0]) {
           // add player
-          con.query(`INSERT INTO market (dID,bells,turnips) VALUES (${msg.author.id},${price},1)`,updateTurnip(msg,suffix,price,0,0,reply))
+          con.query(`INSERT INTO market (dID,bells,turnips,pulls) VALUES (${msg.author.id},${price},1,1)`,updateTurnip(msg,suffix,price,0,0,0,reply))
         }
         else {
           // returning player
           if (result[0].turnips == 0) result[0].turnips = 1
-          updateTurnip(msg,suffix,price,result[0].bells,result[0].turnips,reply)
+          if (result[0].pulls == 0) result[0].pulls = 1
+          updateTurnip(msg,suffix,price,result[0].bells,result[0].turnips,result[0].pulls,reply)
         }
       })
     }
@@ -2735,10 +2762,10 @@ function pullTurnip(msg, suffix) {
   })
 }
 
-function updateTurnip(msg, suffix, price, bells, turnips, reply) {
+function updateTurnip(msg, suffix, price, bells, turnips, pulls, reply) {
   // update player using config.tprice
   // update turnips using suffix
-  con.query(`UPDATE market SET bells=${bells+price},turnips=${turnips+1} WHERE dID=${msg.author.id}`,(err,result) => {
+  con.query(`UPDATE market SET bells=${bells+price},turnips=${turnips+1},pulls=${pulls+1} WHERE dID=${msg.author.id}`,(err,result) => {
     if (err) {
       console.log(err)
       msg.channel.send('Oops! Something went wrong with the database!')
@@ -2751,6 +2778,7 @@ function updateTurnip(msg, suffix, price, bells, turnips, reply) {
         }
         else {
           claimedTurnips[suffix] = true
+          turnipCounts[msg.author.id] = (turnipCounts[msg.author.id])?turnipCounts[msg.author.id]+1:1
           config.tfound++
           con.query(`UPDATE config SET tfound=${config.tfound} WHERE id=2`, (err, result) => {
             if (err) {
