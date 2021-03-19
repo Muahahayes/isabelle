@@ -147,7 +147,7 @@ bot.on('ready', () => {
     }
     else {
       for (let row of result) {
-        turnipCounts[`${row['dID']}`] = row['pulls']
+        turnipCounts[row['dID']] = row['pulls']
       }
       console.log(JSON.stringify(turnipCounts))
     }
@@ -821,7 +821,7 @@ const commands = {
     description: "Pull a Turnip! If its a Lucky Turnip Isabelle will reward you with some bells. \nYou may include an optional hash (string of alphanumeric characters) of length 1-20, you'll earn 50% more bells if this hash is lucky!",
     admin:false,
     process: function(msg, suffix) {
-      if ((turnipCounts[`${msg.author.id}`] < 5 || !turnipCounts[`${msg.author.id}`]) && config.tfound < 50) {
+      if ((turnipCounts[msg.author.id] < 5 || !turnipCounts[msg.author.id]) && config.tfound < 50) {
         pullTurnip(msg, suffix)
       }
       else if (config.tfound < 50) {
@@ -2778,7 +2778,7 @@ function updateTurnip(msg, suffix, price, bells, turnips, pulls, reply) {
         }
         else {
           claimedTurnips[suffix] = true
-          turnipCounts[`${msg.author.id}`] = (turnipCounts[`${msg.author.id}`])?turnipCounts[`${msg.author.id}`]+1:1
+          turnipCounts[msg.author.id] = (turnipCounts[msg.author.id])?turnipCounts[msg.author.id]+1:1
           config.tfound++
           con.query(`UPDATE config SET tfound=${config.tfound} WHERE id=2`, (err, result) => {
             if (err) {
