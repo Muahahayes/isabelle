@@ -2712,11 +2712,10 @@ function genString() {
 
 function checkHash(hash) {
   let vals = [1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5]
-  let result = 0
-  let j = 0
+  result = 0
   for (let i=0; i<20; i++) {
-    result += hash.charCodeAt(j%hash.length) * vals[i]
-    j++
+    result += hash.charCodeAt(i%hash.length) * vals[i]
+    result = result % 99
   }
   return (result % 100 < 5)?true:false
 }
