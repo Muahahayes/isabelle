@@ -954,14 +954,14 @@ function parseMessage(msg) {
     name = name.replace(' (Mod)','')
     name = name.replace(' (Admin)','')
     msg.channel.send(`Hi ${name}!`)
-  }
-  else if (msg.channel.guild.id == 369948288277020674 && msg.channel.name != 'politics' && msg.channel.name != 'final-destination' && msg.channel.name != 'suggestions') {
-    let polWords = /(obama)|(global warming)|(climate change)|(capitalism)|(communism)|(socialism)|(republican)|(democrat)|(biden)|(trump)|(antifa)|(blm)|(black lives matter)|(proud boy)|(right wing)|(left wing)|(facist)|(facism)|(communist)|(commie)|(acab)|(capitalist)|(means of production)|((?<!g)rape)|(impeach)|(socioeconomic)|(socio-economic)|(election)|(electoral college)|(maga(?!zine))|(make america great again)|(free speech)|(amendment)|(constitution)/gi
-    let mat = msg.content.match(polWords)
-    if (mat && mat[0]) { // someone posted a political word/phrase
-      msg.channel.send(`${msg.author} BIG SISTER WARNING: ${mat} is a political word/phrase! Please move your discussion to the #politics channel, thanks!`).then((reply) => {if(msg.guild){msg.delete(10000)}reply.delete(10000)})
-    }
-  }
+  }b
+  // else if (msg.channel.guild.id == 369948288277020674 && msg.channel.name != 'politics' && msg.channel.name != 'final-destination' && msg.channel.name != 'suggestions') {
+  //   let polWords = /(obama)|(global warming)|(climate change)|(capitalism)|(communism)|(socialism)|(republican)|(democrat)|(biden)|(trump)|(antifa)|(blm)|(black lives matter)|(proud boy)|(right wing)|(left wing)|(facist)|(facism)|(communist)|(commie)|(acab)|(capitalist)|(means of production)|((?<!g)rape)|(impeach)|(socioeconomic)|(socio-economic)|(election)|(electoral college)|(maga(?!zine))|(make america great again)|(free speech)|(amendment)|(constitution)/gi
+  //   let mat = msg.content.match(polWords)
+  //   if (mat && mat[0]) { // someone posted a political word/phrase
+  //     msg.channel.send(`${msg.author} BIG SISTER WARNING: ${mat} is a political word/phrase! Please move your discussion to the #politics channel, thanks!`).then((reply) => {if(msg.guild){msg.delete(10000)}reply.delete(10000)})
+  //   }
+  // }
 }// parseMessage
 
 function beltColor(elo) {
