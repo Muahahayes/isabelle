@@ -885,9 +885,9 @@ function parseMessage(msg) {
   else if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'chan') {
     chanPost(msg, msg.content)
   }
-  else if (msg.content.startsWith('b.') || msg.author.id == '339926969548275722' && msg.channel.name != 'waifu-gacha') {
-    if (msg.content.startsWith('b.')) {
-      msg.channel.send(`Bongo command detected outside of #Waifu-Gacha!\nDeleting Bongo related posts.`)
+  else if (msg.channel.id != '611765107940130826' && (msg.content.match(/^(b|B)\./) != null || (msg.author.bot && msg.author.username == 'Bongo'))) {
+    if (!msg.author.bot) {
+      msg.channel.send(`Bongo command detected outside of #waifu-gacha!\nDeleting Bongo related posts.`)
     }
     msg.delete(100)
   }
