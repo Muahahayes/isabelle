@@ -885,6 +885,12 @@ function parseMessage(msg) {
   else if (msg.author.id != bot.user.id && msg.author.id != '85614143951892480' && msg.channel.name == 'chan') {
     chanPost(msg, msg.content)
   }
+  else if (msg.content.startsWith('b.') || msg.author.id == '339926969548275722' && msg.channel.name != 'waifu-gacha') {
+    if (msg.content.startsWith('b.')) {
+      msg.channel.send(`Bongo command detected outside of #Waifu-Gacha!\nDeleting Bongo related posts.`)
+    }
+    msg.delete(100)
+  }
   else if (msg.author.id != bot.user.id && msg.content.startsWith(prefix) && msg.author.id != '85614143951892480') { //command from user (not UB3R-B0T)
     let cmdTxt = msg.content.split(" ")[0].substring(prefix.length)
     let suffix = msg.content.substring(cmdTxt.length+prefix.length+1)
