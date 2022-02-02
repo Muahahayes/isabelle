@@ -2866,6 +2866,10 @@ function displaySubredditPic(msg, sub,r) {
   fetch(url, settings)
     .then(res => res.json())
     .then((json) => {
+      if (!json || !json.data) {
+        msg.channel.send('Oops! I couldn\'t find any pictures for r/'+sub+'!')
+        return;
+      }
       let post = json.data.children[(r!==false)?r:randNum(range)]
       let attempts = range
       while ((!post || !post.data.url_overridden_by_dest || post.data.over_18 || !post.data.url_overridden_by_dest.startsWith('https://i')) && attempts > 0) {
