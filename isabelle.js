@@ -12,19 +12,21 @@
 const Discord = require('discord.js')
 const fs = require('fs')
 const mysql = require('mysql')
+const fetch = require('node-fetch')
 var config = {}
 var token = (process.env.token)?process.env.token:JSON.parse(fs.readFileSync('data/configlocal.json')).token
-try {
-  token = fs.readFileSync('token.txt')
-  console.log('Running on local machine.')
-}
-catch(e){
-  console.log('Running on Heroku cloud.')
-}
+// try {
+//   token = fs.readFileSync('token.txt')
+//   console.log('Running on local machine.')
+// }
+// catch(e){
+//   console.log('Running on Heroku cloud.')
+// }
 //var reportStream = fs.createWriteStream("data/reports.txt", {flags:'a'})
 //var logStream = fs.createWriteStream("data/log.txt", {flags:'a'})
 //var con = mysql.createConnection(config.db)
 if (process.env.db_host) {
+  console.log('Running on Heroku cloud')
   var con = mysql.createPool({
   connectionLimit : 9,
   host : process.env.db_host,
@@ -35,6 +37,7 @@ if (process.env.db_host) {
 })
 }
 else {
+  console.log('Running on local machine')
   var configlocal = JSON.parse(fs.readFileSync('data/configlocal.json'))
   var con = mysql.createPool({
     connectionLimit : 9,
@@ -56,12 +59,13 @@ var anonChan
 var chanChan
 var claimedTurnips = {}
 var turnipCounts = {}
+
 con.query(`SELECT * FROM config`, function (err, result) {
   if (err) {
     console.error(err)
-    bot.channels.find(x => x.name === 'logs').send(`Error Loading config values from database!\n${err}`).then(then => {
+    // bot.channels.find(x => x.name === 'logs').send(`Error Loading config values from database!\n${err}`).then(then => {
       process.exit(1)
-    })
+    // })
   }
   else {
     if (result[0]) {
@@ -95,11 +99,6 @@ con.query(`SELECT * FROM config`, function (err, result) {
     bot.login(token)
   }
 })
-/**
- * con.query()
- * if (result[0])
- * blah blah
- */
 
 // bot event handlers
 bot.on('ready', () => {
@@ -111,6 +110,7 @@ bot.on('ready', () => {
   reportChan = bot.channels.find(x => x.name === 'reports')
   anonChan = bot.channels.find(x => x.id == '711689236457455691')
   chanChan = bot.channels.find(x => x.id == '744888215399301202')
+  maintainChan = bot.channels.find(x => x.name === 'bot-maintanence')
   for (let i in commands) {
     commands[i].usage = commands[i].usage.replace(';',prefix) // replace default with defined prefix
     commands[i].description = commands[i].description.replace(';',prefix)
@@ -152,11 +152,11 @@ bot.on('ready', () => {
       console.log(JSON.stringify(turnipCounts))
     }
   })
-  bot.channels.find(x => x.name === 'bot-maintanence').send('Hi Mayor! This is Isabelle, reporting for duty!').then( () => {
+  maintainChan.send('Hi Mayor! This is Isabelle, reporting for duty!').then( () => {
     let embed = new Discord.RichEmbed().setTitle('Bot Reset!').setDescription('Anon Aliases are reset.').setColor('#ff52b1')
     anonChan.send(embed)
-  }
-  )
+  })
+  // displaySubredditPic({channel:maintainChan}, 'awwnime')
   // get trips and colors from db
 
 
@@ -289,6 +289,26 @@ const commands = {
       }
     }// process
   },//debugalias
+  "pic" : {
+    usage: ';pic subreddit #',
+    description: 'pulls a random photo recently posted to a subreddit, or a photo specified by # chronologically (will filter out 18+ images but please don\'t push it)',
+    admin:false,
+    process: function(msg, suffix) {
+      let args = suffix.split(' ')
+      let r
+      if (Number.isNaN(Number(args[1])) || Number(args[1])<1) {
+        r = false
+      }
+      else {
+        r = Number(args[1]) - 1
+      }
+      if (r > 99) {
+        msg.channel.send('Sorry! I can\'t go further back than 100 posts!')
+        return
+      }
+      displaySubredditPic(msg, args[0], r)
+    }
+  },
   "rating": {
     usage: `;rating name`,
     description: 'prints the current ELO rating of the named player\n'+
@@ -2836,6 +2856,37 @@ function updateColor(msg, color) {
       })
     }
   })
+}
+
+function displaySubredditPic(msg, sub,r) {
+  let range = 25
+  let url = `https://www.reddit.com/r/${sub}.json?limit=${(r > range)?r:range}`
+  let settings = {method: 'Get'}
+
+  fetch(url, settings)
+    .then(res => res.json())
+    .then((json) => {
+      let post = json.data.children[(r!==false)?r:randNum(range)]
+      let attempts = range
+      while ((!post || !post.data.url_overridden_by_dest || post.data.over_18 || !post.data.url_overridden_by_dest.startsWith('https://i')) && attempts > 0) {
+        attempts--
+        post = json.data.children[randNum(range)]
+      }
+      if (attempts <= 0) {
+        msg.channel.send('Oops! I couldn\'t find any pictures for r/'+sub+'!')
+      }
+      else {
+        let d = new Date(post.data.created_utc*1000)
+        d = d.toDateString().split(' ').slice(1,4).join(' ')
+        let emb = new Discord.RichEmbed()
+          .setColor('#c4ffff')
+          .setFooter(d)
+          .setDescription(post.data.title)
+          .setTitle(`${(r!==false && attempts == range)?'#'+(r+1):'Random pic'} from ${post.data.subreddit_name_prefixed}`)
+          .setImage(post.data.url_overridden_by_dest)
+        msg.channel.send(emb)
+      }
+    })
 }
 
 /*
